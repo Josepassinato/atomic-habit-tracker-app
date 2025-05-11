@@ -33,13 +33,13 @@ export const useRelatorioData = () => {
 
   // Estado para filtros
   const [periodoSelecionado, setPeriodoSelecionado] = useState<"semana" | "mes" | "trimestre" | "ano">("mes");
-  const [equipeId, setEquipeId] = useState<string>("");
+  const [equipeId, setEquipeId] = useState<string>("todas");
   const [date, setDate] = useState<Date | undefined>(undefined);
 
   // Filtragem de vendedores por equipe
-  const vendedoresFiltrados = equipeId 
-    ? vendedores.filter(vendedor => vendedor.equipe === equipeId)
-    : vendedores;
+  const vendedoresFiltrados = equipeId === "todas" 
+    ? vendedores 
+    : vendedores.filter(vendedor => vendedor.equipe === equipeId);
 
   // Totais para dashboard
   const totalVendas = vendedores.reduce((acc, v) => acc + v.vendas, 0);

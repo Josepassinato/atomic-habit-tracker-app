@@ -58,7 +58,7 @@ export const RelatorioFiltros: React.FC<RelatorioFiltrosProps> = ({
             <SelectValue placeholder="Todas as equipes" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="">Todas as equipes</SelectItem>
+            <SelectItem value="todas">Todas as equipes</SelectItem>
             {equipes.map(equipe => (
               <SelectItem key={equipe.id} value={equipe.id}>
                 {equipe.nome}
