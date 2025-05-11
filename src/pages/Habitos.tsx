@@ -1,10 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle, Calendar, List, Trophy } from "lucide-react";
+import { TrendingUp, Zap, Award } from "lucide-react";
 import HabitoItem from "@/components/habitos/HabitoItem";
 import { Habito } from "@/components/habitos/types";
 import { HabitoEvidenciaType } from "@/components/habitos/HabitoEvidencia";

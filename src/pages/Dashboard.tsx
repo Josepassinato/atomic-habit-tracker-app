@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
@@ -14,28 +14,35 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
   const notificacaoExibida = useRef(false);
+  const [carregado, setCarregado] = useState(false);
   
   useEffect(() => {
     // Verificação simples de autenticação
     const user = localStorage.getItem("user");
     if (!user) {
       // Para fins de desenvolvimento, vamos apenas criar um usuário temporário
-      // em vez de redirecionar para o login
       localStorage.setItem("user", JSON.stringify({ id: 1, nome: "Usuário de Teste" }));
-      //navigate("/login");
     }
     
-    // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
-    // Apenas adiciona a notificação se ainda não foi exibida
-    if (!notificacaoExibida.current) {
-      adicionarNotificacao({
-        titulo: "Bem-vindo de volta!",
-        mensagem: "Você tem 3 hábitos para concluir hoje.",
-        tipo: "info"
-      });
-      notificacaoExibida.current = true;
+    // Usamos o estado para controlar se a página já foi carregada
+    // e apenas mostrar a notificação na primeira vez
+    if (!carregado) {
+      setCarregado(true);
+      
+      // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
+      // Apenas adiciona a notificação se ainda não foi exibida
+      if (!notificacaoExibida.current) {
+        setTimeout(() => {
+          adicionarNotificacao({
+            titulo: "Bem-vindo de volta!",
+            mensagem: "Você tem 3 hábitos para concluir hoje.",
+            tipo: "info"
+          });
+          notificacaoExibida.current = true;
+        }, 1000); // Pequeno delay para evitar múltiplas notificações
+      }
     }
-  }, [navigate, adicionarNotificacao]);
+  }, [navigate, adicionarNotificacao, carregado]);
 
   return (
     <div className="flex min-h-screen flex-col">

@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { ptBR } from "date-fns/locale";
@@ -27,6 +27,14 @@ const CalendarioHabitos: React.FC<CalendarioHabitosProps> = ({
   onSelectDay,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
+  const [habitosParaExibir, setHabitosParaExibir] = useState<Habito[]>([]);
+
+  // Atualizar os hábitos mostrados quando mudar a data selecionada ou quando os hábitos mudam
+  useEffect(() => {
+    const habitosDoDia = habitos.filter(habito => 
+      !habito.dataCriacao || isSameDay(new Date(habito.dataCriacao), selectedDate));
+    setHabitosParaExibir(habitosDoDia);
+  }, [habitos, selectedDate]);
 
   const handleDateSelect = (date: Date | undefined) => {
     if (date) {
@@ -97,9 +105,8 @@ const CalendarioHabitos: React.FC<CalendarioHabitosProps> = ({
             </h3>
             
             <div className="space-y-1">
-              {habitos
-                .filter(habito => !habito.dataCriacao || isSameDay(new Date(habito.dataCriacao), selectedDate))
-                .map(habito => (
+              {habitosParaExibir.length > 0 ? (
+                habitosParaExibir.map(habito => (
                   <div key={habito.id} className="flex items-center text-sm gap-2">
                     {habito.cumprido ? (
                       <Badge variant="outline" className="flex gap-1 bg-green-50 text-green-700 border-green-200">
@@ -110,7 +117,12 @@ const CalendarioHabitos: React.FC<CalendarioHabitosProps> = ({
                     )}
                     <span>{habito.titulo}</span>
                   </div>
-                ))}
+                ))
+              ) : (
+                <p className="text-sm text-muted-foreground py-2">
+                  Não há hábitos registrados para esta data.
+                </p>
+              )}
             </div>
           </div>
         )}
