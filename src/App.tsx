@@ -7,6 +7,7 @@ import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Tutorial from "./pages/Tutorial";
 import Index from "./pages/Index";
+import Relatorios from "./pages/Relatorios";
 
 // Componente para proteger rotas
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -34,6 +35,14 @@ function App() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/relatorios" 
+          element={
+            <PrivateRoute>
+              <Relatorios />
             </PrivateRoute>
           } 
         />
