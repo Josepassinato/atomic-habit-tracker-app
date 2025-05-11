@@ -123,12 +123,17 @@ export const useVendedores = (equipeId?: string) => {
       taxa_conversao: 0.28,
       criado_em: new Date().toISOString(),
     }
-  ]).filter(v => !equipeId || v.equipe_id === equipeId);
+  ]);
   
   const [loading] = useState(false);
   const [error] = useState<Error | null>(null);
+  
+  // Filtra os vendedores pelo equipeId se fornecido
+  const vendedoresFiltrados = equipeId 
+    ? vendedores.filter(vendedor => vendedor.equipe_id === equipeId)
+    : vendedores;
 
-  return { vendedores, loading, error };
+  return { vendedores: vendedoresFiltrados, loading, error };
 };
 
 export default useSupabase;
