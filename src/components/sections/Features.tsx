@@ -5,7 +5,64 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const Features = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Features lists translations
+  const featureLists = {
+    en: {
+      smartGoals: [
+        "Personalized AI suggestions",
+        "Automatic adjustment based on history",
+        "Clear progress visualization"
+      ],
+      atomicHabits: [
+        "Automated daily check-ins",
+        "Custom reminders",
+        "Gamification for greater engagement"
+      ],
+      autoRewards: [
+        "Automatic award calculation",
+        "Detailed performance reports",
+        "Integration with payment systems"
+      ]
+    },
+    es: {
+      smartGoals: [
+        "Sugerencias personalizadas por IA",
+        "Ajuste automático basado en historial",
+        "Visualización clara del progreso"
+      ],
+      atomicHabits: [
+        "Check-ins diarios automatizados",
+        "Recordatorios personalizados",
+        "Gamificación para mayor participación"
+      ],
+      autoRewards: [
+        "Cálculo automático de premios",
+        "Informes de rendimiento detallados",
+        "Integración con sistemas de pago"
+      ]
+    },
+    pt: {
+      smartGoals: [
+        "Sugestões personalizadas por IA",
+        "Ajuste automático baseado no histórico",
+        "Visualização clara do progresso"
+      ],
+      atomicHabits: [
+        "Check-ins diários automatizados",
+        "Lembretes personalizados",
+        "Gamificação para maior engajamento"
+      ],
+      autoRewards: [
+        "Cálculo automático de premiações",
+        "Relatórios de desempenho detalhados",
+        "Integração com sistemas de pagamento"
+      ]
+    }
+  };
+
+  const currentFeatures = featureLists[language];
   
   return (
     <section className="py-20">
@@ -22,18 +79,12 @@ const Features = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Sugestões personalizadas por IA</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Ajuste automático baseado no histórico</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Visualização clara do progresso</span>
-                </li>
+                {currentFeatures.smartGoals.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <Check className="mr-2 h-5 w-5 text-primary" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -47,18 +98,12 @@ const Features = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Check-ins diários automatizados</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Lembretes personalizados</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Gamificação para maior engajamento</span>
-                </li>
+                {currentFeatures.atomicHabits.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <Check className="mr-2 h-5 w-5 text-primary" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>
@@ -72,18 +117,12 @@ const Features = () => {
             </CardHeader>
             <CardContent>
               <ul className="space-y-2">
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Cálculo automático de premiações</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Relatórios de desempenho detalhados</span>
-                </li>
-                <li className="flex items-start">
-                  <Check className="mr-2 h-5 w-5 text-primary" />
-                  <span>Integração com sistemas de pagamento</span>
-                </li>
+                {currentFeatures.autoRewards.map((feature, index) => (
+                  <li key={index} className="flex items-start">
+                    <Check className="mr-2 h-5 w-5 text-primary" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
               </ul>
             </CardContent>
           </Card>

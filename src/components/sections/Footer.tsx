@@ -26,7 +26,9 @@ const Footer = () => {
             <LanguageSelector />
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            Habitus © 2025 - O futuro da automação de vendas e performance
+            Habitus © 2025 - {t('language') === 'en' ? 'The future of sales automation and performance' : 
+                             t('language') === 'es' ? 'El futuro de la automatización de ventas y rendimiento' : 
+                             'O futuro da automação de vendas e performance'}
           </div>
         </div>
       </div>

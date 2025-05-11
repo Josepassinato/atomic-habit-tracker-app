@@ -11,6 +11,7 @@ import {
   LogOut
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 import {
   Collapsible,
@@ -30,6 +31,7 @@ import { toast } from 'sonner';
 const AppSidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
+  const { t } = useLanguage();
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -76,19 +78,19 @@ const AppSidebar = () => {
       <SidebarContent className="px-3 py-4">
         <div className="space-y-1">
           <NavItem to="/dashboard" icon={LayoutDashboard}>
-            Dashboard
+            {t('dashboard')}
           </NavItem>
           <NavItem to="/habitos" icon={Calendar}>
-            Hábitos
+            {t('habits')}
           </NavItem>
           <NavItem to="/metas" icon={Target}>
-            Metas
+            {t('goals')}
           </NavItem>
           <NavItem to="/relatorios" icon={BarChart3}>
-            Relatórios
+            {t('reports')}
           </NavItem>
           <NavItem to="/configuracoes" icon={Settings}>
-            Configurações
+            {t('settings')}
           </NavItem>
           <NavItem to="/tutorial" icon={HelpCircle}>
             Tutorial
@@ -116,7 +118,7 @@ const AppSidebar = () => {
                 onClick={handleLogout}
               >
                 <LogOut size={16} className="mr-2" />
-                Sair
+                {t('language') === 'en' ? 'Logout' : t('language') === 'es' ? 'Salir' : 'Sair'}
               </Button>
             </CollapsibleContent>
           </Collapsible>
