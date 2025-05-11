@@ -1,0 +1,83 @@
+
+import React from "react";
+import { Button } from "@/components/ui/button";
+import { Clock, Check } from "lucide-react";
+import { Habito } from "./types";
+import HabitoEvidencia, { HabitoEvidenciaType } from "./HabitoEvidencia";
+
+interface HabitoItemProps {
+  habito: Habito;
+  onEvidenciaSubmitted: (habitoId: number, evidencia: HabitoEvidenciaType) => void;
+  onMarcarConcluido: (id: number) => void;
+}
+
+const HabitoItem: React.FC<HabitoItemProps> = ({
+  habito,
+  onEvidenciaSubmitted,
+  onMarcarConcluido,
+}) => {
+  return (
+    <div className="flex items-start gap-3 border-b pb-3 last:border-0">
+      <div className="mt-0.5">
+        {habito.cumprido ? (
+          <div className={`flex h-6 w-6 items-center justify-center rounded-full 
+            ${habito.verificado 
+              ? "bg-green-100 text-green-700" 
+              : "bg-blue-100 text-blue-700"}`}>
+            <Check className="h-4 w-4" />
+          </div>
+        ) : (
+          <div className="flex h-6 w-6 items-center justify-center rounded-full border">
+            <span className="sr-only">Não concluído</span>
+          </div>
+        )}
+      </div>
+      <div className="flex-1 space-y-1">
+        <div className="flex items-center justify-between">
+          <h4 className="font-medium">{habito.titulo}</h4>
+          <div className="flex items-center text-sm text-muted-foreground">
+            <Clock className="mr-1 h-3 w-3" />
+            {habito.horario}
+          </div>
+        </div>
+        <p className="text-sm text-muted-foreground">{habito.descricao}</p>
+        
+        {habito.verificacaoNecessaria && (
+          <div className="flex items-center mt-1">
+            {habito.evidencia ? (
+              <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200">
+                Evidência enviada
+              </span>
+            ) : (
+              <HabitoEvidencia 
+                habitoId={habito.id}
+                titulo={habito.titulo}
+                onEvidenciaSubmitted={onEvidenciaSubmitted}
+              />
+            )}
+          </div>
+        )}
+        
+        {!habito.cumprido && (
+          <Button size="sm" className="mt-1" onClick={() => onMarcarConcluido(habito.id)}>
+            Marcar como concluído
+          </Button>
+        )}
+        
+        {habito.cumprido && habito.evidencia && !habito.verificado && (
+          <p className="text-xs text-amber-600 mt-1">
+            Aguardando verificação do gerente
+          </p>
+        )}
+        
+        {habito.verificado && (
+          <p className="text-xs text-green-600 mt-1">
+            Verificado pelo gerente
+          </p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default HabitoItem;
