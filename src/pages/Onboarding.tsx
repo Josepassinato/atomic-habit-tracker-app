@@ -7,9 +7,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Check, HelpCircle } from "lucide-react";
+import { Check, HelpCircle, Trophy, Medal, Gift } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
+import { Badge } from "@/components/ui/badge";
+import { Textarea } from "@/components/ui/textarea";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const Onboarding = () => {
   const [activeStep, setActiveStep] = useState("metas");
@@ -22,6 +25,14 @@ const Onboarding = () => {
   const [metaDiaria, setMetaDiaria] = useState("");
   
   const [habitosSelecionados, setHabitosSelecionados] = useState<string[]>([]);
+  
+  // Estado para recompensas
+  const [recompensaTipo, setRecompensaTipo] = useState("individual");
+  const [recompensaDescricao, setRecompensaDescricao] = useState("");
+  const [recompensasMetas, setRecompensasMetas] = useState<{descricao: string; tipo: string}[]>([
+    { descricao: "Café da manhã especial para o time", tipo: "equipe" },
+    { descricao: "Folga no dia do aniversário", tipo: "individual" }
+  ]);
   
   const habitosRecomendados = [
     "Fazer 10 ligações por dia",
@@ -40,10 +51,35 @@ const Onboarding = () => {
     }
   };
   
+  const adicionarRecompensa = () => {
+    if (recompensaDescricao.trim() === "") {
+      toast({
+        title: "Descrição obrigatória",
+        description: "Por favor, descreva a recompensa.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    setRecompensasMetas([
+      ...recompensasMetas, 
+      { descricao: recompensaDescricao, tipo: recompensaTipo }
+    ]);
+    setRecompensaDescricao("");
+  };
+  
+  const removerRecompensa = (index: number) => {
+    const novasRecompensas = [...recompensasMetas];
+    novasRecompensas.splice(index, 1);
+    setRecompensasMetas(novasRecompensas);
+  };
+  
   const handleNext = () => {
     if (activeStep === "metas") {
       setActiveStep("habitos");
     } else if (activeStep === "habitos") {
+      setActiveStep("recompensas");
+    } else if (activeStep === "recompensas") {
       setActiveStep("integracao");
     } else {
       handleFinish();
@@ -66,7 +102,8 @@ const Onboarding = () => {
           mensal: metaMensal,
           diaria: metaDiaria
         },
-        habitos: habitosSelecionados
+        habitos: habitosSelecionados,
+        recompensas: recompensasMetas
       }));
       
       toast({
@@ -99,9 +136,10 @@ const Onboarding = () => {
         </CardHeader>
         <CardContent>
           <Tabs value={activeStep} onValueChange={setActiveStep} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-4">
               <TabsTrigger value="metas">Metas</TabsTrigger>
               <TabsTrigger value="habitos">Hábitos</TabsTrigger>
+              <TabsTrigger value="recompensas">Recompensas</TabsTrigger>
               <TabsTrigger value="integracao">Integrações</TabsTrigger>
             </TabsList>
             
@@ -174,6 +212,92 @@ const Onboarding = () => {
                       {habito}
                     </Button>
                   ))}
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="recompensas" className="space-y-4 pt-4">
+              <div>
+                <h3 className="text-lg font-medium">Defina recompensas para motivar sua equipe</h3>
+                <p className="text-sm text-muted-foreground mb-4">
+                  Estabeleça incentivos para celebrar conquistas de metas e hábitos
+                </p>
+                
+                <div className="bg-purple-50 p-4 rounded-md mb-4 border border-purple-100">
+                  <div className="flex items-center gap-2 mb-2 text-purple-800">
+                    <Trophy className="h-5 w-5" />
+                    <h4 className="font-semibold">Por que recompensas são importantes?</h4>
+                  </div>
+                  <p className="text-sm text-purple-700">
+                    Recompensas aumentam a motivação e engajamento, reforçando comportamentos positivos 
+                    e ajudando a criar uma cultura de reconhecimento na equipe.
+                  </p>
+                </div>
+                
+                <div className="space-y-4 mb-6">
+                  <div>
+                    <Label htmlFor="recompensaDescricao">Descrição da recompensa</Label>
+                    <Textarea 
+                      id="recompensaDescricao" 
+                      placeholder="Ex: Vale-presente de R$100 para quem bater 120% da meta" 
+                      value={recompensaDescricao}
+                      onChange={(e) => setRecompensaDescricao(e.target.value)}
+                      className="mt-1"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label>Tipo de recompensa</Label>
+                    <RadioGroup value={recompensaTipo} onValueChange={setRecompensaTipo} className="flex space-x-4">
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="individual" id="individual" />
+                        <Label htmlFor="individual" className="cursor-pointer">Individual</Label>
+                      </div>
+                      <div className="flex items-center space-x-2">
+                        <RadioGroupItem value="equipe" id="equipe" />
+                        <Label htmlFor="equipe" className="cursor-pointer">Equipe</Label>
+                      </div>
+                    </RadioGroup>
+                  </div>
+                  
+                  <Button onClick={adicionarRecompensa} className="w-full">
+                    <Gift className="mr-2 h-4 w-4" />
+                    Adicionar recompensa
+                  </Button>
+                </div>
+                
+                <div className="space-y-2">
+                  <h4 className="font-medium text-sm">Recompensas adicionadas:</h4>
+                  {recompensasMetas.length === 0 ? (
+                    <p className="text-sm text-muted-foreground">Nenhuma recompensa adicionada ainda</p>
+                  ) : (
+                    <div className="space-y-3">
+                      {recompensasMetas.map((recompensa, index) => (
+                        <div key={index} className="flex justify-between items-center p-3 border rounded-md bg-white">
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              {recompensa.tipo === "individual" ? (
+                                <Medal className="h-4 w-4 text-amber-500" />
+                              ) : (
+                                <Trophy className="h-4 w-4 text-purple-600" />
+                              )}
+                              <span>{recompensa.descricao}</span>
+                            </div>
+                            <Badge variant="outline" className="mt-1">
+                              {recompensa.tipo === "individual" ? "Individual" : "Equipe"}
+                            </Badge>
+                          </div>
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => removerRecompensa(index)}
+                          >
+                            Remover
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </TabsContent>
