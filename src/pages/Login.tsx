@@ -8,12 +8,14 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { UserAuth, UserRole } from "@/types/auth";
 import { getCurrentUser } from "@/utils/permissions";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   // Check if user is already logged in
   useEffect(() => {
@@ -96,13 +98,13 @@ const Login = () => {
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold text-primary">Habitus</CardTitle>
           <CardDescription>
-            Entre com suas credenciais para acessar sua conta
+            {t('loginTitle')}
           </CardDescription>
         </CardHeader>
         <form onSubmit={handleSubmit}>
           <CardContent className="space-y-4">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email">{t('email')}</Label>
               <Input 
                 id="email" 
                 type="email" 
@@ -112,17 +114,15 @@ const Login = () => {
                 required
               />
               <p className="text-xs text-muted-foreground">
-                Use admin@habitus.com para acesso admin, 
-                gerente@exemplo.com para gerente, 
-                ou qualquer outro email para vendedor.
+                {t('adminInfo')}
               </p>
             </div>
             
             <div className="space-y-2">
               <div className="flex items-center justify-between">
-                <Label htmlFor="password">Senha</Label>
+                <Label htmlFor="password">{t('password')}</Label>
                 <Link to="/esqueci-senha" className="text-xs text-primary hover:underline">
-                  Esqueceu a senha?
+                  {t('forgotPassword')}
                 </Link>
               </div>
               <Input 
@@ -136,12 +136,12 @@ const Login = () => {
           </CardContent>
           <CardFooter className="flex flex-col space-y-4">
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? "Entrando..." : "Entrar"}
+              {loading ? t('entering') : t('enter')}
             </Button>
             <div className="text-center text-sm">
-              Não tem uma conta?{" "}
+              {t('dontHaveAccount')}{" "}
               <Link to="/registro" className="text-primary hover:underline">
-                Registre-se
+                {t('signUp')}
               </Link>
             </div>
           </CardFooter>

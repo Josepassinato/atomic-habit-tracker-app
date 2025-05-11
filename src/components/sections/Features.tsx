@@ -2,19 +2,22 @@
 import React from "react";
 import { Check } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const Features = () => {
+  const { t } = useLanguage();
+  
   return (
     <section className="py-20">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">Como o Habitus transforma sua equipe</h2>
+        <h2 className="mb-12 text-center text-3xl font-bold">{t('featuresTitle')}</h2>
         
         <div className="grid gap-8 md:grid-cols-3">
           <Card>
             <CardHeader>
-              <CardTitle>Metas Inteligentes</CardTitle>
+              <CardTitle>{t('smartGoalsTitle')}</CardTitle>
               <CardDescription>
-                Defina e monitore metas realistas baseadas em dados do seu mercado
+                {t('smartGoalsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -37,9 +40,9 @@ const Features = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle>Hábitos Atômicos</CardTitle>
+              <CardTitle>{t('atomicHabitsTitle')}</CardTitle>
               <CardDescription>
-                Cultive hábitos diários que levam ao sucesso da sua equipe
+                {t('atomicHabitsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -62,9 +65,9 @@ const Features = () => {
           
           <Card>
             <CardHeader>
-              <CardTitle>Bônus Automáticos</CardTitle>
+              <CardTitle>{t('autoRewardsTitle')}</CardTitle>
               <CardDescription>
-                Calcule e distribua incentivos de forma transparente
+                {t('autoRewardsDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent>

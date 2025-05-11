@@ -2,19 +2,21 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 const CTA = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <section className="py-20">
       <div className="container mx-auto px-4 text-center">
-        <h2 className="mb-6 text-3xl font-bold">Pronto para transformar sua equipe de vendas?</h2>
+        <h2 className="mb-6 text-3xl font-bold">{t('ctaTitle')}</h2>
         <p className="mx-auto mb-10 max-w-2xl text-xl text-muted-foreground">
-          Comece hoje a jornada para um time de vendas mais eficiente e motivado
+          {t('ctaDesc')}
         </p>
         <Button size="lg" onClick={() => navigate("/registro")}>
-          Criar sua conta
+          {t('createAccount')}
         </Button>
       </div>
     </section>

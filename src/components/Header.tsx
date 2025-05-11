@@ -4,12 +4,16 @@ import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
+import LanguageSelector from "@/components/LanguageSelector";
+import { useLanguage } from "@/contexts/LanguageContext";
 
 interface HeaderProps {
   isLoggedIn?: boolean;
 }
 
 const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
+  const { t } = useLanguage();
+  
   return (
     <header className="border-b bg-white dark:bg-slate-900 dark:border-slate-800">
       <div className="container flex h-16 items-center justify-between">
@@ -24,16 +28,16 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
           {isLoggedIn && (
             <nav className="hidden md:flex gap-4">
               <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
-                Dashboard
+                {t('dashboard')}
               </Link>
               <Link to="/habitos" className="text-sm font-medium hover:text-primary">
-                Hábitos
+                {t('habits')}
               </Link>
               <Link to="/metas" className="text-sm font-medium hover:text-primary">
-                Metas
+                {t('goals')}
               </Link>
               <Link to="/relatorios" className="text-sm font-medium hover:text-primary">
-                Relatórios
+                {t('reports')}
               </Link>
             </nav>
           )}
@@ -43,19 +47,21 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
           {isLoggedIn ? (
             <>
               <NotificacoesBadge />
+              <LanguageSelector />
               <ThemeSwitcher />
               <Button size="sm" variant="outline" asChild>
-                <Link to="/configuracoes">Configurações</Link>
+                <Link to="/configuracoes">{t('settings')}</Link>
               </Button>
             </>
           ) : (
             <>
+              <LanguageSelector />
               <ThemeSwitcher />
               <Button size="sm" variant="outline" asChild>
-                <Link to="/login">Entrar</Link>
+                <Link to="/login">{t('login')}</Link>
               </Button>
               <Button size="sm" asChild>
-                <Link to="/registro">Registrar</Link>
+                <Link to="/registro">{t('register')}</Link>
               </Button>
             </>
           )}
