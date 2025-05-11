@@ -1,8 +1,8 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Plus } from "lucide-react";
+import { Plus, Loader } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { HabitoEvidenciaType } from "./habitos/HabitoEvidencia";
@@ -21,6 +21,7 @@ const HabitosTracker = () => {
   
   const [feedback, setFeedback] = useState<string>("");
   const [carregandoFeedback, setCarregandoFeedback] = useState(false);
+  const [animateProgress, setAnimateProgress] = useState(false);
   
   // Estados para o diálogo de sugestão de hábitos
   const [dialogAberto, setDialogAberto] = useState(false);
@@ -35,74 +36,114 @@ const HabitosTracker = () => {
   
   const habitosCumpridos = habitos.filter((habito) => habito.cumprido).length;
   const habitosVerificados = habitos.filter((habito) => habito.verificado).length;
-  const progresso = (habitosCumpridos / habitos.length) * 100;
+  const progresso = habitos.length > 0 ? (habitosCumpridos / habitos.length) * 100 : 0;
   
   // Salvar hábitos no localStorage quando mudarem
   useEffect(() => {
     localStorage.setItem("habitos", JSON.stringify(habitos));
-  }, [habitos]);
+    
+    // Animar a barra de progresso quando os hábitos cumpridos mudarem
+    if (habitosCumpridos > 0) {
+      setAnimateProgress(true);
+      const timer = setTimeout(() => setAnimateProgress(false), 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [habitos, habitosCumpridos]);
 
-  const marcarComoConcluido = (id: number) => {
+  const marcarComoConcluido = useCallback((id: number) => {
     const habito = habitos.find(h => h.id === id);
     
     if (habito && habito.verificacaoNecessaria && !habito.evidencia) {
-      toast.warning("Por favor, adicione uma evidência antes de concluir este hábito");
+      toast.warning("Por favor, adicione uma evidência antes de concluir este hábito", {
+        description: "Este hábito requer verificação para ser concluído.",
+        duration: 4000
+      });
       return;
     }
     
-    setHabitos(habitos.map((habito) => 
+    setHabitos(prev => prev.map((habito) => 
       habito.id === id ? { ...habito, cumprido: true } : habito
     ));
-    toast.success("Hábito marcado como concluído!");
-  };
-  
-  const reiniciarHabitos = () => {
-    setHabitos(habitosIniciais.map(h => ({...h, cumprido: false})));
-    setFeedback("");
-    toast.info("Hábitos reiniciados para o próximo dia.");
-  };
 
-  const solicitarFeedbackIA = async () => {
+    // Mostrar toast com mais detalhes
+    toast.success("Hábito marcado como concluído!", {
+      description: `Você progrediu para ${habitosCumpridos + 1} de ${habitos.length} hábitos para hoje.`,
+      duration: 4000
+    });
+  }, [habitos, habitosCumpridos]);
+  
+  const reiniciarHabitos = useCallback(() => {
+    setHabitos(habitosIniciais.map(h => ({...h, cumprido: false, evidencia: undefined})));
+    setFeedback("");
+    toast.info("Hábitos reiniciados para o próximo dia.", {
+      description: "Todos os hábitos foram desmarcados e estão prontos para serem concluídos novamente."
+    });
+  }, []);
+
+  const solicitarFeedbackIA = useCallback(async () => {
     setCarregandoFeedback(true);
     try {
       const mensagemFeedback = await getFeedbackIA(habitos);
       setFeedback(mensagemFeedback);
+      toast.success("Feedback da IA gerado com sucesso!", {
+        description: "O assistente analisou seus hábitos e forneceu recomendações."
+      });
+    } catch (error) {
+      toast.error("Erro ao gerar feedback", {
+        description: "Tente novamente em alguns instantes."
+      });
     } finally {
       setCarregandoFeedback(false);
     }
-  };
+  }, [habitos]);
   
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
     setModeloNegocio(prev => ({
       ...prev,
       [name]: value
     }));
-  };
+  }, []);
   
-  const sugerirHabitosPersonalizados = async () => {
+  const sugerirHabitosPersonalizados = useCallback(async () => {
     setCarregandoSugestoes(true);
     try {
       const habitosPersonalizados = await gerarHabitosSugeridos(modeloNegocio);
       setHabitosSugeridos(habitosPersonalizados);
+      toast.info("Sugestões de hábitos geradas", {
+        description: `${habitosPersonalizados.length} novos hábitos foram sugeridos para seu perfil.`
+      });
+    } catch (error) {
+      toast.error("Erro ao gerar sugestões", {
+        description: "Tente novamente em alguns instantes."
+      });
     } finally {
       setCarregandoSugestoes(false);
     }
-  };
+  }, [modeloNegocio]);
   
-  const adicionarHabitosSugeridos = () => {
+  const adicionarHabitosSugeridos = useCallback(() => {
+    if (habitosSugeridos.length === 0) {
+      toast.warning("Não há hábitos para adicionar", {
+        description: "Gere sugestões primeiro antes de adicioná-las."
+      });
+      return;
+    }
+    
     // Adicionar hábitos sugeridos à lista atual
     setHabitos(prev => [...prev, ...habitosSugeridos]);
     setHabitosSugeridos([]);
     setDialogAberto(false);
-    toast.success("Hábitos personalizados adicionados com sucesso!");
-  };
+    toast.success("Hábitos personalizados adicionados com sucesso!", {
+      description: `${habitosSugeridos.length} novos hábitos foram adicionados à sua lista.`
+    });
+  }, [habitosSugeridos]);
 
-  const handleEvidenciaSubmitted = (habitoId: number, evidencia: HabitoEvidenciaType) => {
-    setHabitos(habitos.map((habito) => 
+  const handleEvidenciaSubmitted = useCallback((habitoId: number, evidencia: HabitoEvidenciaType) => {
+    setHabitos(prev => prev.map((habito) => 
       habito.id === habitoId ? { ...habito, evidencia } : habito
     ));
-  };
+  }, []);
 
   return (
     <Card className="h-full">
@@ -116,7 +157,10 @@ const HabitosTracker = () => {
             </span>
           )}
         </CardDescription>
-        <Progress value={progresso} className="h-2" />
+        <Progress 
+          value={progresso} 
+          className={`h-2 transition-all duration-700 ${animateProgress ? 'scale-y-150' : ''}`} 
+        />
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
@@ -130,10 +174,16 @@ const HabitosTracker = () => {
           ))}
         </div>
         
+        {habitos.length === 0 && (
+          <div className="py-6 text-center text-muted-foreground">
+            <p>Você ainda não possui hábitos cadastrados.</p>
+          </div>
+        )}
+        
         <Button 
           variant="outline" 
           size="sm" 
-          className="mt-4 w-full flex items-center justify-center"
+          className="mt-4 w-full flex items-center justify-center hover:bg-slate-50 hover:text-slate-900 transition-all"
           onClick={() => setDialogAberto(true)}
         >
           <Plus className="h-4 w-4 mr-2" /> Sugerir Hábitos Personalizados
@@ -162,6 +212,7 @@ const HabitosTracker = () => {
           variant="outline" 
           size="sm"
           onClick={reiniciarHabitos}
+          className="hover:bg-red-50 hover:text-red-700 hover:border-red-200 transition-colors"
         >
           Reiniciar Hábitos
         </Button>
@@ -169,8 +220,16 @@ const HabitosTracker = () => {
           size="sm" 
           onClick={solicitarFeedbackIA} 
           disabled={carregandoFeedback}
+          className="relative overflow-hidden"
         >
-          {carregandoFeedback ? "Analisando..." : "Solicitar Feedback da IA"}
+          {carregandoFeedback ? (
+            <span className="flex items-center">
+              <Loader className="h-4 w-4 mr-2 animate-spin" />
+              Analisando...
+            </span>
+          ) : (
+            "Solicitar Feedback da IA"
+          )}
         </Button>
       </CardFooter>
     </Card>

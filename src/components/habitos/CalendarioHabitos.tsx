@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar } from "@/components/ui/calendar";
 import { ptBR } from "date-fns/locale";
@@ -7,7 +7,6 @@ import { format, isSameDay } from "date-fns";
 import { Habito } from "./types";
 import { Badge } from "@/components/ui/badge";
 import { Check, Calendar as CalendarIcon } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Tooltip,
   TooltipContent,
@@ -27,13 +26,11 @@ const CalendarioHabitos: React.FC<CalendarioHabitosProps> = ({
   onSelectDay,
 }) => {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [habitosParaExibir, setHabitosParaExibir] = useState<Habito[]>([]);
-
-  // Atualizar os hábitos mostrados quando mudar a data selecionada ou quando os hábitos mudam
-  useEffect(() => {
-    const habitosDoDia = habitos.filter(habito => 
+  
+  // Usamos useMemo para evitar recálculos desnecessários
+  const habitosParaExibir = useMemo(() => {
+    return habitos.filter(habito => 
       !habito.dataCriacao || isSameDay(new Date(habito.dataCriacao), selectedDate));
-    setHabitosParaExibir(habitosDoDia);
   }, [habitos, selectedDate]);
 
   const handleDateSelect = (date: Date | undefined) => {
@@ -42,6 +39,11 @@ const CalendarioHabitos: React.FC<CalendarioHabitosProps> = ({
       onSelectDay(date);
     }
   };
+
+  // Destacar datas com memoization
+  const highlightedDates = useMemo(() => 
+    Object.entries(habitosPorDia).map(([dateStr]) => new Date(dateStr)),
+  [habitosPorDia]);
 
   return (
     <Card>
@@ -59,7 +61,7 @@ const CalendarioHabitos: React.FC<CalendarioHabitosProps> = ({
           locale={ptBR}
           className="p-3 pointer-events-auto"
           modifiers={{
-            highlighted: Object.entries(habitosPorDia).map(([dateStr]) => new Date(dateStr)),
+            highlighted: highlightedDates,
           }}
           modifiersStyles={{
             highlighted: { fontWeight: "bold" }

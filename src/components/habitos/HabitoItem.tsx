@@ -1,7 +1,7 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Clock, Check } from "lucide-react";
+import { Clock, Check, Loader } from "lucide-react";
 import { Habito } from "./types";
 import HabitoEvidencia, { HabitoEvidenciaType } from "./HabitoEvidencia";
 
@@ -16,18 +16,34 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
   onEvidenciaSubmitted,
   onMarcarConcluido,
 }) => {
+  const [isCompleting, setIsCompleting] = useState(false);
+
+  const handleMarcarConcluido = async () => {
+    setIsCompleting(true);
+    // Simular um pequeno atraso para mostrar o feedback visual
+    await new Promise(resolve => setTimeout(resolve, 600));
+    onMarcarConcluido(habito.id);
+    setIsCompleting(false);
+  };
+
   return (
-    <div className="flex items-start gap-3 border-b pb-3 last:border-0">
+    <div className={`flex items-start gap-3 border-b pb-3 last:border-0 transition-all duration-300 
+      ${isCompleting ? 'bg-green-50/50' : ''}`}>
       <div className="mt-0.5">
         {habito.cumprido ? (
           <div className={`flex h-6 w-6 items-center justify-center rounded-full 
             ${habito.verificado 
-              ? "bg-green-100 text-green-700" 
+              ? "bg-green-100 text-green-700 animate-[pulse_1s_ease-in-out]" 
               : "bg-blue-100 text-blue-700"}`}>
             <Check className="h-4 w-4" />
           </div>
+        ) : isCompleting ? (
+          <div className="flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-amber-700 animate-spin">
+            <Loader className="h-4 w-4" />
+          </div>
         ) : (
-          <div className="flex h-6 w-6 items-center justify-center rounded-full border">
+          <div className="flex h-6 w-6 items-center justify-center rounded-full border hover:bg-slate-50 cursor-pointer"
+               onClick={handleMarcarConcluido}>
             <span className="sr-only">Não concluído</span>
           </div>
         )}
@@ -59,19 +75,33 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
         )}
         
         {!habito.cumprido && (
-          <Button size="sm" className="mt-1" onClick={() => onMarcarConcluido(habito.id)}>
-            Marcar como concluído
+          <Button 
+            size="sm" 
+            className="mt-1 relative overflow-hidden" 
+            onClick={handleMarcarConcluido}
+            disabled={isCompleting}
+          >
+            {isCompleting ? (
+              <>
+                <Loader className="h-4 w-4 mr-2 animate-spin" />
+                Concluindo...
+              </>
+            ) : (
+              <>Marcar como concluído</>
+            )}
           </Button>
         )}
         
         {habito.cumprido && habito.evidencia && !habito.verificado && (
-          <p className="text-xs text-amber-600 mt-1">
+          <p className="text-xs text-amber-600 mt-1 flex items-center">
+            <Loader className="h-3 w-3 mr-1 animate-spin" />
             Aguardando verificação do gerente
           </p>
         )}
         
         {habito.verificado && (
-          <p className="text-xs text-green-600 mt-1">
+          <p className="text-xs text-green-600 mt-1 flex items-center animate-fade-in">
+            <Check className="h-3 w-3 mr-1" />
             Verificado pelo gerente
           </p>
         )}

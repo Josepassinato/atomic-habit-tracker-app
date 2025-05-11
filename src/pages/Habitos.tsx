@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
+
+import React, { useState, useEffect, useCallback } from "react";
 import { format } from "date-fns";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { PlusCircle, Calendar, List, Trophy } from "lucide-react";
-import { TrendingUp, Zap, Award } from "lucide-react";
 import HabitoItem from "@/components/habitos/HabitoItem";
 import { Habito } from "@/components/habitos/types";
 import { HabitoEvidenciaType } from "@/components/habitos/HabitoEvidencia";
@@ -13,38 +13,45 @@ import { toast } from "sonner";
 import CalendarioHabitos from "@/components/habitos/CalendarioHabitos";
 import GamificacaoCard from "@/components/habitos/GamificacaoCard";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
+import { habitosIniciais } from "@/components/habitos/HabitosService";
+
+// Importações para ícones de conquistas
+import { TrendingUp, Zap, Award } from "lucide-react";
 
 const Habitos = () => {
   const { adicionarNotificacao } = useNotificacoes();
   
-  const [habitos, setHabitos] = useState<Habito[]>([
-    {
-      id: 1,
-      titulo: "Fazer 10 ligações para prospectos",
-      descricao: "Realizar ligações para novos leads qualificados",
-      cumprido: false,
-      horario: "09:00",
-      verificacaoNecessaria: true,
-      dataCriacao: new Date().toISOString()
-    },
-    {
-      id: 2,
-      titulo: "Atualizar CRM",
-      descricao: "Registrar interações com clientes no sistema",
-      cumprido: false,
-      horario: "15:00",
-      dataCriacao: new Date().toISOString()
-    },
-    {
-      id: 3,
-      titulo: "Revisar pipeline de vendas",
-      descricao: "Analisar oportunidades e próximas ações",
-      cumprido: true,
-      horario: "17:00",
-      verificado: true,
-      dataCriacao: new Date().toISOString()
-    }
-  ]);
+  const [habitos, setHabitos] = useState<Habito[]>(() => {
+    const salvos = localStorage.getItem("habitos");
+    return salvos ? JSON.parse(salvos) : [
+      {
+        id: 1,
+        titulo: "Fazer 10 ligações para prospectos",
+        descricao: "Realizar ligações para novos leads qualificados",
+        cumprido: false,
+        horario: "09:00",
+        verificacaoNecessaria: true,
+        dataCriacao: new Date().toISOString()
+      },
+      {
+        id: 2,
+        titulo: "Atualizar CRM",
+        descricao: "Registrar interações com clientes no sistema",
+        cumprido: false,
+        horario: "15:00",
+        dataCriacao: new Date().toISOString()
+      },
+      {
+        id: 3,
+        titulo: "Revisar pipeline de vendas",
+        descricao: "Analisar oportunidades e próximas ações",
+        cumprido: true,
+        horario: "17:00",
+        verificado: true,
+        dataCriacao: new Date().toISOString()
+      }
+    ];
+  });
   
   // Estado para as conquistas e pontos do sistema de gamificação
   const [pontos, setPontos] = useState(150);
@@ -83,6 +90,7 @@ const Habitos = () => {
   // Criar dados de hábitos para o calendário
   const [habitosPorDia, setHabitosPorDia] = useState<Record<string, { total: number; completos: number }>>({});
 
+  // Gerar dados para o calendário
   useEffect(() => {
     // Gerar dados fictícios para o calendário dos últimos 30 dias
     const hoje = new Date();
@@ -117,10 +125,11 @@ const Habitos = () => {
     setFeedback(
       "Você está progredindo bem com seus hábitos diários. Considere adicionar mais hábitos focados em prospecção ativa para aumentar seu pipeline de vendas."
     );
-  }, []);
+  }, [habitos]);
 
-  const handleMarcarConcluido = (id: number) => {
-    setHabitos(habitos.map(habito => 
+  // Função para marcar hábitos como concluídos
+  const handleMarcarConcluido = useCallback((id: number) => {
+    setHabitos(prev => prev.map(habito => 
       habito.id === id ? { ...habito, cumprido: true } : habito
     ));
     
@@ -134,11 +143,14 @@ const Habitos = () => {
       tipo: "sucesso"
     });
     
-    toast.success("Hábito marcado como concluído!");
-  };
+    toast.success("Hábito marcado como concluído!", {
+      description: "Você está construindo consistência e melhorando seus resultados!"
+    });
+  }, [adicionarNotificacao]);
 
-  const handleEvidenciaSubmitted = (habitoId: number, evidencia: HabitoEvidenciaType) => {
-    setHabitos(habitos.map(habito => 
+  // Função para registrar evidências de hábitos
+  const handleEvidenciaSubmitted = useCallback((habitoId: number, evidencia: HabitoEvidenciaType) => {
+    setHabitos(prev => prev.map(habito => 
       habito.id === habitoId ? { ...habito, evidencia } : habito
     ));
     
@@ -150,19 +162,19 @@ const Habitos = () => {
       mensagem: "Sua evidência foi enviada para verificação. +5 pontos!",
       tipo: "info"
     });
-    
-    toast.success("Evidência enviada com sucesso!");
-  };
+  }, [adicionarNotificacao]);
 
-  const handleCalendarDaySelect = (date: Date) => {
+  // Função para selecionar dia no calendário
+  const handleCalendarDaySelect = useCallback((date: Date) => {
     setSelectedDate(date);
     // Em um sistema real, buscaríamos os hábitos para esta data específica
-  };
+  }, []);
 
-  const handleAddNewHabito = () => {
-    // Simplesmente adiciona um novo hábito exemplo
+  // Função para adicionar novo hábito
+  const handleAddNewHabito = useCallback(() => {
+    // Adicionar um novo hábito com ID único
     const novoHabito: Habito = {
-      id: Math.max(...habitos.map(h => h.id)) + 1,
+      id: Math.max(0, ...habitos.map(h => h.id)) + 1,
       titulo: "Novo hábito",
       descricao: "Descrição do novo hábito",
       cumprido: false,
@@ -170,7 +182,7 @@ const Habitos = () => {
       dataCriacao: new Date().toISOString()
     };
     
-    setHabitos([...habitos, novoHabito]);
+    setHabitos(prev => [...prev, novoHabito]);
     
     adicionarNotificacao({
       titulo: "Novo hábito adicionado",
@@ -178,8 +190,10 @@ const Habitos = () => {
       tipo: "info"
     });
     
-    toast.success("Novo hábito adicionado!");
-  };
+    toast.success("Novo hábito adicionado!", {
+      description: "Configure o título e a descrição editando o hábito."
+    });
+  }, [habitos, adicionarNotificacao]);
 
   return (
     <div className="container py-6">
@@ -370,6 +384,3 @@ const Habitos = () => {
 };
 
 export default Habitos;
-
-// Adicionamos os ícones necessários
-import { TrendingUp, Zap, Award } from "lucide-react";

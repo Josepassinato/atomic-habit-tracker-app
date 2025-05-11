@@ -8,7 +8,6 @@ import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
-import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,14 +31,17 @@ const Dashboard = () => {
       // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
       // Apenas adiciona a notificação se ainda não foi exibida
       if (!notificacaoExibida.current) {
-        setTimeout(() => {
+        // Pequeno delay para evitar múltiplas notificações
+        const timer = setTimeout(() => {
           adicionarNotificacao({
             titulo: "Bem-vindo de volta!",
             mensagem: "Você tem 3 hábitos para concluir hoje.",
             tipo: "info"
           });
           notificacaoExibida.current = true;
-        }, 1000); // Pequeno delay para evitar múltiplas notificações
+        }, 1000);
+        
+        return () => clearTimeout(timer);
       }
     }
   }, [navigate, adicionarNotificacao, carregado]);
