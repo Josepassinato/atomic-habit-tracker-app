@@ -5,6 +5,7 @@ import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Tutorial from "./pages/Tutorial";
 import Index from "./pages/Index";
 
 // Componente para proteger rotas
@@ -33,6 +34,14 @@ function App() {
           element={
             <PrivateRoute>
               <Dashboard />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/tutorial" 
+          element={
+            <PrivateRoute>
+              <Tutorial />
             </PrivateRoute>
           } 
         />
