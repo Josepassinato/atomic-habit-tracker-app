@@ -1,10 +1,10 @@
-
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
+import Admin from "./pages/Admin";
 import Habitos from "./pages/Habitos";
 import Metas from "./pages/Metas";
 import Relatorios from "./pages/Relatorios";
@@ -57,6 +57,16 @@ function App() {
             <PrivateRoute>
               <AppLayout>
                 <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Admin />
               </AppLayout>
             </PrivateRoute>
           } 
