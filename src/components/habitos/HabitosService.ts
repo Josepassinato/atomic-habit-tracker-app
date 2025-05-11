@@ -1,7 +1,7 @@
-
 import { Habito, ModeloNegocio } from "./types";
 import { HabitoEvidenciaType } from "./HabitoEvidencia";
 import { toast } from "sonner";
+import { openAIService } from "@/services/openai-service";
 
 export const habitosIniciais = [
   {
@@ -49,28 +49,33 @@ export const habitosIniciais = [
 // Obter feedback da IA com base nos hábitos concluídos
 export const getFeedbackIA = async (habitos: Habito[]): Promise<string> => {
   try {
-    // Simulação de resposta da OpenAI (em produção, use a API real)
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    if (!openAIService.getApiKey()) {
+      return "Configure sua chave da API da OpenAI nas configurações para receber feedback personalizado.";
+    }
     
     const habitosCumpridos = habitos.filter(h => h.cumprido).length;
     const percentualConcluido = (habitosCumpridos / habitos.length) * 100;
     
-    let mensagemFeedback = "";
-    
-    if (percentualConcluido === 100) {
-      mensagemFeedback = "Excelente trabalho hoje! Você completou todos os hábitos programados. Manter essa consistência trará resultados significativos para suas metas de vendas. Continue assim!";
-    } else if (percentualConcluido >= 60) {
-      mensagemFeedback = `Bom progresso! Você completou ${habitosCumpridos} de ${habitos.length} hábitos hoje. Para melhorar ainda mais, considere priorizar "${habitos.find(h => !h.cumprido)?.titulo}" amanhã, pois esse hábito tem impacto direto no fechamento de vendas.`;
-    } else {
-      mensagemFeedback = `Você completou ${habitosCumpridos} de ${habitos.length} hábitos hoje. Recomendo revisar sua rotina para priorizar esses hábitos atômicos, especialmente o "${habitos.find(h => !h.cumprido)?.titulo}" que pode ter impacto significativo no seu desempenho.`;
-    }
-    
-    return mensagemFeedback;
-    
-    // Em produção, substituir por chamada real à API da OpenAI
-    // const response = await fetch("https://api.openai.com/v1/chat/completions", { ... });
-    // const data = await response.json();
-    // return data.choices[0].message.content;
+    // Criar o prompt para a API da OpenAI
+    const prompt = `
+      Analise o desempenho do usuário nos hábitos atômicos de vendas hoje:
+      - Total de hábitos: ${habitos.length}
+      - Hábitos concluídos: ${habitosCumpridos}
+      - Percentual concluído: ${percentualConcluido.toFixed(2)}%
+
+      Lista de hábitos:
+      ${habitos.map(h => `- ${h.titulo}: ${h.cumprido ? 'Concluído' : 'Não concluído'}`).join('\n')}
+
+      Forneça um feedback construtivo e motivador sobre o desempenho, incluindo:
+      1. Avaliação geral do desempenho
+      2. Sugestão específica para melhorar no(s) hábito(s) não concluído(s)
+      3. Como isso pode impactar nos resultados de vendas
+      
+      Limite sua resposta a 3 ou 4 frases objetivas.
+    `;
+
+    // Usar o serviço da OpenAI para gerar o feedback
+    return await openAIService.generateText(prompt);
     
   } catch (error) {
     console.error("Erro ao obter feedback da IA:", error);
@@ -82,99 +87,73 @@ export const getFeedbackIA = async (habitos: Habito[]): Promise<string> => {
 // Gerar sugestões de hábitos baseados no modelo de negócio
 export const gerarHabitosSugeridos = async (modeloNegocio: ModeloNegocio): Promise<Habito[]> => {
   try {
-    // Simulação de resposta da OpenAI (em produção, use a API real)
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    // Hábitos personalizados baseados no modelo de negócio
-    let habitosPersonalizados: Habito[] = [];
-    
-    // Lógica básica de personalização baseada no setor/segmento
-    if (modeloNegocio.segmento.toLowerCase().includes("saas") || 
-        modeloNegocio.segmento.toLowerCase().includes("software")) {
-      habitosPersonalizados = [
+    if (!openAIService.getApiKey()) {
+      toast.error("Configure sua chave da API da OpenAI nas configurações");
+      
+      // Retorna hábitos padrão se não houver API key
+      return [
         {
           id: Date.now(),
-          titulo: "Demonstração de Valor",
-          descricao: "Preparar demonstrações personalizadas do produto para cada cliente",
-          cumprido: false,
-          horario: "10:00"
-        },
-        {
-          id: Date.now() + 1,
-          titulo: "Acompanhamento Pós-Demo",
-          descricao: "Entrar em contato 24h após demonstrações",
+          titulo: "Hábito Padrão 1",
+          descricao: "Configure sua API key para hábitos personalizados",
           cumprido: false,
           horario: "09:00"
         },
         {
-          id: Date.now() + 2,
-          titulo: "Análise de Engajamento",
-          descricao: "Verificar métricas de uso do trial/freemium",
-          cumprido: false,
-          horario: "14:00"
-        }
-      ];
-    } else if (modeloNegocio.cicloVenda.toLowerCase().includes("longo") || 
-              modeloNegocio.objetivoPrincipal.toLowerCase().includes("enterprise")) {
-      habitosPersonalizados = [
-        {
-          id: Date.now(),
-          titulo: "Mapeamento de Stakeholders",
-          descricao: "Identificar e documentar todos os decisores do cliente",
-          cumprido: false,
-          horario: "09:30"
-        },
-        {
           id: Date.now() + 1,
-          titulo: "Estudo de Caso",
-          descricao: "Preparar estudo de caso relevante para o setor do cliente",
+          titulo: "Hábito Padrão 2",
+          descricao: "Configure sua API key para hábitos personalizados",
           cumprido: false,
           horario: "11:00"
-        },
-        {
-          id: Date.now() + 2,
-          titulo: "Análise de Objeções",
-          descricao: "Documentar e preparar respostas para objeções recorrentes",
-          cumprido: false,
-          horario: "15:30"
-        }
-      ];
-    } else {
-      // Caso genérico baseado no tamanho da equipe
-      const tamEquipeNum = parseInt(modeloNegocio.tamEquipe) || 5;
-      
-      habitosPersonalizados = [
-        {
-          id: Date.now(),
-          titulo: "Qualificação de Leads",
-          descricao: "Qualificar novos leads usando metodologia BANT",
-          cumprido: false,
-          horario: "09:00"
-        },
-        {
-          id: Date.now() + 1,
-          titulo: tamEquipeNum > 10 ? "Reunião de Alinhamento" : "Revisão de Pipeline",
-          descricao: tamEquipeNum > 10 ? "Sincronizar prioridades com a equipe" : "Atualizar status de oportunidades no CRM",
-          cumprido: false,
-          horario: tamEquipeNum > 10 ? "09:30" : "16:00"
-        },
-        {
-          id: Date.now() + 2,
-          titulo: "Feedback de Mercado",
-          descricao: "Documentar percepções dos clientes sobre produto/concorrência",
-          cumprido: false,
-          horario: "17:00"
         }
       ];
     }
     
-    return habitosPersonalizados;
+    const prompt = `
+      Com base no modelo de negócio descrito abaixo, sugira 3 hábitos atômicos de vendas que teriam maior impacto na performance:
+
+      Segmento/Indústria: ${modeloNegocio.segmento}
+      Ciclo de Vendas: ${modeloNegocio.cicloVenda}
+      Tamanho da Equipe de Vendas: ${modeloNegocio.tamEquipe}
+      Objetivo Principal: ${modeloNegocio.objetivoPrincipal}
+
+      Para cada hábito, forneça:
+      - Um título conciso (máximo 5 palavras)
+      - Uma descrição clara da ação (máximo 15 palavras)
+      - Um horário recomendado para realizá-lo
+
+      Retorne os dados APENAS no seguinte formato JSON (sem explicações adicionais):
+      [
+        {
+          "titulo": "Título do Hábito 1",
+          "descricao": "Descrição da ação específica",
+          "horario": "09:00"
+        },
+        ...
+      ]
+    `;
+
+    const systemPrompt = "Você é um consultor especializado em vendas B2B e hábitos atômicos para equipes comerciais. Seu objetivo é gerar hábitos altamente impactantes e específicos para o contexto do cliente. Responda APENAS no formato JSON solicitado.";
+
+    // Usar o serviço da OpenAI para gerar as sugestões
+    const openaiResponse = await openAIService.generateText(prompt, systemPrompt);
     
-    // Em produção, substituir por chamada real à API da OpenAI
-    // const response = await fetch("https://api.openai.com/v1/chat/completions", { ... });
-    // const data = await response.json();
-    // const habitosGerados = JSON.parse(data.choices[0].message.content);
-    // return habitosGerados;
+    try {
+      const habitosGerados = JSON.parse(openaiResponse);
+      
+      // Adicionar IDs aos hábitos gerados
+      return habitosGerados.map((habito: any, index: number) => ({
+        id: Date.now() + index,
+        titulo: habito.titulo,
+        descricao: habito.descricao,
+        cumprido: false,
+        horario: habito.horario
+      }));
+    } catch (error) {
+      console.error("Erro ao processar resposta da OpenAI:", error);
+      toast.error("Erro ao processar a resposta da IA");
+      return [];
+    }
     
   } catch (error) {
     console.error("Erro ao obter sugestões da IA:", error);
