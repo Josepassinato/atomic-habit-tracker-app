@@ -1,19 +1,32 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import { UserAuth, UserRole } from "@/types/auth";
+import { getCurrentUser } from "@/utils/permissions";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { toast } = useToast();
+  
+  // Check if user is already logged in
+  useEffect(() => {
+    const user = getCurrentUser();
+    if (user) {
+      // If already logged in, redirect to appropriate page
+      if (user.role === 'admin') {
+        navigate("/admin");
+      } else {
+        navigate("/dashboard");
+      }
+    }
+  }, [navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,8 +68,7 @@ const Login = () => {
         
         localStorage.setItem("user", JSON.stringify(userData));
         
-        toast({
-          title: "Login realizado com sucesso",
+        toast.success("Login realizado com sucesso", {
           description: `Bem-vindo ao Habitus! Você está logado como ${role}.`,
         });
         
@@ -70,10 +82,8 @@ const Login = () => {
         throw new Error("Credenciais inválidas");
       }
     } catch (error: any) {
-      toast({
-        title: "Erro ao fazer login",
+      toast.error("Erro ao fazer login", {
         description: error.message || "Verifique suas credenciais e tente novamente.",
-        variant: "destructive",
       });
     } finally {
       setLoading(false);
@@ -81,7 +91,7 @@ const Login = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-gray-900 px-4 py-12">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1 text-center">
           <CardTitle className="text-3xl font-bold text-primary">Habitus</CardTitle>

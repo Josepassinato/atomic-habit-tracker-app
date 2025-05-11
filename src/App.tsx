@@ -31,11 +31,15 @@ const ProtectedRoute = ({
   const isAuthenticated = user !== null;
   const hasAccess = isAuthenticated && hasPermission(user, requiredRole);
   
-  return isAuthenticated && hasAccess ? (
-    <>{children}</>
-  ) : (
-    <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />
-  );
+  if (!isAuthenticated) {
+    return <Navigate to="/login" replace />;
+  }
+  
+  if (isAuthenticated && !hasAccess) {
+    return <Navigate to="/dashboard" replace />;
+  }
+  
+  return <>{children}</>;
 };
 
 // Componente para aplicar o layout da aplicação com sidebar
@@ -44,7 +48,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
-        <div className="flex-1">
+        <div className="flex-1 overflow-auto">
           {children}
         </div>
       </div>
@@ -57,9 +61,12 @@ function App() {
     <BrowserRouter>
       <Toaster richColors closeButton position="top-right" />
       <Routes>
+        {/* Rotas públicas */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        
+        {/* Rotas protegidas */}
         <Route 
           path="/onboarding" 
           element={
@@ -68,6 +75,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/dashboard" 
           element={
@@ -78,6 +86,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/admin" 
           element={
@@ -88,6 +97,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/habitos" 
           element={
@@ -98,6 +108,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/metas" 
           element={
@@ -108,6 +119,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/relatorios" 
           element={
@@ -118,6 +130,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/configuracoes" 
           element={
@@ -128,6 +141,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         <Route 
           path="/tutorial" 
           element={
@@ -136,6 +150,7 @@ function App() {
             </ProtectedRoute>
           } 
         />
+        
         {/* Rota legada - para compatibilidade durante desenvolvimento */}
         <Route path="/index" element={<Index />} />
         
