@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,12 +6,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Check, HelpCircle, Trophy, Medal, Gift } from "lucide-react";
+import { Check, HelpCircle, Trophy, Medal, Gift, Percent } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 
 const Onboarding = () => {
   const [activeStep, setActiveStep] = useState("metas");
@@ -33,6 +33,11 @@ const Onboarding = () => {
     { descricao: "Café da manhã especial para o time", tipo: "equipe" },
     { descricao: "Folga no dia do aniversário", tipo: "individual" }
   ]);
+  
+  // Estado para percentuais de comissão
+  const [comissaoBase, setComissaoBase] = useState("3");
+  const [comissaoHabitos, setComissaoHabitos] = useState("2");
+  const [isComissaoAberta, setIsComissaoAberta] = useState(false);
   
   const habitosRecomendados = [
     "Fazer 10 ligações por dia",
@@ -103,7 +108,11 @@ const Onboarding = () => {
           diaria: metaDiaria
         },
         habitos: habitosSelecionados,
-        recompensas: recompensasMetas
+        recompensas: recompensasMetas,
+        comissoes: {
+          base: comissaoBase,
+          habitos: comissaoHabitos
+        }
       }));
       
       toast({
@@ -143,6 +152,7 @@ const Onboarding = () => {
               <TabsTrigger value="integracao">Integrações</TabsTrigger>
             </TabsList>
             
+            {/* Aba de Metas */}
             <TabsContent value="metas" className="space-y-4 pt-4">
               <div>
                 <h3 className="text-lg font-medium">Defina suas metas de vendas</h3>
@@ -176,6 +186,7 @@ const Onboarding = () => {
               </div>
             </TabsContent>
             
+            {/* Aba de Hábitos */}
             <TabsContent value="habitos" className="space-y-4 pt-4">
               <div>
                 <div className="flex items-center justify-between mb-2">
@@ -216,12 +227,74 @@ const Onboarding = () => {
               </div>
             </TabsContent>
             
+            {/* Aba de Recompensas */}
             <TabsContent value="recompensas" className="space-y-4 pt-4">
               <div>
                 <h3 className="text-lg font-medium">Defina recompensas para motivar sua equipe</h3>
                 <p className="text-sm text-muted-foreground mb-4">
                   Estabeleça incentivos para celebrar conquistas de metas e hábitos
                 </p>
+                
+                {/* Seção de Comissões */}
+                <Collapsible 
+                  open={isComissaoAberta} 
+                  onOpenChange={setIsComissaoAberta}
+                  className="bg-blue-50 p-4 rounded-md mb-6 border border-blue-100"
+                >
+                  <CollapsibleTrigger asChild>
+                    <div className="flex items-center justify-between cursor-pointer">
+                      <div className="flex items-center gap-2 text-blue-800">
+                        <Percent className="h-5 w-5" />
+                        <h4 className="font-semibold">Percentuais de Comissão</h4>
+                      </div>
+                      <Button variant="ghost" size="sm">
+                        {isComissaoAberta ? "Fechar" : "Abrir"}
+                      </Button>
+                    </div>
+                  </CollapsibleTrigger>
+                  <CollapsibleContent className="mt-4 space-y-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <Label htmlFor="comissaoBase" className="text-blue-700">
+                          Comissão base sobre vendas (%)
+                        </Label>
+                        <Input 
+                          id="comissaoBase" 
+                          type="number" 
+                          placeholder="3" 
+                          value={comissaoBase}
+                          onChange={(e) => setComissaoBase(e.target.value)}
+                          className="bg-white mt-1"
+                        />
+                        <p className="text-xs text-blue-600 mt-1">
+                          Percentual padrão sobre todas as vendas
+                        </p>
+                      </div>
+                      <div>
+                        <Label htmlFor="comissaoHabitos" className="text-blue-700">
+                          Bônus por cumprir hábitos (%)
+                        </Label>
+                        <Input 
+                          id="comissaoHabitos" 
+                          type="number" 
+                          placeholder="2" 
+                          value={comissaoHabitos}
+                          onChange={(e) => setComissaoHabitos(e.target.value)}
+                          className="bg-white mt-1"
+                        />
+                        <p className="text-xs text-blue-600 mt-1">
+                          Percentual adicional ao atingir 100% dos hábitos
+                        </p>
+                      </div>
+                    </div>
+                    <div className="bg-blue-100 p-3 rounded-md">
+                      <p className="text-sm text-blue-800">
+                        Total potencial: <span className="font-bold">{Number(comissaoBase) + Number(comissaoHabitos)}%</span> 
+                        (Comissão base: {comissaoBase}% + Bônus por hábitos: {comissaoHabitos}%)
+                      </p>
+                    </div>
+                  </CollapsibleContent>
+                </Collapsible>
                 
                 <div className="bg-purple-50 p-4 rounded-md mb-4 border border-purple-100">
                   <div className="flex items-center gap-2 mb-2 text-purple-800">
@@ -302,6 +375,7 @@ const Onboarding = () => {
               </div>
             </TabsContent>
             
+            {/* Aba de Integração */}
             <TabsContent value="integracao" className="space-y-4 pt-4">
               <div>
                 <h3 className="text-lg font-medium">Integre seus sistemas</h3>
