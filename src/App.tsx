@@ -84,7 +84,7 @@ function App() {
               <AppLayout>
                 <Admin />
               </AppLayout>
-            </ProtectedRole>
+            </ProtectedRoute>
           } 
         />
         <Route 

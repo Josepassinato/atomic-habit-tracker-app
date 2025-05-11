@@ -16,6 +16,7 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
+  CardFooter,
 } from "@/components/ui/card";
 import {
   Tabs,
@@ -24,7 +25,11 @@ import {
   TabsTrigger,
 } from "@/components/ui/tabs";
 import { useSupabase } from "@/hooks/use-supabase";
-import { BarChart, PieChart, Users } from "lucide-react";
+import { BarChart, Key, PieChart, Shield, Users } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
+import { openAIService } from "@/services/openai-service";
 
 // Tipos para os dados do painel administrativo
 type EmpresaAdmin = {
@@ -44,6 +49,7 @@ const Admin = () => {
   const [empresas, setEmpresas] = useState<EmpresaAdmin[]>([]);
   const [loading, setLoading] = useState(true);
   const { supabase } = useSupabase();
+  const [apiKey, setApiKey] = useState("");
 
   // Estatísticas gerais
   const [estatisticas, setEstatisticas] = useState({
@@ -80,6 +86,7 @@ const Admin = () => {
         } else {
           // Se for admin, carrega os dados
           await carregarDadosAdmin();
+          carregarApiKey();
         }
       } catch (error) {
         console.error("Erro ao verificar permissões:", error);
@@ -91,6 +98,30 @@ const Admin = () => {
     
     checkAdminAccess();
   }, [navigate, supabase]);
+
+  // Carregar API Key do OpenAI
+  const carregarApiKey = () => {
+    const savedApiKey = localStorage.getItem("admin-openai-api-key");
+    if (savedApiKey) {
+      setApiKey(savedApiKey);
+    }
+  };
+
+  // Salvar API Key do OpenAI
+  const salvarApiKey = () => {
+    try {
+      if (apiKey.trim()) {
+        localStorage.setItem("admin-openai-api-key", apiKey);
+        openAIService.setApiKey(apiKey);
+        toast.success("Chave da API salva com sucesso!");
+      } else {
+        toast.error("Por favor, insira uma chave API válida.");
+      }
+    } catch (error) {
+      console.error("Erro ao salvar a chave API:", error);
+      toast.error("Erro ao salvar a chave API.");
+    }
+  };
 
   // Função para carregar os dados do painel administrativo
   const carregarDadosAdmin = async () => {
@@ -248,6 +279,40 @@ const Admin = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Card para configurar chave da API OpenAI */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Key className="h-5 w-5" />
+              Configuração da API OpenAI
+            </CardTitle>
+            <CardDescription>
+              Configure aqui a chave da API da OpenAI que será usada por todos os clientes do SaaS
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-col space-y-2">
+              <Input
+                type="password"
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                placeholder="sk-..."
+                className="font-mono"
+              />
+              <p className="text-xs text-muted-foreground">
+                Esta chave será usada para todas as solicitações de IA dos clientes do SaaS.
+                Os tokens consumidos serão contabilizados por empresa.
+              </p>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button onClick={salvarApiKey} className="w-full">
+              <Shield className="mr-2 h-4 w-4" />
+              Salvar Chave da API
+            </Button>
+          </CardFooter>
+        </Card>
 
         {/* Tabs para diferentes visualizações */}
         <Tabs defaultValue="empresas" className="w-full">
@@ -418,4 +483,3 @@ const Admin = () => {
 };
 
 export default Admin;
-

@@ -14,13 +14,13 @@ class OpenAIService {
   private apiKey: string | null = null;
 
   constructor() {
-    // Tenta recuperar a chave da API do localStorage, se existir
-    this.apiKey = localStorage.getItem("openai-api-key");
+    // Tenta recuperar a chave da API do admin, se existir
+    this.apiKey = localStorage.getItem("admin-openai-api-key") || null;
   }
 
   setApiKey(apiKey: string) {
     this.apiKey = apiKey;
-    localStorage.setItem("openai-api-key", apiKey);
+    localStorage.setItem("admin-openai-api-key", apiKey);
   }
 
   getApiKey() {
@@ -29,8 +29,8 @@ class OpenAIService {
 
   async generateText(prompt: string, systemPrompt: string = "Você é um assistente especializado em vendas e produtividade para equipes comerciais."): Promise<string> {
     if (!this.apiKey) {
-      toast.error("Chave da API da OpenAI não configurada");
-      return "Configure sua chave da API da OpenAI para receber respostas personalizadas.";
+      toast.error("API da OpenAI não configurada pelo administrador");
+      return "O administrador do sistema precisa configurar a chave da API da OpenAI para habilitar esta funcionalidade.";
     }
 
     try {
@@ -66,7 +66,7 @@ class OpenAIService {
     } catch (error) {
       console.error("Erro ao gerar texto com OpenAI:", error);
       toast.error("Falha ao conectar com a API da OpenAI");
-      return "Não foi possível obter uma resposta. Por favor, verifique sua conexão e a chave da API.";
+      return "Não foi possível obter uma resposta. Por favor, contate o administrador do sistema.";
     }
   }
 }
