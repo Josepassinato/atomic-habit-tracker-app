@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -8,6 +7,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
+import HabitoEvidencia, { HabitoEvidenciaType } from "./habitos/HabitoEvidencia";
 
 interface Habito {
   id: number;
@@ -15,6 +15,9 @@ interface Habito {
   descricao: string;
   cumprido: boolean;
   horario: string;
+  evidencia?: HabitoEvidenciaType;
+  verificacaoNecessaria?: boolean;
+  verificado?: boolean;
 }
 
 interface ModeloNegocio {
@@ -31,6 +34,7 @@ const habitosIniciais = [
     descricao: "Definir metas diárias para vendas",
     cumprido: true,
     horario: "08:30",
+    verificacaoNecessaria: true
   },
   {
     id: 2,
@@ -38,6 +42,7 @@ const habitosIniciais = [
     descricao: "Verificar se contatos foram registrados no CRM",
     cumprido: true,
     horario: "12:00",
+    verificacaoNecessaria: true
   },
   {
     id: 3,
@@ -45,6 +50,7 @@ const habitosIniciais = [
     descricao: "Ler conteúdo e validar aprendizado",
     cumprido: false,
     horario: "15:00",
+    verificacaoNecessaria: true
   },
   {
     id: 4,
@@ -52,6 +58,7 @@ const habitosIniciais = [
     descricao: "Documentar interações importantes",
     cumprido: false,
     horario: "16:30",
+    verificacaoNecessaria: true
   },
   {
     id: 5,
@@ -59,6 +66,7 @@ const habitosIniciais = [
     descricao: "Reflexão sobre conquistas e melhorias",
     cumprido: false,
     horario: "18:00",
+    verificacaoNecessaria: false
   },
 ];
 
@@ -84,6 +92,7 @@ const HabitosTracker = () => {
   const [habitosSugeridos, setHabitosSugeridos] = useState<Habito[]>([]);
   
   const habitosCumpridos = habitos.filter((habito) => habito.cumprido).length;
+  const habitosVerificados = habitos.filter((habito) => habito.verificado).length;
   const progresso = (habitosCumpridos / habitos.length) * 100;
   
   // Salvar hábitos no localStorage quando mudarem
@@ -92,6 +101,13 @@ const HabitosTracker = () => {
   }, [habitos]);
 
   const marcarComoConcluido = (id: number) => {
+    const habito = habitos.find(h => h.id === id);
+    
+    if (habito && habito.verificacaoNecessaria && !habito.evidencia) {
+      toast.warning("Por favor, adicione uma evidência antes de concluir este hábito");
+      return;
+    }
+    
     setHabitos(habitos.map((habito) => 
       habito.id === id ? { ...habito, cumprido: true } : habito
     ));
@@ -298,12 +314,23 @@ const HabitosTracker = () => {
     toast.success("Hábitos personalizados adicionados com sucesso!");
   };
 
+  const handleEvidenciaSubmitted = (habitoId: number, evidencia: HabitoEvidenciaType) => {
+    setHabitos(habitos.map((habito) => 
+      habito.id === habitoId ? { ...habito, evidencia } : habito
+    ));
+  };
+
   return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Hábitos Atômicos Diários</CardTitle>
         <CardDescription>
           Progresso de hoje: {habitosCumpridos} de {habitos.length} hábitos
+          {habitosVerificados > 0 && (
+            <span className="text-green-600 ml-1">
+              ({habitosVerificados} verificado{habitosVerificados > 1 ? 's' : ''})
+            </span>
+          )}
         </CardDescription>
         <Progress value={progresso} className="h-2" />
       </CardHeader>
@@ -313,7 +340,10 @@ const HabitosTracker = () => {
             <div key={habito.id} className="flex items-start gap-3 border-b pb-3 last:border-0">
               <div className="mt-0.5">
                 {habito.cumprido ? (
-                  <div className="flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-green-700">
+                  <div className={`flex h-6 w-6 items-center justify-center rounded-full 
+                    ${habito.verificado 
+                      ? "bg-green-100 text-green-700" 
+                      : "bg-blue-100 text-blue-700"}`}>
                     <Check className="h-4 w-4" />
                   </div>
                 ) : (
@@ -331,10 +361,39 @@ const HabitosTracker = () => {
                   </div>
                 </div>
                 <p className="text-sm text-muted-foreground">{habito.descricao}</p>
+                
+                {habito.verificacaoNecessaria && (
+                  <div className="flex items-center mt-1">
+                    {habito.evidencia ? (
+                      <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200">
+                        Evidência enviada
+                      </span>
+                    ) : (
+                      <HabitoEvidencia 
+                        habitoId={habito.id}
+                        titulo={habito.titulo}
+                        onEvidenciaSubmitted={handleEvidenciaSubmitted}
+                      />
+                    )}
+                  </div>
+                )}
+                
                 {!habito.cumprido && (
                   <Button size="sm" className="mt-1" onClick={() => marcarComoConcluido(habito.id)}>
                     Marcar como concluído
                   </Button>
+                )}
+                
+                {habito.cumprido && habito.evidencia && !habito.verificado && (
+                  <p className="text-xs text-amber-600 mt-1">
+                    Aguardando verificação do gerente
+                  </p>
+                )}
+                
+                {habito.verificado && (
+                  <p className="text-xs text-green-600 mt-1">
+                    Verificado pelo gerente
+                  </p>
                 )}
               </div>
             </div>
