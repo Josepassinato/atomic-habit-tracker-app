@@ -39,6 +39,11 @@ export const useNotificacoes = () => {
   return context;
 };
 
+// Função auxiliar para verificar se as notificações do navegador são suportadas
+const isNotificationSupported = () => {
+  return typeof window !== 'undefined' && 'Notification' in window;
+};
+
 export const NotificacoesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>(() => {
     const salvas = localStorage.getItem("notificacoes");
@@ -66,13 +71,15 @@ export const NotificacoesProvider: React.FC<{ children: React.ReactNode }> = ({ 
 
     setNotificacoes(prev => [novaNotificacao, ...prev]);
     
-    // Exibir notificação do navegador se permitido
-    if (Notification.permission === "granted") {
-      new Notification(notificacao.titulo, {
-        body: notificacao.mensagem
-      });
-    } else if (Notification.permission !== "denied") {
-      Notification.requestPermission();
+    // Exibir notificação do navegador se suportado e permitido
+    if (isNotificationSupported()) {
+      if (Notification.permission === "granted") {
+        new Notification(notificacao.titulo, {
+          body: notificacao.mensagem
+        });
+      } else if (Notification.permission !== "denied") {
+        Notification.requestPermission();
+      }
     }
   };
 
