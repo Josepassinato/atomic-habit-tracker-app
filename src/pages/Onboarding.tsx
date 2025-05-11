@@ -7,7 +7,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { Check } from "lucide-react";
+import { Check, HelpCircle } from "lucide-react";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import ConsultoriaIA from "@/components/ConsultoriaIA";
 
 const Onboarding = () => {
   const [activeStep, setActiveStep] = useState("metas");
@@ -138,7 +140,22 @@ const Onboarding = () => {
             
             <TabsContent value="habitos" className="space-y-4 pt-4">
               <div>
-                <h3 className="text-lg font-medium">Selecione os hábitos atômicos</h3>
+                <div className="flex items-center justify-between mb-2">
+                  <h3 className="text-lg font-medium">Selecione os hábitos atômicos</h3>
+                  
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button variant="outline" size="sm" className="flex gap-2">
+                        <HelpCircle className="h-4 w-4" />
+                        Ajuda da IA
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-96 p-0" align="end">
+                      <ConsultoriaIA />
+                    </PopoverContent>
+                  </Popover>
+                </div>
+                
                 <p className="text-sm text-muted-foreground mb-4">
                   Escolha hábitos que ajudarão sua equipe a atingir as metas
                 </p>
