@@ -8,6 +8,7 @@ import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import { Toaster } from "@/components/ui/sonner";
+import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -18,39 +19,48 @@ const Dashboard = () => {
     if (!user) {
       navigate("/login");
     }
+    
+    // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
+    const { adicionarNotificacao } = require("@/components/notificacoes/NotificacoesProvider").useNotificacoes();
+    adicionarNotificacao({
+      titulo: "Bem-vindo de volta!",
+      mensagem: "Você tem 3 hábitos para concluir hoje.",
+      tipo: "info"
+    });
   }, [navigate]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-background">
       <Toaster />
       <Header isLoggedIn={true} />
       <main className="container flex-1 py-6">
-        <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
-        <DashboardSummary />
-        
-        <div className="mt-8 grid gap-6 lg:grid-cols-3">
-          <div className="lg:col-span-2">
-            <div className="grid gap-6 md:grid-cols-2">
-              <div>
-                <h2 className="mb-3 text-xl font-semibold">Desempenho de Vendas</h2>
-                <MetasVendas />
+        <DashboardPersonalizavel>
+          <DashboardSummary />
+          
+          <div className="mt-8 grid gap-6 lg:grid-cols-3">
+            <div className="lg:col-span-2">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div>
+                  <h2 className="mb-3 text-xl font-semibold">Desempenho de Vendas</h2>
+                  <MetasVendas />
+                </div>
+                <div>
+                  <h2 className="mb-3 text-xl font-semibold">Hábitos Atômicos</h2>
+                  <HabitosTracker />
+                </div>
               </div>
-              <div>
-                <h2 className="mb-3 text-xl font-semibold">Hábitos Atômicos</h2>
-                <HabitosTracker />
+            </div>
+            <div>
+              <h2 className="mb-3 text-xl font-semibold">Assistente IA</h2>
+              <ConsultoriaIA />
+              <div className="mt-6">
+                <IntegracoesCRM />
               </div>
             </div>
           </div>
-          <div>
-            <h2 className="mb-3 text-xl font-semibold">Assistente IA</h2>
-            <ConsultoriaIA />
-            <div className="mt-6">
-              <IntegracoesCRM />
-            </div>
-          </div>
-        </div>
+        </DashboardPersonalizavel>
       </main>
-      <footer className="border-t bg-white py-4">
+      <footer className="border-t bg-card py-4">
         <div className="container text-center text-sm text-muted-foreground">
           Habitus © 2025 - O futuro da automação de vendas e performance
         </div>

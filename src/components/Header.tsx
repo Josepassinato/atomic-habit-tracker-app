@@ -1,79 +1,61 @@
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { NavigationMenu, NavigationMenuList, NavigationMenuItem, NavigationMenuLink, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { UserPlus, LogOut } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import ThemeSwitcher from "@/components/ThemeSwitcher";
+import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
 
 interface HeaderProps {
   isLoggedIn?: boolean;
 }
 
-const Header = ({ isLoggedIn = false }: HeaderProps) => {
-  const navigate = useNavigate();
-  const { toast } = useToast();
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    toast({
-      title: "Logout realizado com sucesso",
-      description: "Você foi desconectado do sistema.",
-    });
-    navigate("/login");
-  };
-
+const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
   return (
-    <header className="border-b bg-white">
+    <header className="border-b bg-white dark:bg-slate-900 dark:border-slate-800">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
-          <Link to={isLoggedIn ? "/dashboard" : "/"}>
-            <h1 className="text-2xl font-bold text-primary">Habitus</h1>
+          <Link to="/" className="flex items-center gap-2">
+            <div className="bg-primary p-1 rounded-sm">
+              <div className="h-5 w-5 bg-white dark:bg-slate-900 rounded-sm" />
+            </div>
+            <span className="font-bold">Habitus</span>
           </Link>
+          
           {isLoggedIn && (
-            <NavigationMenu>
-              <NavigationMenuList>
-                <NavigationMenuItem>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/dashboard">
-                    Dashboard
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/metas">
-                    Metas
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/habitos">
-                    Hábitos
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-                <NavigationMenuItem>
-                  <NavigationMenuLink className={navigationMenuTriggerStyle()} href="/relatorios">
-                    Relatórios
-                  </NavigationMenuLink>
-                </NavigationMenuItem>
-              </NavigationMenuList>
-            </NavigationMenu>
+            <nav className="hidden md:flex gap-4">
+              <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
+                Dashboard
+              </Link>
+              <Link to="/habitos" className="text-sm font-medium hover:text-primary">
+                Hábitos
+              </Link>
+              <Link to="/metas" className="text-sm font-medium hover:text-primary">
+                Metas
+              </Link>
+              <Link to="/relatorios" className="text-sm font-medium hover:text-primary">
+                Relatórios
+              </Link>
+            </nav>
           )}
         </div>
-        <div className="flex items-center gap-4">
+        
+        <div className="flex items-center gap-3">
           {isLoggedIn ? (
             <>
-              <Button variant="outline" size="sm" onClick={handleLogout}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sair
+              <NotificacoesBadge />
+              <ThemeSwitcher />
+              <Button size="sm" variant="outline" asChild>
+                <Link to="/configuracoes">Configurações</Link>
               </Button>
-              <Button size="sm">Consultar IA</Button>
             </>
           ) : (
             <>
-              <Button variant="outline" size="sm">
-                <UserPlus className="mr-2 h-4 w-4" />
-                Teste Grátis
+              <ThemeSwitcher />
+              <Button size="sm" variant="outline" asChild>
+                <Link to="/login">Entrar</Link>
               </Button>
-              <Button size="sm" onClick={() => navigate("/login")}>
-                Entrar
+              <Button size="sm" asChild>
+                <Link to="/registro">Registrar</Link>
               </Button>
             </>
           )}
