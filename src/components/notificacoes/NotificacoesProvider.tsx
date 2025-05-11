@@ -10,12 +10,15 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import { toast } from "sonner";
+
+export type NotificacaoTipo = 'info' | 'sucesso' | 'alerta' | 'erro';
 
 export interface Notificacao {
   id: string;
   titulo: string;
   mensagem: string;
-  tipo: 'info' | 'sucesso' | 'alerta' | 'erro';
+  tipo: NotificacaoTipo;
   data: Date;
   lida: boolean;
 }
@@ -44,41 +47,78 @@ const isNotificationSupported = () => {
   return typeof window !== 'undefined' && 'Notification' in window;
 };
 
+// Gera um ID único para notificações
+const gerarId = () => Math.random().toString(36).slice(2, 11);
+
+// Mapeia tipos de notificação para variantes de toast
+const tipoParaVariantToast = (tipo: NotificacaoTipo) => {
+  switch (tipo) {
+    case 'sucesso': return 'success';
+    case 'erro': return 'error';
+    case 'alerta': return 'warning';
+    case 'info': 
+    default: return 'info';
+  }
+};
+
 export const NotificacoesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [notificacoes, setNotificacoes] = useState<Notificacao[]>(() => {
-    const salvas = localStorage.getItem("notificacoes");
-    if (salvas) {
-      const parsed = JSON.parse(salvas);
-      return parsed.map((n: any) => ({
-        ...n,
-        data: new Date(n.data)
-      }));
+    try {
+      const salvas = localStorage.getItem("notificacoes");
+      if (salvas) {
+        const parsed = JSON.parse(salvas);
+        return parsed.map((n: any) => ({
+          ...n,
+          data: new Date(n.data)
+        }));
+      }
+    } catch (error) {
+      console.error("Erro ao carregar notificações:", error);
     }
     return [];
   });
 
   useEffect(() => {
-    localStorage.setItem("notificacoes", JSON.stringify(notificacoes));
+    try {
+      localStorage.setItem("notificacoes", JSON.stringify(notificacoes));
+    } catch (error) {
+      console.error("Erro ao salvar notificações:", error);
+    }
   }, [notificacoes]);
 
   const adicionarNotificacao = (notificacao: Omit<Notificacao, "id" | "data" | "lida">) => {
     const novaNotificacao: Notificacao = {
       ...notificacao,
-      id: Math.random().toString(36).slice(2, 11),
+      id: gerarId(),
       data: new Date(),
       lida: false,
     };
 
     setNotificacoes(prev => [novaNotificacao, ...prev]);
     
+    // Mostrar toast interno para todos os tipos de notificações
+    toast[tipoParaVariantToast(notificacao.tipo)](notificacao.titulo, {
+      description: notificacao.mensagem,
+    });
+    
     // Exibir notificação do navegador se suportado e permitido
     if (isNotificationSupported()) {
-      if (Notification.permission === "granted") {
-        new Notification(notificacao.titulo, {
-          body: notificacao.mensagem
-        });
-      } else if (Notification.permission !== "denied") {
-        Notification.requestPermission();
+      try {
+        if (Notification.permission === "granted") {
+          new Notification(notificacao.titulo, {
+            body: notificacao.mensagem
+          });
+        } else if (Notification.permission !== "denied") {
+          Notification.requestPermission().then(permission => {
+            if (permission === "granted") {
+              new Notification(notificacao.titulo, {
+                body: notificacao.mensagem
+              });
+            }
+          });
+        }
+      } catch (error) {
+        console.error("Erro ao exibir notificação do navegador:", error);
       }
     }
   };
@@ -123,6 +163,16 @@ export const NotificacoesBadge: React.FC = () => {
   const { notificacoes, marcarComoLida, marcarTodasComoLidas } = useNotificacoes();
   const naoLidas = notificacoes.filter(n => !n.lida).length;
   const [open, setOpen] = useState(false);
+
+  const tipoParaCor = (tipo: NotificacaoTipo) => {
+    switch (tipo) {
+      case 'sucesso': return 'bg-green-50 text-green-700 border-green-200';
+      case 'erro': return 'bg-red-50 text-red-700 border-red-200';
+      case 'alerta': return 'bg-amber-50 text-amber-700 border-amber-200';
+      case 'info': 
+      default: return 'bg-blue-50 text-blue-700 border-blue-200';
+    }
+  };
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -176,6 +226,9 @@ export const NotificacoesBadge: React.FC = () => {
                     </span>
                   </div>
                   <p className="text-sm">{notif.mensagem}</p>
+                  <span className={`text-xs inline-block mt-2 px-2 py-0.5 rounded border ${tipoParaCor(notif.tipo)}`}>
+                    {notif.tipo}
+                  </span>
                 </div>
               ))}
             </div>

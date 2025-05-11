@@ -7,7 +7,7 @@ import HabitosTracker from "@/components/HabitosTracker";
 import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 
@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
-      <Toaster />
+      <Toaster richColors closeButton position="top-right" />
       <Header isLoggedIn={true} />
       <main className="container flex-1 py-6">
         <DashboardPersonalizavel>

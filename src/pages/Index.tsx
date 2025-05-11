@@ -6,12 +6,12 @@ import HabitosTracker from "@/components/HabitosTracker";
 import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 
 const Index = () => {
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
-      <Toaster />
+      <Toaster richColors closeButton position="top-right" />
       <Header />
       <main className="container flex-1 py-6">
         <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>

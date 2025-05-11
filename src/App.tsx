@@ -13,7 +13,7 @@ import Configuracoes from "./pages/Configuracoes";
 import Index from "./pages/Index";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
-import { Toaster } from "@/components/ui/sonner";
+import { Toaster } from "sonner";
 
 // Componente para proteger rotas
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -28,7 +28,6 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex min-h-screen w-full bg-slate-50">
         <AppSidebar />
         <div className="flex-1">
-          <Toaster />
           {children}
         </div>
       </div>
@@ -39,6 +38,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <BrowserRouter>
+      <Toaster richColors closeButton position="top-right" />
       <Routes>
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
