@@ -1,15 +1,14 @@
 
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "@/components/Header";
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
 import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
-import { Toaster } from "sonner";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
+import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -31,10 +30,13 @@ const Dashboard = () => {
   }, [navigate, adicionarNotificacao]);
 
   return (
-    <div className="flex min-h-screen flex-col bg-background">
-      <Toaster richColors closeButton position="top-right" />
-      <Header isLoggedIn={true} />
+    <div className="flex min-h-screen flex-col">
       <main className="container flex-1 py-6">
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <NotificacoesBadge />
+        </div>
+        
         <DashboardPersonalizavel>
           <DashboardSummary />
           
@@ -61,11 +63,6 @@ const Dashboard = () => {
           </div>
         </DashboardPersonalizavel>
       </main>
-      <footer className="border-t bg-card py-4">
-        <div className="container text-center text-sm text-muted-foreground">
-          Habitus © 2025 - O futuro da automação de vendas e performance
-        </div>
-      </footer>
     </div>
   );
 };

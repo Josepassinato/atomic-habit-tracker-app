@@ -7,14 +7,19 @@ import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import { Toaster } from "sonner";
+import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
 
 const Index = () => {
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
+    <div className="flex min-h-screen flex-col bg-background">
       <Toaster richColors closeButton position="top-right" />
       <Header />
       <main className="container flex-1 py-6">
-        <h1 className="mb-6 text-3xl font-bold">Dashboard</h1>
+        <div className="flex justify-between items-center mb-6">
+          <h1 className="text-3xl font-bold">Dashboard</h1>
+          <NotificacoesBadge />
+        </div>
+        
         <DashboardSummary />
         
         <div className="mt-8 grid gap-6 lg:grid-cols-3">
@@ -39,7 +44,7 @@ const Index = () => {
           </div>
         </div>
       </main>
-      <footer className="border-t bg-white py-4">
+      <footer className="border-t bg-card py-4">
         <div className="container text-center text-sm text-muted-foreground">
           Habitus © 2025 - O futuro da automação de vendas e performance
         </div>
