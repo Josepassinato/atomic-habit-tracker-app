@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import Header from "@/components/Header";
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
@@ -7,9 +7,25 @@ import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import { Toaster } from "sonner";
-import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
+import { NotificacoesBadge, useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 
 const Index = () => {
+  const { adicionarNotificacao } = useNotificacoes();
+  const notificacaoExibida = useRef(false);
+  
+  useEffect(() => {
+    // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
+    // Apenas adiciona a notificação se ainda não foi exibida
+    if (!notificacaoExibida.current) {
+      adicionarNotificacao({
+        titulo: "Bem-vindo de volta!",
+        mensagem: "Você tem 3 hábitos para concluir hoje.",
+        tipo: "info"
+      });
+      notificacaoExibida.current = true;
+    }
+  }, [adicionarNotificacao]);
+
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Toaster richColors closeButton position="top-right" />

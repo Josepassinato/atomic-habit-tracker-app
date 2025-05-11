@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
@@ -13,6 +13,7 @@ import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvide
 const Dashboard = () => {
   const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
+  const notificacaoExibida = useRef(false);
   
   useEffect(() => {
     // Verificação simples de autenticação
@@ -22,11 +23,15 @@ const Dashboard = () => {
     }
     
     // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
-    adicionarNotificacao({
-      titulo: "Bem-vindo de volta!",
-      mensagem: "Você tem 3 hábitos para concluir hoje.",
-      tipo: "info"
-    });
+    // Apenas adiciona a notificação se ainda não foi exibida
+    if (!notificacaoExibida.current) {
+      adicionarNotificacao({
+        titulo: "Bem-vindo de volta!",
+        mensagem: "Você tem 3 hábitos para concluir hoje.",
+        tipo: "info"
+      });
+      notificacaoExibida.current = true;
+    }
   }, [navigate, adicionarNotificacao]);
 
   return (

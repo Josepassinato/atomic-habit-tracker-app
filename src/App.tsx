@@ -14,7 +14,6 @@ import Index from "./pages/Index";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import { Toaster } from "sonner";
-import { NotificacoesProvider } from "@/components/notificacoes/NotificacoesProvider";
 
 // Componente para proteger rotas
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
@@ -39,82 +38,80 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 function App() {
   return (
     <BrowserRouter>
-      <NotificacoesProvider>
-        <Toaster richColors closeButton position="top-right" />
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/registro" element={<Registro />} />
-          <Route 
-            path="/onboarding" 
-            element={
-              <PrivateRoute>
-                <Onboarding />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/dashboard" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Dashboard />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/habitos" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Habitos />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/metas" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Metas />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/relatorios" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Relatorios />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/configuracoes" 
-            element={
-              <PrivateRoute>
-                <AppLayout>
-                  <Configuracoes />
-                </AppLayout>
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/tutorial" 
-            element={
-              <PrivateRoute>
-                <Tutorial />
-              </PrivateRoute>
-            } 
-          />
-          {/* Rota legada - para compatibilidade durante desenvolvimento */}
-          <Route path="/index" element={<Index />} />
-        </Routes>
-      </NotificacoesProvider>
+      <Toaster richColors closeButton position="top-right" />
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route 
+          path="/onboarding" 
+          element={
+            <PrivateRoute>
+              <Onboarding />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/dashboard" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Dashboard />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/habitos" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Habitos />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/metas" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Metas />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/relatorios" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Relatorios />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/configuracoes" 
+          element={
+            <PrivateRoute>
+              <AppLayout>
+                <Configuracoes />
+              </AppLayout>
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/tutorial" 
+          element={
+            <PrivateRoute>
+              <Tutorial />
+            </PrivateRoute>
+          } 
+        />
+        {/* Rota legada - para compatibilidade durante desenvolvimento */}
+        <Route path="/index" element={<Index />} />
+      </Routes>
     </BrowserRouter>
   );
 }
