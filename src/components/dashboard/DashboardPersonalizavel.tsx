@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Settings, Plus, X, Move } from "lucide-react";
+import { Settings, ArrowUp, ArrowDown } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
 interface Widget {
@@ -45,7 +46,11 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
   const [dialogOpen, setDialogOpen] = useState(false);
   
   useEffect(() => {
-    localStorage.setItem("dashboard-widgets", JSON.stringify(widgets));
+    try {
+      localStorage.setItem("dashboard-widgets", JSON.stringify(widgets));
+    } catch (error) {
+      console.error("Erro ao salvar widgets no localStorage:", error);
+    }
   }, [widgets]);
   
   const toggleWidget = (id: string) => {
@@ -202,6 +207,3 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
 };
 
 export default DashboardPersonalizavel;
-
-import { Badge } from "@/components/ui/badge";
-import { ArrowUp, ArrowDown } from "lucide-react";

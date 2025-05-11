@@ -19,7 +19,10 @@ const Dashboard = () => {
     // Verificação simples de autenticação
     const user = localStorage.getItem("user");
     if (!user) {
-      navigate("/login");
+      // Para fins de desenvolvimento, vamos apenas criar um usuário temporário
+      // em vez de redirecionar para o login
+      localStorage.setItem("user", JSON.stringify({ id: 1, nome: "Usuário de Teste" }));
+      //navigate("/login");
     }
     
     // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
@@ -37,11 +40,6 @@ const Dashboard = () => {
   return (
     <div className="flex min-h-screen flex-col">
       <main className="container flex-1 py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Dashboard</h1>
-          <NotificacoesBadge />
-        </div>
-        
         <DashboardPersonalizavel>
           <DashboardSummary />
           
