@@ -9,9 +9,11 @@ import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import { Toaster } from "@/components/ui/sonner";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
+import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { adicionarNotificacao } = useNotificacoes();
   
   useEffect(() => {
     // Verificação simples de autenticação
@@ -21,13 +23,12 @@ const Dashboard = () => {
     }
     
     // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
-    const { adicionarNotificacao } = require("@/components/notificacoes/NotificacoesProvider").useNotificacoes();
     adicionarNotificacao({
       titulo: "Bem-vindo de volta!",
       mensagem: "Você tem 3 hábitos para concluir hoje.",
       tipo: "info"
     });
-  }, [navigate]);
+  }, [navigate, adicionarNotificacao]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
