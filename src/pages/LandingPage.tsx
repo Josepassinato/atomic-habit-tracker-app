@@ -242,13 +242,13 @@ const LandingPage = () => {
         <div className="container mx-auto px-4">
           <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <div className="flex space-x-4">
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/sobre" className="text-sm text-muted-foreground hover:text-foreground">
                 Sobre nós
               </Link>
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/blog" className="text-sm text-muted-foreground hover:text-foreground">
                 Blog
               </Link>
-              <Link to="/" className="text-sm text-muted-foreground hover:text-foreground">
+              <Link to="/contato" className="text-sm text-muted-foreground hover:text-foreground">
                 Contato
               </Link>
             </div>
