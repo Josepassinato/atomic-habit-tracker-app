@@ -29,7 +29,7 @@ import {
   Checkbox
 } from "@/components/ui/checkbox";
 import { Link } from "react-router-dom";
-import { BookOpen, ChevronRight, Info } from "lucide-react";
+import { BookOpen, ChevronRight, Download, Info, Mail } from "lucide-react";
 
 interface TutorialStepProps {
   title: string;
@@ -181,6 +181,7 @@ const Tutorial = () => {
                     <li>Total de vendas realizadas no mês</li>
                     <li>Consistência nos hábitos atômicos</li>
                     <li>Previsão de resultados baseada no desempenho atual</li>
+                    <li>Visualização de calendário para planejamento de hábitos</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -196,6 +197,7 @@ const Tutorial = () => {
                     <li>Visualizar sua consistência ao longo do tempo</li>
                     <li>Receber feedback da IA sobre seu desempenho</li>
                     <li>Adicionar ou remover hábitos conforme necessário</li>
+                    <li>Visualizar seus hábitos em formato de calendário</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -211,6 +213,8 @@ const Tutorial = () => {
                     <li>Comparar resultados com períodos anteriores</li>
                     <li>Visualizar gráficos de progresso</li>
                     <li>Identificar tendências e padrões</li>
+                    <li>Baixar relatórios de desempenho</li>
+                    <li>Enviar relatórios por email para a equipe</li>
                   </ul>
                 </AccordionContent>
               </AccordionItem>
@@ -291,9 +295,68 @@ const Tutorial = () => {
           </TutorialStep>
           
           <TutorialStep 
+            title="Relatórios e Exportação" 
+            description="Exporte, baixe e compartilhe seus relatórios de desempenho" 
+            index={4}
+          >
+            <p className="mb-4">
+              O Habitus permite que você gere, baixe e compartilhe relatórios detalhados 
+              de desempenho para análise e apresentações:
+            </p>
+            
+            <div className="space-y-4">
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Download className="h-4 w-4" />
+                    Download de Relatórios
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Baixe relatórios completos em diferentes formatos para análise offline:
+                  </p>
+                  <ul className="list-disc pl-6 space-y-1 text-sm">
+                    <li>Acesse a página de Relatórios</li>
+                    <li>Aplique os filtros desejados (período, equipe, data)</li>
+                    <li>Clique no botão "Baixar Relatório"</li>
+                    <li>O arquivo será baixado automaticamente para seu dispositivo</li>
+                  </ul>
+                </CardContent>
+              </Card>
+              
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <Mail className="h-4 w-4" />
+                    Envio por Email
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <p className="text-sm text-muted-foreground mb-2">
+                    Compartilhe relatórios diretamente por email com sua equipe ou stakeholders:
+                  </p>
+                  <ul className="list-disc pl-6 space-y-1 text-sm">
+                    <li>Configure os filtros do relatório conforme necessário</li>
+                    <li>Clique no botão "Enviar por Email"</li>
+                    <li>Insira o endereço de email do destinatário</li>
+                    <li>O sistema enviará o relatório automaticamente com todos os dados e gráficos</li>
+                  </ul>
+                </CardContent>
+              </Card>
+            </div>
+            
+            <div className="mt-6">
+              <Button asChild>
+                <Link to="/relatorios">Ir para Relatórios</Link>
+              </Button>
+            </div>
+          </TutorialStep>
+          
+          <TutorialStep 
             title="Integrações e Ajustes Avançados" 
             description="Configure integrações com outros sistemas e personalize sua experiência" 
-            index={4}
+            index={5}
           >
             <p className="mb-4">
               O Habitus pode ser integrado com várias ferramentas de CRM e vendas 
