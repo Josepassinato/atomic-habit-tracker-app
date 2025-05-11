@@ -7,13 +7,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { UserAuth, UserRole } from "@/types/auth";
 
 const Registro = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [nome, setNome] = useState("");
   const [nomeEmpresa, setNomeEmpresa] = useState("");
   const [tamanhoEquipe, setTamanhoEquipe] = useState("");
   const [segmento, setSegmento] = useState("");
+  const [cargo, setCargo] = useState<UserRole>("vendedor");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -24,7 +27,7 @@ const Registro = () => {
     
     try {
       // Aqui seria integrado com Supabase ou outro provedor de autenticação
-      console.log("Registrando:", { email, password, nomeEmpresa, tamanhoEquipe, segmento });
+      console.log("Registrando:", { email, password, nome, nomeEmpresa, tamanhoEquipe, segmento, cargo });
       
       // Simula um atraso de rede
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -36,12 +39,20 @@ const Registro = () => {
       });
       
       // Para demonstração, armazenamos no localStorage
-      localStorage.setItem("user", JSON.stringify({ 
-        email, 
-        empresa: nomeEmpresa, 
-        tamanhoEquipe, 
-        segmento 
-      }));
+      const userId = "user-" + Math.random().toString(36).substring(2, 9);
+      const empresaId = "emp-" + Math.random().toString(36).substring(2, 7);
+      const equipeId = "eqp-" + Math.random().toString(36).substring(2, 7);
+      
+      const userData: UserAuth = {
+        id: userId,
+        email,
+        nome,
+        role: cargo,
+        empresa_id: empresaId,
+        equipe_id: equipeId
+      };
+      
+      localStorage.setItem("user", JSON.stringify(userData));
       
       navigate("/onboarding");
     } catch (error: any) {
@@ -99,6 +110,31 @@ const Registro = () => {
                 onChange={(e) => setPassword(e.target.value)} 
                 required
               />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="nome">Seu Nome</Label>
+              <Input 
+                id="nome" 
+                type="text"
+                placeholder="Seu nome completo"
+                value={nome}
+                onChange={(e) => setNome(e.target.value)} 
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <Label htmlFor="cargo">Seu Cargo</Label>
+              <Select value={cargo} onValueChange={(v) => setCargo(v as UserRole)} required>
+                <SelectTrigger id="cargo">
+                  <SelectValue placeholder="Selecione seu cargo" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="gerente">Gerente de Vendas</SelectItem>
+                  <SelectItem value="vendedor">Vendedor</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             
             <div className="space-y-2">

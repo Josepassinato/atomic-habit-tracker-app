@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
@@ -14,11 +15,26 @@ import Index from "./pages/Index";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import { Toaster } from "sonner";
+import { getCurrentUser, hasPermission } from "./utils/permissions";
+import { UserRole } from "./types/auth";
 
-// Componente para proteger rotas
-const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = localStorage.getItem("user") !== null;
-  return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
+// Componente para proteger rotas com base em permissão
+const ProtectedRoute = ({ 
+  children, 
+  requiredRole = 'vendedor' 
+}: { 
+  children: React.ReactNode;
+  requiredRole?: UserRole;
+}) => {
+  const user = getCurrentUser();
+  const isAuthenticated = user !== null;
+  const hasAccess = isAuthenticated && hasPermission(user, requiredRole);
+  
+  return isAuthenticated && hasAccess ? (
+    <>{children}</>
+  ) : (
+    <Navigate to={isAuthenticated ? "/dashboard" : "/login"} replace />
+  );
 };
 
 // Componente para aplicar o layout da aplicação com sidebar
@@ -46,77 +62,77 @@ function App() {
         <Route 
           path="/onboarding" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <Onboarding />
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/dashboard" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <AppLayout>
                 <Dashboard />
               </AppLayout>
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/admin" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute requiredRole="admin">
               <AppLayout>
                 <Admin />
               </AppLayout>
-            </PrivateRoute>
+            </ProtectedRole>
           } 
         />
         <Route 
           path="/habitos" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <AppLayout>
                 <Habitos />
               </AppLayout>
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/metas" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute requiredRole="gerente">
               <AppLayout>
                 <Metas />
               </AppLayout>
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/relatorios" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute requiredRole="gerente">
               <AppLayout>
                 <Relatorios />
               </AppLayout>
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/configuracoes" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <AppLayout>
                 <Configuracoes />
               </AppLayout>
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         <Route 
           path="/tutorial" 
           element={
-            <PrivateRoute>
+            <ProtectedRoute>
               <Tutorial />
-            </PrivateRoute>
+            </ProtectedRoute>
           } 
         />
         {/* Rota legada - para compatibilidade durante desenvolvimento */}

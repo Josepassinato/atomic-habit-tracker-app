@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { UserAuth, UserRole } from "@/types/auth";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -26,15 +27,45 @@ const Login = () => {
       // Simula um atraso de rede
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Para demonstração, vamos apenas verificar se o email tem formato válido
+      // Para demonstração, vamos verificar o tipo de usuário com base no email
+      let role: UserRole = 'vendedor'; // Padrão é vendedor
+      let userId = "user-" + Math.random().toString(36).substring(2, 9);
+      
+      if (email === "admin@habitus.com") {
+        role = 'admin';
+      } else if (email.includes("gerente")) {
+        role = 'gerente';
+      }
+
+      // Para demonstração, definimos algumas IDs fictícias
+      const empresaId = "emp-" + Math.random().toString(36).substring(2, 7);
+      const equipeId = role !== 'admin' ? "eqp-" + Math.random().toString(36).substring(2, 7) : undefined;
+      
+      // Verificamos credenciais básicas
       if (email.includes("@") && password.length > 5) {
         // Login bem-sucedido
-        localStorage.setItem("user", JSON.stringify({ email }));
+        const userData: UserAuth = {
+          id: userId,
+          email,
+          nome: email.split('@')[0],
+          role,
+          empresa_id: role !== 'admin' ? empresaId : undefined,
+          equipe_id: equipeId
+        };
+        
+        localStorage.setItem("user", JSON.stringify(userData));
+        
         toast({
           title: "Login realizado com sucesso",
-          description: "Bem-vindo ao Habitus!",
+          description: `Bem-vindo ao Habitus! Você está logado como ${role}.`,
         });
-        navigate("/dashboard");
+        
+        // Redireciona com base no papel
+        if (role === 'admin') {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
         throw new Error("Credenciais inválidas");
       }
@@ -70,7 +101,13 @@ const Login = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
+              <p className="text-xs text-muted-foreground">
+                Use admin@habitus.com para acesso admin, 
+                gerente@exemplo.com para gerente, 
+                ou qualquer outro email para vendedor.
+              </p>
             </div>
+            
             <div className="space-y-2">
               <div className="flex items-center justify-between">
                 <Label htmlFor="password">Senha</Label>
