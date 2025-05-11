@@ -31,11 +31,19 @@ import { toast } from 'sonner';
 const AppSidebar = () => {
   const location = useLocation();
   const currentPath = location.pathname;
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
 
   const handleLogout = () => {
     localStorage.removeItem('user');
-    toast.success('Logout realizado com sucesso');
+    
+    // Show toast message in the correct language
+    const logoutMessages = {
+      en: 'Logout successful',
+      es: 'Cierre de sesión exitoso',
+      pt: 'Logout realizado com sucesso'
+    };
+    toast.success(logoutMessages[language]);
+    
     setTimeout(() => {
       window.location.href = '/login';
     }, 1500);
@@ -63,6 +71,20 @@ const AppSidebar = () => {
         </div>
       </Link>
     );
+  };
+
+  // Logout text based on language
+  const getLogoutText = () => {
+    switch(language) {
+      case 'en':
+        return 'Logout';
+      case 'es':
+        return 'Salir';
+      case 'pt':
+        return 'Sair';
+      default:
+        return 'Logout';
+    }
   };
 
   return (
@@ -118,7 +140,7 @@ const AppSidebar = () => {
                 onClick={handleLogout}
               >
                 <LogOut size={16} className="mr-2" />
-                {t('language') === 'en' ? 'Logout' : t('language') === 'es' ? 'Salir' : 'Sair'}
+                {getLogoutText()}
               </Button>
             </CollapsibleContent>
           </Collapsible>

@@ -5,7 +5,21 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import LanguageSelector from "@/components/LanguageSelector";
 
 const Footer = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Footer tagline based on language
+  const getFooterTagline = () => {
+    switch(language) {
+      case 'en':
+        return 'The future of sales automation and performance';
+      case 'es':
+        return 'El futuro de la automatización de ventas y rendimiento';
+      case 'pt':
+        return 'O futuro da automação de vendas e performance';
+      default:
+        return 'O futuro da automação de vendas e performance';
+    }
+  };
   
   return (
     <footer className="border-t bg-white py-6">
@@ -26,9 +40,7 @@ const Footer = () => {
             <LanguageSelector />
           </div>
           <div className="text-center text-sm text-muted-foreground">
-            Habitus © 2025 - {t('language') === 'en' ? 'The future of sales automation and performance' : 
-                             t('language') === 'es' ? 'El futuro de la automatización de ventas y rendimiento' : 
-                             'O futuro da automação de vendas e performance'}
+            Habitus © 2025 - {getFooterTagline()}
           </div>
         </div>
       </div>
