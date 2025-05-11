@@ -10,6 +10,7 @@ export interface Habito {
   evidencia?: HabitoEvidenciaType;
   verificacaoNecessaria?: boolean;
   verificado?: boolean;
+  dataCriacao?: string; // Adicionado campo de data de criação
 }
 
 export interface ModeloNegocio {
