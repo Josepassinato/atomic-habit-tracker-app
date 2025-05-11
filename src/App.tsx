@@ -12,6 +12,7 @@ import Relatorios from "./pages/Relatorios";
 import Tutorial from "./pages/Tutorial";
 import Configuracoes from "./pages/Configuracoes";
 import Index from "./pages/Index";
+import NotFound from "./pages/NotFound";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import { Toaster } from "sonner";
@@ -137,6 +138,9 @@ function App() {
         />
         {/* Rota legada - para compatibilidade durante desenvolvimento */}
         <Route path="/index" element={<Index />} />
+        
+        {/* Rota para páginas não encontradas */}
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );
