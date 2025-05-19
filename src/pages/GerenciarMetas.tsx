@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -11,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/i18n";
 import { toast } from "sonner";
 import { CalendarDays, Trophy, Flag, CheckCircle, PlusCircle, Edit } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";

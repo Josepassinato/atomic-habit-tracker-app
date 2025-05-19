@@ -1,4 +1,3 @@
-
 import React from "react";
 import { 
   Carousel, 
@@ -10,7 +9,7 @@ import {
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent } from "@/components/ui/card";
 import { MessageSquareQuote } from "lucide-react";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/i18n";
 
 interface TestimonialProps {
   quote: string;
