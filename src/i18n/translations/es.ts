@@ -64,6 +64,11 @@ export const esTranslations = {
   dontHaveAccount: "¿No tienes una cuenta?",
   signUp: "Regístrate",
   adminInfo: "Usa admin@habitus.com para acceso admin, gerente@exemplo.com para gerente, o cualquier otro correo para vendedor.",
+  loginSuccess: "Inicio de sesión exitoso",
+  welcomeMessage: "¡Bienvenido a Habitus! Has iniciado sesión como {{role}}.",
+  invalidCredentials: "Credenciales inválidas",
+  loginError: "Error al iniciar sesión",
+  checkCredentials: "Verifica tus credenciales e intenta nuevamente.",
   
   // Not found
   notFoundTitle: "¡Ups! Página no encontrada",

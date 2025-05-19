@@ -71,7 +71,7 @@ const Login = () => {
         localStorage.setItem("user", JSON.stringify(userData));
         
         toast.success(t('loginSuccess'), {
-          description: t('welcomeMessage', { role }),
+          description: t('welcomeMessage').replace('{{role}}', role),
         });
         
         // Redireciona com base no papel
