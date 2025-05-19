@@ -12,6 +12,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useLanguage } from "@/i18n";
 import { toast } from "sonner";
+import { PlusCircle, Users, User, Pencil } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 
 type PremiationType = 'financeiro' | 'produto' | 'viagem' | 'experiencia' | 'reconhecimento';
 type TargetType = 'equipe' | 'vendedor';
