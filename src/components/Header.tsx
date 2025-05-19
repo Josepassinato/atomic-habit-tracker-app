@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = tr
       };
       toast.success(logoutMessages[language]);
       
-      // Force navigation to login page using replace
-      window.location.replace('/login');
+      // Force navigation to login page with absolute URL
+      window.location.href = `${window.location.origin}/login`;
     }
   };
   
