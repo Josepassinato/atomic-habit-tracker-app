@@ -45,8 +45,8 @@ const AppSidebar = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Use navigate instead of window.location for better React integration
-    navigate('/login', { replace: true });
+    // Navigate directly to login page
+    navigate('/login');
   };
 
   const NavItem = ({ to, icon: Icon, children }: { 

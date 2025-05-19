@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = tr
       };
       toast.success(logoutMessages[language]);
       
-      // Use navigate instead of window.location for better React integration
-      navigate('/login', { replace: true });
+      // Navigate to login page
+      navigate('/login');
     }
   };
   

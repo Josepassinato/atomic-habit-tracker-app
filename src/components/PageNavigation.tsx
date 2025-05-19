@@ -25,8 +25,8 @@ const PageNavigation = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Use navigate instead of window.location for better React integration
-    navigate('/login', { replace: true });
+    // Navigate directly to login page without any replace option
+    navigate('/login');
   };
   
   return (
