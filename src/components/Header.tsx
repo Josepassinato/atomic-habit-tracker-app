@@ -1,23 +1,55 @@
 
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
 import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { ArrowLeft, LogOut } from "lucide-react";
+import { toast } from "sonner";
 
 interface HeaderProps {
   isLoggedIn?: boolean;
+  showBackButton?: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
-  const { t } = useLanguage();
+const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = true }) => {
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
+  
+  const handleBack = () => {
+    navigate(-1);
+  };
+  
+  const handleLogout = () => {
+    if (isLoggedIn) {
+      localStorage.removeItem('user');
+      
+      // Show toast message in the correct language
+      const logoutMessages = {
+        en: 'Logout successful',
+        es: 'Cierre de sesión exitoso',
+        pt: 'Logout realizado com sucesso'
+      };
+      toast.success(logoutMessages[language]);
+      
+      setTimeout(() => {
+        window.location.href = '/login';
+      }, 1500);
+    }
+  };
   
   return (
     <header className="border-b bg-white dark:bg-slate-900 dark:border-slate-800">
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6">
+          {showBackButton && window.history.length > 1 && (
+            <Button variant="ghost" size="sm" onClick={handleBack} className="mr-2">
+              <ArrowLeft size={16} className="mr-2" />
+              {t('back')}
+            </Button>
+          )}
           <Link to="/" className="flex items-center gap-2">
             <div className="bg-primary p-1 rounded-sm">
               <div className="h-5 w-5 bg-white dark:bg-slate-900 rounded-sm" />
@@ -51,6 +83,15 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false }) => {
               <ThemeSwitcher />
               <Button size="sm" variant="outline" asChild>
                 <Link to="/configuracoes">{t('settings')}</Link>
+              </Button>
+              <Button 
+                size="sm" 
+                variant="outline" 
+                onClick={handleLogout}
+                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+              >
+                <LogOut size={16} className="mr-2" />
+                {t('logout')}
               </Button>
             </>
           ) : (

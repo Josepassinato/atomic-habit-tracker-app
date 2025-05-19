@@ -21,6 +21,7 @@ import AppSidebar from "@/components/AppSidebar";
 import { Toaster } from "sonner";
 import { getCurrentUser, hasPermission } from "./utils/permissions";
 import { UserRole } from "./types/auth";
+import PageNavigation from "./components/PageNavigation";
 
 // Componente para proteger rotas com base em permissão
 const ProtectedRoute = ({ 
@@ -52,6 +53,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="flex min-h-screen w-full bg-background">
         <AppSidebar />
         <div className="flex-1 overflow-auto">
+          <PageNavigation />
           {children}
         </div>
       </div>
