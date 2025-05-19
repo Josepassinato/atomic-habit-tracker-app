@@ -15,6 +15,8 @@ export const translations = {
     settings: "Settings",
     login: "Login",
     register: "Register",
+    back: "Back",
+    logout: "Logout",
     
     // Landing page
     heroTitle: "Transform your",
@@ -86,6 +88,8 @@ export const translations = {
     settings: "Configuración",
     login: "Iniciar Sesión",
     register: "Registrarse",
+    back: "Regresar",
+    logout: "Cerrar Sesión",
     
     // Landing page
     heroTitle: "Transforma tu",
@@ -157,6 +161,8 @@ export const translations = {
     settings: "Configurações",
     login: "Entrar",
     register: "Registrar",
+    back: "Voltar",
+    logout: "Sair",
     
     // Landing page
     heroTitle: "Transforme sua",
