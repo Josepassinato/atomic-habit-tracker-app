@@ -25,9 +25,8 @@ const PageNavigation = () => {
     };
     toast.success(logoutMessages[language]);
     
-    setTimeout(() => {
-      window.location.href = '/login';
-    }, 1500);
+    // Use navigate instead of window.location for better React integration
+    navigate('/login', { replace: true });
   };
   
   return (

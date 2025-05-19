@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Target, 
@@ -29,6 +29,7 @@ import { toast } from 'sonner';
 
 const AppSidebar = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const currentPath = location.pathname;
   const { t, language } = useLanguage();
 
@@ -43,9 +44,8 @@ const AppSidebar = () => {
     };
     toast.success(logoutMessages[language]);
     
-    setTimeout(() => {
-      window.location.href = '/login';
-    }, 1500);
+    // Use navigate instead of window.location for better React integration
+    navigate('/login', { replace: true });
   };
 
   const NavItem = ({ to, icon: Icon, children }: { 
@@ -139,7 +139,7 @@ const AppSidebar = () => {
                 onClick={handleLogout}
               >
                 <LogOut size={16} className="mr-2" />
-                {getLogoutText()}
+                {t('logout')}
               </Button>
             </CollapsibleContent>
           </Collapsible>

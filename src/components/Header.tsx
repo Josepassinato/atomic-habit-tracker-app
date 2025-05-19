@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -34,9 +33,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = tr
       };
       toast.success(logoutMessages[language]);
       
-      setTimeout(() => {
-        window.location.href = '/login';
-      }, 1500);
+      // Use navigate instead of window.location for better React integration
+      navigate('/login', { replace: true });
     }
   };
   
