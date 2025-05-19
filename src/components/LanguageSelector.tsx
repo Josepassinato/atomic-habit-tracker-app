@@ -1,6 +1,6 @@
 
 import React from "react";
-import { useLanguage, Language } from "@/contexts/LanguageContext";
+import { useLanguage, Language } from "@/i18n";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,

@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import ThemeSwitcher from "@/components/ThemeSwitcher";
 import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
 import LanguageSelector from "@/components/LanguageSelector";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/i18n";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { toast } from "sonner";
 

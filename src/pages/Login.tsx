@@ -8,7 +8,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import { UserAuth, UserRole } from "@/types/auth";
 import { getCurrentUser } from "@/utils/permissions";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage } from "@/i18n";
 
 const Login = () => {
   const [email, setEmail] = useState("");
