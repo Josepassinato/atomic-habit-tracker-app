@@ -15,6 +15,7 @@ const PageNavigation = () => {
   };
   
   const handleLogout = () => {
+    // Clear user data from localStorage
     localStorage.removeItem('user');
     
     // Show toast message in the correct language
@@ -25,8 +26,8 @@ const PageNavigation = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Navigate directly to login page without any replace option
-    navigate('/login');
+    // Navigate to the login page with absolute path
+    window.location.href = '/login';
   };
   
   return (

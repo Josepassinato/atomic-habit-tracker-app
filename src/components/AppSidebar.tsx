@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -45,8 +44,8 @@ const AppSidebar = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Navigate directly to login page
-    navigate('/login');
+    // Use window.location for a hard redirect to login page
+    window.location.href = '/login';
   };
 
   const NavItem = ({ to, icon: Icon, children }: { 
