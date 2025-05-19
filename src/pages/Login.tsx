@@ -70,8 +70,8 @@ const Login = () => {
         
         localStorage.setItem("user", JSON.stringify(userData));
         
-        toast.success("Login realizado com sucesso", {
-          description: `Bem-vindo ao Habitus! Você está logado como ${role}.`,
+        toast.success(t('loginSuccess'), {
+          description: t('welcomeMessage', { role }),
         });
         
         // Redireciona com base no papel
@@ -81,11 +81,11 @@ const Login = () => {
           navigate("/dashboard");
         }
       } else {
-        throw new Error("Credenciais inválidas");
+        throw new Error(t('invalidCredentials'));
       }
     } catch (error: any) {
-      toast.error("Erro ao fazer login", {
-        description: error.message || "Verifique suas credenciais e tente novamente.",
+      toast.error(t('loginError'), {
+        description: error.message || t('checkCredentials'),
       });
     } finally {
       setLoading(false);
