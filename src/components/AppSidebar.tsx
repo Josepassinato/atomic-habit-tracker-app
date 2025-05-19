@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { 
@@ -70,20 +71,6 @@ const AppSidebar = () => {
         </div>
       </Link>
     );
-  };
-
-  // Logout text based on language
-  const getLogoutText = () => {
-    switch(language) {
-      case 'en':
-        return 'Logout';
-      case 'es':
-        return 'Salir';
-      case 'pt':
-        return 'Sair';
-      default:
-        return 'Logout';
-    }
   };
 
   return (
