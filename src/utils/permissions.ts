@@ -24,7 +24,7 @@ export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): bo
   }
   
   // For testing purposes, allow access regardless of role - REMOVE THIS IN PRODUCTION
-  // This is just to ensure the Metas page can be accessed during development
+  // This is just to ensure pages can be accessed during development
   return true;
   
   // return false; // This line is commented out for testing
@@ -41,7 +41,7 @@ export const getCurrentUser = (): UserAuth | null => {
     const tempUser: UserAuth = {
       id: "temp-user",
       email: "temp@example.com",
-      nome: "Temporary User",
+      nome: "Usuário Temporário",
       role: "gerente" // This will allow access to pages that require 'gerente' role
     };
     localStorage.setItem("user", JSON.stringify(tempUser));
@@ -57,7 +57,7 @@ export const getCurrentUser = (): UserAuth | null => {
     const defaultUser: UserAuth = {
       id: "default-user",
       email: "default@example.com",
-      nome: "Default User",
+      nome: "Usuário Padrão",
       role: "gerente"
     };
     localStorage.setItem("user", JSON.stringify(defaultUser));
@@ -86,7 +86,13 @@ export const canAccessRoute = (path: string): boolean => {
   }
   
   // Rotas específicas para gerentes
-  if (path.includes('/relatorios') || path.includes('/metas')) {
+  if (
+    path.includes('/relatorios') || 
+    path.includes('/metas') || 
+    path.includes('/gerenciar-metas') || 
+    path.includes('/vendedores') || 
+    path.includes('/premiacoes')
+  ) {
     return hasPermission(user, 'gerente');
   }
   

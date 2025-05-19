@@ -8,6 +8,9 @@ import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
 import Habitos from "./pages/Habitos";
 import Metas from "./pages/Metas";
+import GerenciarMetas from "./pages/GerenciarMetas";
+import Vendedores from "./pages/Vendedores";
+import Premiacoes from "./pages/Premiacoes";
 import Relatorios from "./pages/Relatorios";
 import Tutorial from "./pages/Tutorial";
 import Configuracoes from "./pages/Configuracoes";
@@ -115,6 +118,39 @@ function App() {
             <ProtectedRoute requiredRole="gerente">
               <AppLayout>
                 <Metas />
+              </AppLayout>
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/gerenciar-metas" 
+          element={
+            <ProtectedRoute requiredRole="gerente">
+              <AppLayout>
+                <GerenciarMetas />
+              </AppLayout>
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/vendedores" 
+          element={
+            <ProtectedRoute requiredRole="gerente">
+              <AppLayout>
+                <Vendedores />
+              </AppLayout>
+            </ProtectedRoute>
+          } 
+        />
+        
+        <Route 
+          path="/premiacoes" 
+          element={
+            <ProtectedRoute requiredRole="gerente">
+              <AppLayout>
+                <Premiacoes />
               </AppLayout>
             </ProtectedRoute>
           } 
