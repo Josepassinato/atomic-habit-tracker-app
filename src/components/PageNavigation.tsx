@@ -26,8 +26,8 @@ const PageNavigation = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Force navigation to login page with absolute URL
-    window.location.href = `${window.location.origin}/login`;
+    // Navigate to login page
+    navigate('/login');
   };
   
   return (

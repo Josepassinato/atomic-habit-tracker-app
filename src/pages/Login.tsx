@@ -34,16 +34,14 @@ const Login = () => {
     e.preventDefault();
     setLoading(true);
     
-    // Simulação de login para demonstração
     try {
-      // Aqui seria integrado com Supabase ou outro provedor de autenticação
-      console.log("Fazendo login com:", email, password);
+      console.log("Attempting login with:", email, password);
       
-      // Simula um atraso de rede
+      // Simulates a network delay
       await new Promise(resolve => setTimeout(resolve, 1000));
       
-      // Para demonstração, vamos verificar o tipo de usuário com base no email
-      let role: UserRole = 'vendedor'; // Padrão é vendedor
+      // Determine user role based on email for demo
+      let role: UserRole = 'vendedor'; // Default is seller
       let userId = "user-" + Math.random().toString(36).substring(2, 9);
       
       if (email === "admin@habitus.com") {
@@ -52,13 +50,13 @@ const Login = () => {
         role = 'gerente';
       }
 
-      // Para demonstração, definimos algumas IDs fictícias
+      // Define some demo IDs
       const empresaId = "emp-" + Math.random().toString(36).substring(2, 7);
       const equipeId = role !== 'admin' ? "eqp-" + Math.random().toString(36).substring(2, 7) : undefined;
       
-      // Verificamos credenciais básicas
+      // Basic credential check
       if (email.includes("@") && password.length > 5) {
-        // Login bem-sucedido
+        // Successful login
         const userData: UserAuth = {
           id: userId,
           email,
@@ -68,13 +66,14 @@ const Login = () => {
           equipe_id: equipeId
         };
         
+        // Store user in localStorage
         localStorage.setItem("user", JSON.stringify(userData));
         
         toast.success(t('loginSuccess'), {
           description: t('welcomeMessage').replace('{{role}}', role),
         });
         
-        // Redireciona com base no papel
+        // Redirect based on role
         if (role === 'admin') {
           navigate("/admin");
         } else {

@@ -23,11 +23,7 @@ export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): bo
     return true;
   }
   
-  // For testing purposes, allow access regardless of role - REMOVE THIS IN PRODUCTION
-  // This is just to ensure pages can be accessed during development
-  return true;
-  
-  // return false; // This line is commented out for testing
+  return false;
 };
 
 /**
@@ -36,16 +32,7 @@ export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): bo
 export const getCurrentUser = (): UserAuth | null => {
   const userString = localStorage.getItem("user");
   if (!userString) {
-    // For testing purposes, create a temporary user object
-    // REMOVE THIS IN PRODUCTION
-    const tempUser: UserAuth = {
-      id: "temp-user",
-      email: "temp@example.com",
-      nome: "Usuário Temporário",
-      role: "gerente" // This will allow access to pages that require 'gerente' role
-    };
-    localStorage.setItem("user", JSON.stringify(tempUser));
-    return tempUser;
+    return null;
   }
   
   try {
@@ -53,15 +40,7 @@ export const getCurrentUser = (): UserAuth | null => {
     return user;
   } catch (error) {
     console.error("Erro ao obter usuário:", error);
-    // For testing, return a default user if parsing fails
-    const defaultUser: UserAuth = {
-      id: "default-user",
-      email: "default@example.com",
-      nome: "Usuário Padrão",
-      role: "gerente"
-    };
-    localStorage.setItem("user", JSON.stringify(defaultUser));
-    return defaultUser;
+    return null;
   }
 };
 
