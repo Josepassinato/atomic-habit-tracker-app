@@ -34,8 +34,8 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = tr
       };
       toast.success(logoutMessages[language]);
       
-      // Use window.location for a hard redirect to the login page
-      window.location.href = '/login';
+      // Force navigation to login page using replace
+      window.location.replace('/login');
     }
   };
   

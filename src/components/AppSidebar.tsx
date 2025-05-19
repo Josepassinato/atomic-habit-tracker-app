@@ -44,8 +44,8 @@ const AppSidebar = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Use window.location for a hard redirect to login page
-    window.location.href = '/login';
+    // Force navigation to login page using replace
+    window.location.replace('/login');
   };
 
   const NavItem = ({ to, icon: Icon, children }: { 
