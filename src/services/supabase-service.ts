@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { storageService } from "./storage-service";
 
@@ -80,8 +79,8 @@ class SupabaseService {
     }
   }
   
-  // Salva a configuração atual no banco de dados (se conectado)
-  private async saveConfigToDatabase() {
+  // Changed from private to public so it can be accessed from outside the class
+  async saveConfigToDatabase() {
     const url = this.getUrl();
     const key = this.getApiKey();
     
