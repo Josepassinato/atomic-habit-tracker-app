@@ -38,6 +38,49 @@ class OpenAIService {
     return this.apiKeyCache;
   }
 
+  async testConnection(): Promise<boolean> {
+    if (!this.getApiKey()) {
+      toast.error("API da OpenAI não configurada");
+      return false;
+    }
+
+    try {
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${this.getApiKey()}`,
+        },
+        body: JSON.stringify({
+          model: "gpt-4o-mini",
+          messages: [
+            {
+              role: "system",
+              content: "You are a test assistant. Respond with 'Conexão bem-sucedida' only.",
+            },
+            {
+              role: "user",
+              content: "Test connection",
+            },
+          ],
+          max_tokens: 20,
+        }),
+      });
+
+      if (!response.ok) {
+        const error = await response.json();
+        console.error("Erro na conexão com OpenAI:", error);
+        return false;
+      }
+
+      const data: OpenAIResponse = await response.json();
+      return data.choices[0].message.content.includes("Conexão bem-sucedida");
+    } catch (error) {
+      console.error("Erro ao testar conexão com OpenAI:", error);
+      return false;
+    }
+  }
+
   async generateText(prompt: string, systemPrompt: string = "Você é um assistente especializado em vendas e produtividade para equipes comerciais."): Promise<string> {
     if (!this.getApiKey()) {
       toast.error("API da OpenAI não configurada pelo administrador");

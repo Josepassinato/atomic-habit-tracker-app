@@ -7,12 +7,13 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Badge } from "@/components/ui/badge";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { KeyRound, Sparkles, Save } from "lucide-react";
+import { KeyRound, Sparkles, Save, Check, X } from "lucide-react";
 import { openAIService } from "@/services/openai-service";
 
 const APIConfigTab: React.FC = () => {
   const [apiKey, setApiKey] = useState("");
   const [isTesting, setIsTesting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
 
   const apiForm = useForm({
     defaultValues: {
@@ -26,26 +27,34 @@ const APIConfigTab: React.FC = () => {
     if (savedApiKey) {
       setApiKey(savedApiKey);
       apiForm.setValue("openaiApiKey", savedApiKey);
+      setConnectionStatus("unknown");
     }
   }, []);
   
   const salvarChaveAPI = (data: { openaiApiKey: string }) => {
     openAIService.setApiKey(data.openaiApiKey);
     setApiKey(data.openaiApiKey);
+    setConnectionStatus("unknown");
     toast.success("Chave da API salva com sucesso!");
   };
   
   const testarConexaoAPI = async () => {
     setIsTesting(true);
+    setConnectionStatus("unknown");
+    
     try {
       const resultado = await openAIService.generateText("Teste de conexão. Responda apenas com 'Conexão bem-sucedida'.");
+      
       if (resultado.includes("Conexão bem-sucedida")) {
         toast.success("Conexão com a API da OpenAI estabelecida com sucesso!");
+        setConnectionStatus("success");
       } else {
-        toast.error("Teste concluído, mas a resposta não foi a esperada.");
+        toast.warning("Resposta recebida, mas não foi a esperada.");
+        setConnectionStatus("failed");
       }
     } catch (error) {
       toast.error("Falha ao conectar com a API da OpenAI");
+      setConnectionStatus("failed");
       console.error(error);
     } finally {
       setIsTesting(false);
@@ -62,8 +71,28 @@ const APIConfigTab: React.FC = () => {
               <CardTitle>OpenAI API</CardTitle>
             </div>
             {apiKey && (
-              <Badge variant="outline" className="bg-green-50 text-green-600 border-green-200">
-                Configurada
+              <Badge 
+                variant="outline" 
+                className={connectionStatus === "success" 
+                  ? "bg-green-50 text-green-600 border-green-200" 
+                  : connectionStatus === "failed"
+                  ? "bg-red-50 text-red-600 border-red-200"
+                  : "bg-amber-50 text-amber-600 border-amber-200"
+                }
+              >
+                {connectionStatus === "success" ? (
+                  <div className="flex items-center gap-1">
+                    <Check className="h-3 w-3" />
+                    <span>Conectado</span>
+                  </div>
+                ) : connectionStatus === "failed" ? (
+                  <div className="flex items-center gap-1">
+                    <X className="h-3 w-3" />
+                    <span>Falha</span>
+                  </div>
+                ) : (
+                  "Configurada"
+                )}
               </Badge>
             )}
           </div>
@@ -99,7 +128,7 @@ const APIConfigTab: React.FC = () => {
                 {apiKey && (
                   <Button 
                     type="button" 
-                    variant="outline" 
+                    variant={connectionStatus === "success" ? "outline" : "secondary"}
                     onClick={testarConexaoAPI}
                     disabled={isTesting}
                   >

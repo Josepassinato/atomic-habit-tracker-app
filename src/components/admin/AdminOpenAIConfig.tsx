@@ -3,12 +3,14 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, Shield } from "lucide-react";
+import { Key, Shield, Check, X } from "lucide-react";
 import { toast } from "sonner";
 import { openAIService } from "@/services/openai-service";
 
 const AdminOpenAIConfig: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>("");
+  const [isTesting, setIsTesting] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
   
   // Carrega a chave da API ao montar o componente
   useEffect(() => {
@@ -20,6 +22,7 @@ const AdminOpenAIConfig: React.FC = () => {
     try {
       if (apiKey.trim()) {
         openAIService.setApiKey(apiKey);
+        setConnectionStatus("unknown");
         toast.success("Chave da API salva com sucesso!");
       } else {
         toast.error("Por favor, insira uma chave API válida.");
@@ -27,6 +30,33 @@ const AdminOpenAIConfig: React.FC = () => {
     } catch (error) {
       console.error("Erro ao salvar a chave API:", error);
       toast.error("Erro ao salvar a chave API.");
+    }
+  };
+  
+  const testarConexao = async () => {
+    if (!apiKey) {
+      toast.error("Por favor, insira uma chave API válida.");
+      return;
+    }
+    
+    setIsTesting(true);
+    
+    try {
+      const resultado = await openAIService.testConnection();
+      
+      if (resultado) {
+        toast.success("Conexão com a API da OpenAI estabelecida com sucesso!");
+        setConnectionStatus("success");
+      } else {
+        toast.error("Falha ao conectar com a API da OpenAI");
+        setConnectionStatus("failed");
+      }
+    } catch (error) {
+      toast.error("Erro ao testar conexão com a API da OpenAI");
+      setConnectionStatus("failed");
+      console.error(error);
+    } finally {
+      setIsTesting(false);
     }
   };
   
@@ -54,12 +84,37 @@ const AdminOpenAIConfig: React.FC = () => {
             Esta chave será usada para todas as solicitações de IA dos clientes do SaaS.
             Os tokens consumidos serão contabilizados por empresa.
           </p>
+          
+          {connectionStatus !== "unknown" && (
+            <div className={`mt-2 p-2 rounded-md text-sm flex items-center gap-2 
+              ${connectionStatus === "success" ? "bg-green-50 text-green-600" : "bg-red-50 text-red-600"}`}>
+              {connectionStatus === "success" ? (
+                <>
+                  <Check className="h-4 w-4" />
+                  <span>Conectado com sucesso à API</span>
+                </>
+              ) : (
+                <>
+                  <X className="h-4 w-4" />
+                  <span>Falha na conexão</span>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </CardContent>
-      <CardFooter>
-        <Button onClick={salvarApiKey} className="w-full">
+      <CardFooter className="flex gap-3">
+        <Button onClick={salvarApiKey}>
           <Shield className="mr-2 h-4 w-4" />
           Salvar Chave da API
+        </Button>
+        
+        <Button 
+          variant="outline" 
+          onClick={testarConexao}
+          disabled={isTesting || !apiKey}
+        >
+          {isTesting ? "Testando..." : "Testar Conexão"}
         </Button>
       </CardFooter>
     </Card>
