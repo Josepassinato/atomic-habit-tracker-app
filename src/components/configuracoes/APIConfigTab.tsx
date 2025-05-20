@@ -1,158 +1,14 @@
 
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { Badge } from "@/components/ui/badge";
-import { useForm } from "react-hook-form";
-import { toast } from "sonner";
-import { KeyRound, Sparkles, Save, Check, X } from "lucide-react";
-import { openAIService } from "@/services/openai-service";
 
 const APIConfigTab: React.FC = () => {
-  const [apiKey, setApiKey] = useState("");
-  const [isTesting, setIsTesting] = useState(false);
-  const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
-
-  const apiForm = useForm({
-    defaultValues: {
-      openaiApiKey: ""
-    }
-  });
-  
-  // Carregar a chave da API existente
-  useEffect(() => {
-    const savedApiKey = openAIService.getApiKey();
-    if (savedApiKey) {
-      setApiKey(savedApiKey);
-      apiForm.setValue("openaiApiKey", savedApiKey);
-      setConnectionStatus("unknown");
-    }
-  }, []);
-  
-  const salvarChaveAPI = (data: { openaiApiKey: string }) => {
-    openAIService.setApiKey(data.openaiApiKey);
-    setApiKey(data.openaiApiKey);
-    setConnectionStatus("unknown");
-    toast.success("Chave da API salva com sucesso!");
-  };
-  
-  const testarConexaoAPI = async () => {
-    setIsTesting(true);
-    setConnectionStatus("unknown");
-    
-    try {
-      const resultado = await openAIService.generateText("Teste de conexão. Responda apenas com 'Conexão bem-sucedida'.");
-      
-      if (resultado.includes("Conexão bem-sucedida")) {
-        toast.success("Conexão com a API da OpenAI estabelecida com sucesso!");
-        setConnectionStatus("success");
-      } else {
-        toast.warning("Resposta recebida, mas não foi a esperada.");
-        setConnectionStatus("failed");
-      }
-    } catch (error) {
-      toast.error("Falha ao conectar com a API da OpenAI");
-      setConnectionStatus("failed");
-      console.error(error);
-    } finally {
-      setIsTesting(false);
-    }
-  };
-  
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-primary" />
-              <CardTitle>OpenAI API</CardTitle>
-            </div>
-            {apiKey && (
-              <Badge 
-                variant="outline" 
-                className={connectionStatus === "success" 
-                  ? "bg-green-50 text-green-600 border-green-200" 
-                  : connectionStatus === "failed"
-                  ? "bg-red-50 text-red-600 border-red-200"
-                  : "bg-amber-50 text-amber-600 border-amber-200"
-                }
-              >
-                {connectionStatus === "success" ? (
-                  <div className="flex items-center gap-1">
-                    <Check className="h-3 w-3" />
-                    <span>Conectado</span>
-                  </div>
-                ) : connectionStatus === "failed" ? (
-                  <div className="flex items-center gap-1">
-                    <X className="h-3 w-3" />
-                    <span>Falha</span>
-                  </div>
-                ) : (
-                  "Configurada"
-                )}
-              </Badge>
-            )}
-          </div>
-          <CardDescription>
-            Configure sua chave da API da OpenAI para utilizar os recursos de inteligência artificial
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...apiForm}>
-            <form onSubmit={apiForm.handleSubmit(salvarChaveAPI)} className="space-y-4">
-              <FormField
-                control={apiForm.control}
-                name="openaiApiKey"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Chave da API da OpenAI</FormLabel>
-                    <FormControl>
-                      <Input 
-                        placeholder="sk-..." 
-                        {...field}
-                        type="password"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="flex gap-2">
-                <Button type="submit">
-                  <Save className="mr-2 h-4 w-4" />
-                  Salvar Chave
-                </Button>
-                {apiKey && (
-                  <Button 
-                    type="button" 
-                    variant={connectionStatus === "success" ? "outline" : "secondary"}
-                    onClick={testarConexaoAPI}
-                    disabled={isTesting}
-                  >
-                    {isTesting ? "Testando..." : "Testar Conexão"}
-                  </Button>
-                )}
-              </div>
-            </form>
-          </Form>
-          
-          {!apiKey && (
-            <div className="mt-4 p-4 bg-amber-50 border border-amber-200 rounded-md">
-              <p className="text-sm text-amber-800">
-                É necessário configurar a chave da API para utilizar recursos como assistente IA,
-                feedback personalizado e sugestão de hábitos.
-              </p>
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Outras Integrações</CardTitle>
+          <CardTitle>Integrações</CardTitle>
           <CardDescription>
             Configure integrações com outras ferramentas e serviços
           </CardDescription>
@@ -176,6 +32,13 @@ const APIConfigTab: React.FC = () => {
               </div>
             </div>
             <Button variant="outline">Configurar</Button>
+          </div>
+          
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm text-blue-800">
+              Os recursos de IA estão disponíveis em toda a plataforma e são gerenciados pelo administrador do SaaS.
+              Não é necessária nenhuma configuração adicional para utilizar as funcionalidades de IA.
+            </p>
           </div>
         </CardContent>
       </Card>
