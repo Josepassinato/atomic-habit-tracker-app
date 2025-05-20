@@ -8,10 +8,13 @@ import {
   BarChart3,
   Settings,
   HelpCircle,
-  LogOut
+  LogOut,
+  Users,
+  Shield
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/i18n';
+import { getCurrentUser } from '@/utils/permissions';
 
 import {
   Collapsible,
@@ -33,6 +36,8 @@ const AppSidebar = () => {
   const navigate = useNavigate();
   const currentPath = location.pathname;
   const { t, language } = useLanguage();
+  const user = getCurrentUser();
+  const isAdmin = user?.role === 'admin';
 
   const handleLogout = () => {
     localStorage.removeItem('user');
@@ -97,6 +102,19 @@ const AppSidebar = () => {
           <NavItem to="/relatorios" icon={BarChart3}>
             {t('reports')}
           </NavItem>
+          
+          {isAdmin && (
+            <>
+              <div className="my-2 h-px bg-muted"></div>
+              <NavItem to="/admin" icon={Users}>
+                Admin
+              </NavItem>
+              <NavItem to="/admin-dashboard" icon={Shield}>
+                Painel Administrativo
+              </NavItem>
+            </>
+          )}
+          
           <NavItem to="/configuracoes" icon={Settings}>
             {t('settings')}
           </NavItem>
@@ -113,11 +131,11 @@ const AppSidebar = () => {
             <CollapsibleTrigger className="flex w-full items-center justify-between rounded-md border px-3 py-1 text-left text-sm">
               <div className="flex items-center gap-2">
                 <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/20 text-primary">
-                  M
+                  {user?.nome?.[0]?.toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <p className="font-medium">Marcelo Silva</p>
-                  <p className="text-xs text-muted-foreground">Consultor</p>
+                  <p className="font-medium">{user?.nome || 'Usuário'}</p>
+                  <p className="text-xs text-muted-foreground">{user?.role || 'Papel'}</p>
                 </div>
               </div>
             </CollapsibleTrigger>

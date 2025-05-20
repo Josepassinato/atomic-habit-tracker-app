@@ -27,3 +27,11 @@ export interface AdminMetrics {
   tokensTotais: number;
   receitaMensal: number;
 }
+
+export interface AdminSettings {
+  openAIApiKey?: string;
+  systemEmailAddress?: string;
+  allowTrialAccounts: boolean;
+  trialDurationDays: number;
+  defaultTokenLimit: number;
+}

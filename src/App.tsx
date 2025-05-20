@@ -3,10 +3,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
-import RecuperarSenha from "./pages/RecuperarSenha"; // Adiciona a nova página
+import RecuperarSenha from "./pages/RecuperarSenha";
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
+import AdminDashboard from "./pages/AdminDashboard";
 import Habitos from "./pages/Habitos";
 import Metas from "./pages/Metas";
 import GerenciarMetas from "./pages/GerenciarMetas";
@@ -71,7 +72,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/recuperar-senha" element={<RecuperarSenha />} /> {/* Nova rota */}
+        <Route path="/recuperar-senha" element={<RecuperarSenha />} />
         
         {/* Rotas protegidas */}
         <Route 
@@ -100,6 +101,17 @@ function App() {
             <ProtectedRoute requiredRole="admin">
               <AppLayout>
                 <Admin />
+              </AppLayout>
+            </ProtectedRoute>
+          } 
+        />
+
+        <Route 
+          path="/admin-dashboard" 
+          element={
+            <ProtectedRoute requiredRole="admin">
+              <AppLayout>
+                <AdminDashboard />
               </AppLayout>
             </ProtectedRoute>
           } 
