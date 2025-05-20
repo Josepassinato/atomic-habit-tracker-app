@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useSupabase } from "@/hooks/use-supabase";
 
 type Integracao = {
   id: number;
@@ -18,14 +19,12 @@ type Integracao = {
   apiKey?: string;
 };
 
-const integracoes: Integracao[] = [
+const integracoesIniciais: Integracao[] = [
   {
     id: 1,
     nome: "HubSpot",
-    conectado: true,
+    conectado: false,
     integracoes: ["Contatos", "Negócios", "Atividades"],
-    apiUrl: "https://api.hubspot.com",
-    apiKey: "demo-key-hubspot"
   },
   {
     id: 2,
@@ -36,10 +35,8 @@ const integracoes: Integracao[] = [
   {
     id: 3,
     nome: "WhatsApp",
-    conectado: true,
+    conectado: false,
     integracoes: ["Mensagens", "Notificações"],
-    apiUrl: "https://api.whatsapp.com",
-    apiKey: "demo-key-whatsapp"
   },
   {
     id: 4,
@@ -56,12 +53,69 @@ const integracoes: Integracao[] = [
 ];
 
 const IntegracoesCRM = () => {
-  const [crmList, setCrmList] = useState<Integracao[]>(integracoes);
+  const [crmList, setCrmList] = useState<Integracao[]>([]);
   const [selectedCrm, setSelectedCrm] = useState<Integracao | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [apiUrl, setApiUrl] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [isConnecting, setIsConnecting] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const { supabase } = useSupabase();
+  
+  useEffect(() => {
+    fetchIntegracoes();
+  }, []);
+  
+  const fetchIntegracoes = async () => {
+    setIsLoading(true);
+    
+    try {
+      if (supabase) {
+        // Tenta buscar do Supabase
+        const { data, error } = await supabase
+          .from('integracoes')
+          .select('*');
+          
+        if (error) {
+          console.error("Erro ao buscar integrações:", error);
+          throw error;
+        }
+        
+        if (data && data.length > 0) {
+          setCrmList(data);
+        } else {
+          // Se não houver dados no Supabase, inicializa com as integrações padrão
+          if (supabase) {
+            // Insere as integrações iniciais no Supabase
+            await supabase.from('integracoes').upsert(
+              integracoesIniciais.map(item => ({
+                ...item,
+                empresa_id: 'current' // Em um sistema real, usaríamos o ID da empresa do usuário
+              }))
+            );
+          }
+          setCrmList(integracoesIniciais);
+        }
+      } else {
+        // Fallback para localStorage se não tiver Supabase
+        const savedIntegracoes = localStorage.getItem('integracoes_crm');
+        if (savedIntegracoes) {
+          setCrmList(JSON.parse(savedIntegracoes));
+        } else {
+          setCrmList(integracoesIniciais);
+          localStorage.setItem('integracoes_crm', JSON.stringify(integracoesIniciais));
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao carregar integrações:", error);
+      // Fallback para dados iniciais
+      setCrmList(integracoesIniciais);
+      toast.error("Não foi possível carregar as integrações. Usando dados locais.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   const handleConfigClick = (integracao: Integracao) => {
     if (integracao.conectado) {
@@ -79,58 +133,103 @@ const IntegracoesCRM = () => {
     }
   };
 
-  const handleSaveConfig = () => {
+  const handleSaveConfig = async () => {
     if (!selectedCrm) return;
     
     setIsConnecting(true);
     
-    // Simulando uma chamada API
-    setTimeout(() => {
-      const updatedList = crmList.map(item => {
-        if (item.id === selectedCrm.id) {
-          return {
-            ...item,
+    try {
+      const updatedItem = {
+        ...selectedCrm,
+        conectado: true,
+        apiUrl,
+        apiKey
+      };
+      
+      const updatedList = crmList.map(item => 
+        item.id === selectedCrm.id ? updatedItem : item
+      );
+      
+      if (supabase) {
+        // Salvar no Supabase
+        const { error } = await supabase
+          .from('integracoes')
+          .upsert({
+            id: selectedCrm.id,
+            nome: selectedCrm.nome,
             conectado: true,
+            integracoes: selectedCrm.integracoes,
             apiUrl,
-            apiKey
-          };
+            apiKey,
+            empresa_id: 'current' // Em um sistema real, usaríamos o ID da empresa do usuário
+          });
+          
+        if (error) {
+          console.error("Erro ao salvar integração:", error);
+          throw error;
         }
-        return item;
-      });
+      } else {
+        // Fallback para localStorage
+        localStorage.setItem('integracoes_crm', JSON.stringify(updatedList));
+      }
       
       setCrmList(updatedList);
-      setIsConnecting(false);
       setIsDialogOpen(false);
-      
       toast.success(`Integração com ${selectedCrm.nome} ${selectedCrm.conectado ? 'atualizada' : 'conectada'} com sucesso!`);
-    }, 1500);
+    } catch (error) {
+      console.error("Erro ao salvar configuração:", error);
+      toast.error(`Erro ao configurar a integração com ${selectedCrm.nome}`);
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
-  const handleDisconnect = () => {
+  const handleDisconnect = async () => {
     if (!selectedCrm) return;
     
     setIsConnecting(true);
     
-    // Simulando uma chamada API
-    setTimeout(() => {
-      const updatedList = crmList.map(item => {
-        if (item.id === selectedCrm.id) {
-          return {
-            ...item,
+    try {
+      const updatedItem = {
+        ...selectedCrm,
+        conectado: false,
+        apiUrl: undefined,
+        apiKey: undefined
+      };
+      
+      const updatedList = crmList.map(item => 
+        item.id === selectedCrm.id ? updatedItem : item
+      );
+      
+      if (supabase) {
+        // Atualizar no Supabase
+        const { error } = await supabase
+          .from('integracoes')
+          .update({
             conectado: false,
-            apiUrl: undefined,
-            apiKey: undefined
-          };
+            apiUrl: null,
+            apiKey: null
+          })
+          .eq('id', selectedCrm.id);
+          
+        if (error) {
+          console.error("Erro ao desconectar integração:", error);
+          throw error;
         }
-        return item;
-      });
+      } else {
+        // Fallback para localStorage
+        localStorage.setItem('integracoes_crm', JSON.stringify(updatedList));
+      }
       
       setCrmList(updatedList);
-      setIsConnecting(false);
       setIsDialogOpen(false);
-      
       toast.success(`Integração com ${selectedCrm.nome} desconectada com sucesso!`);
-    }, 1000);
+    } catch (error) {
+      console.error("Erro ao desconectar:", error);
+      toast.error(`Erro ao desconectar a integração com ${selectedCrm.nome}`);
+    } finally {
+      setIsConnecting(false);
+    }
   };
 
   return (
@@ -141,32 +240,39 @@ const IntegracoesCRM = () => {
           <CardDescription>Conecte seu CRM e ferramentas de comunicação</CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="grid gap-3">
-            {crmList.map((integracao) => (
-              <div key={integracao.id} className="flex items-center justify-between border-b pb-2 last:border-0">
-                <div>
-                  <div className="flex items-center gap-2">
-                    <h4 className="font-medium">{integracao.nome}</h4>
-                    {integracao.conectado && (
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <Check className="h-3 w-3" /> Conectado
-                      </Badge>
-                    )}
+          {isLoading ? (
+            <div className="py-8 text-center">
+              <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+              <p className="mt-2 text-sm text-muted-foreground">Carregando integrações...</p>
+            </div>
+          ) : (
+            <div className="grid gap-3">
+              {crmList.map((integracao) => (
+                <div key={integracao.id} className="flex items-center justify-between border-b pb-2 last:border-0">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <h4 className="font-medium">{integracao.nome}</h4>
+                      {integracao.conectado && (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <Check className="h-3 w-3" /> Conectado
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      {integracao.integracoes.join(", ")}
+                    </p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {integracao.integracoes.join(", ")}
-                  </p>
+                  <Button 
+                    variant={integracao.conectado ? "outline" : "default"} 
+                    size="sm"
+                    onClick={() => handleConfigClick(integracao)}
+                  >
+                    {integracao.conectado ? "Configurar" : "Conectar"}
+                  </Button>
                 </div>
-                <Button 
-                  variant={integracao.conectado ? "outline" : "default"} 
-                  size="sm"
-                  onClick={() => handleConfigClick(integracao)}
-                >
-                  {integracao.conectado ? "Configurar" : "Conectar"}
-                </Button>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </CardContent>
       </Card>
 

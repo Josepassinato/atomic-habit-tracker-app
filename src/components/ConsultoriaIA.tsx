@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -5,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { openAIService } from "@/services/openai-service";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
+import { useSupabase } from "@/hooks/use-supabase";
 
 interface Mensagem {
   role: 'user' | 'assistant';
@@ -12,6 +14,7 @@ interface Mensagem {
 }
 
 const ConsultoriaIA = () => {
+  const { supabase } = useSupabase();
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     { 
       role: 'assistant', 
@@ -20,7 +23,15 @@ const ConsultoriaIA = () => {
   ]);
   const [inputMensagem, setInputMensagem] = useState("");
   const [carregando, setCarregando] = useState(false);
+  const [historicoBuscado, setHistoricoBuscado] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  
+  // Buscar histórico de mensagens ao carregar
+  useEffect(() => {
+    if (!historicoBuscado) {
+      fetchChatHistory();
+    }
+  }, [historicoBuscado, supabase]);
   
   // Rolagem automática para a última mensagem
   useEffect(() => {
@@ -29,18 +40,45 @@ const ConsultoriaIA = () => {
     }
   }, [mensagens]);
 
-  const verificarApiKey = () => {
-    if (!openAIService.getApiKey()) {
-      toast.error("Chave da API necessária para usar o assistente. Configure nas Configurações.");
-      return false;
+  const fetchChatHistory = async () => {
+    try {
+      if (supabase) {
+        const { data, error } = await supabase
+          .from('mensagens_ia')
+          .select('*')
+          .order('created_at', { ascending: true })
+          .limit(50);
+        
+        if (error) {
+          console.error("Erro ao buscar histórico de chat:", error);
+          return;
+        }
+        
+        if (data && data.length > 0) {
+          const historicoFormatado = data.map(msg => ({
+            role: msg.role as 'user' | 'assistant',
+            content: msg.content
+          }));
+          
+          // Manter a mensagem de boas-vindas no início
+          setMensagens([mensagens[0], ...historicoFormatado]);
+        }
+      } else {
+        // Buscar do localStorage
+        const historicoSalvo = localStorage.getItem('chat_history');
+        if (historicoSalvo) {
+          setMensagens([mensagens[0], ...JSON.parse(historicoSalvo)]);
+        }
+      }
+    } catch (error) {
+      console.error("Erro ao processar histórico de chat:", error);
+    } finally {
+      setHistoricoBuscado(true);
     }
-    return true;
   };
 
   const enviarMensagem = async () => {
     if (!inputMensagem.trim()) return;
-    
-    if (!verificarApiKey()) return;
     
     const novaMensagem: Mensagem = {
       role: 'user',
@@ -54,6 +92,7 @@ const ConsultoriaIA = () => {
     try {
       // Criar contexto com histórico de conversa para a API
       const historico = mensagens
+        .slice(-5) // Limitar contexto para as últimas 5 mensagens
         .map(msg => `${msg.role === 'user' ? 'Usuário' : 'Assistente'}: ${msg.content}`)
         .join('\n\n');
         
@@ -68,11 +107,36 @@ const ConsultoriaIA = () => {
       
       const respostaIA = await openAIService.generateText(prompt);
       
-      setMensagens(prev => [
-        ...prev, 
-        { role: 'assistant', content: respostaIA }
-      ]);
+      const respostaMensagem: Mensagem = { 
+        role: 'assistant', 
+        content: respostaIA 
+      };
+      
+      setMensagens(prev => [...prev, respostaMensagem]);
+      
+      // Salvar mensagens no banco
+      if (supabase) {
+        await Promise.all([
+          // Salvar a mensagem do usuário
+          supabase.from('mensagens_ia').insert({
+            role: novaMensagem.role,
+            content: novaMensagem.content,
+            created_at: new Date().toISOString()
+          }),
+          // Salvar a resposta da IA
+          supabase.from('mensagens_ia').insert({
+            role: respostaMensagem.role,
+            content: respostaMensagem.content,
+            created_at: new Date().toISOString()
+          })
+        ]);
+      } else {
+        // Salvar no localStorage
+        const mensagensParaSalvar = [...mensagens.slice(1), novaMensagem, respostaMensagem];
+        localStorage.setItem('chat_history', JSON.stringify(mensagensParaSalvar));
+      }
     } catch (error) {
+      console.error("Erro ao obter resposta do assistente:", error);
       toast.error("Erro ao obter resposta do assistente.");
     } finally {
       setCarregando(false);
