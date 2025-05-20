@@ -1,12 +1,12 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
 import { AdminMetrics } from "@/types/admin";
 import AdminMetricsCards from "@/components/admin/AdminMetricsCards";
 import AdminOpenAIConfig from "@/components/admin/AdminOpenAIConfig";
 import AdminTabs from "@/components/admin/AdminTabs";
+import { getCurrentUser } from "@/utils/permissions";
 
 // Tipos para os dados do painel administrativo
 type EmpresaAdmin = {
@@ -25,7 +25,6 @@ const Admin = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const [empresas, setEmpresas] = useState<EmpresaAdmin[]>([]);
   const [loading, setLoading] = useState(true);
-  const { supabase } = useSupabase();
 
   // Estatísticas gerais
   const [estatisticas, setEstatisticas] = useState<AdminMetrics>({
@@ -40,39 +39,30 @@ const Admin = () => {
   // Verifica se o usuário atual é admin
   useEffect(() => {
     const checkAdminAccess = async () => {
-      if (!supabase) return;
+      const user = getCurrentUser();
       
-      const user = localStorage.getItem("user");
       if (!user) {
+        toast.error("Você precisa estar logado para acessar esta página");
         navigate("/login");
         return;
       }
       
-      try {
-        const userObj = JSON.parse(user);
-        
-        // Esse é um exemplo simples. Em produção, você deve verificar isso no backend
-        // com Supabase RLS ou uma função de borda.
-        // Aqui assumimos que o seu email é o admin
-        const isAdminUser = userObj.email === "admin@habitus.com";
-        setIsAdmin(isAdminUser);
-        
-        if (!isAdminUser) {
-          navigate("/dashboard");
-        } else {
-          // Se for admin, carrega os dados
-          await carregarDadosAdmin();
-        }
-      } catch (error) {
-        console.error("Erro ao verificar permissões:", error);
+      const isAdminUser = user.role === "admin";
+      setIsAdmin(isAdminUser);
+      
+      if (!isAdminUser) {
+        toast.error("Você não tem permissão para acessar esta página");
         navigate("/dashboard");
-      } finally {
-        setLoading(false);
+      } else {
+        // Se for admin, carrega os dados
+        await carregarDadosAdmin();
       }
+      
+      setLoading(false);
     };
     
     checkAdminAccess();
-  }, [navigate, supabase]);
+  }, [navigate]);
 
   // Função para carregar os dados do painel administrativo
   const carregarDadosAdmin = async () => {

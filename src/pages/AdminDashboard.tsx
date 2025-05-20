@@ -1,7 +1,6 @@
 
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
 
 import {
@@ -16,12 +15,12 @@ import AdminPlans from "@/components/admin-dashboard/AdminPlans";
 import AdminSettings from "@/components/admin-dashboard/AdminSettings";
 import AdminAnalytics from "@/components/admin-dashboard/AdminAnalytics";
 import { AdminMetrics, AdminSettings as AdminSettingsType } from "@/types/admin";
+import { getCurrentUser } from "@/utils/permissions";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { supabase } = useSupabase();
   const [activeTab, setActiveTab] = useState("analytics");
 
   // Admin metrics
@@ -46,38 +45,30 @@ const AdminDashboard = () => {
   // Check if current user is admin
   useEffect(() => {
     const checkAdminAccess = async () => {
-      if (!supabase) return;
+      const user = getCurrentUser();
       
-      const user = localStorage.getItem("user");
       if (!user) {
+        toast.error("Você precisa estar logado para acessar esta página");
         navigate("/login");
         return;
       }
       
-      try {
-        const userObj = JSON.parse(user);
-        
-        // Simple check - in production, use Supabase RLS or edge function
-        const isAdminUser = userObj.role === "admin";
-        setIsAdmin(isAdminUser);
-        
-        if (!isAdminUser) {
-          navigate("/dashboard");
-          toast.error("Você não tem permissão para acessar esta página");
-        } else {
-          // Load admin data if user is admin
-          await fetchAdminData();
-        }
-      } catch (error) {
-        console.error("Erro ao verificar permissões:", error);
+      const isAdminUser = user.role === "admin";
+      setIsAdmin(isAdminUser);
+      
+      if (!isAdminUser) {
+        toast.error("Você não tem permissão para acessar esta página");
         navigate("/dashboard");
-      } finally {
-        setLoading(false);
+      } else {
+        // Load admin data if user is admin
+        await fetchAdminData();
       }
+      
+      setLoading(false);
     };
     
     checkAdminAccess();
-  }, [navigate, supabase]);
+  }, [navigate]);
 
   // Fetch admin data
   const fetchAdminData = async () => {

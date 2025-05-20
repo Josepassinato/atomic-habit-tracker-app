@@ -57,9 +57,9 @@ export const canAccessRoute = (path: string): boolean => {
   
   if (!user) return false;
   
-  // Rotas admin
-  if (path === '/admin') {
-    return hasPermission(user, 'admin');
+  // Rotas admin - verificando apenas o papel do usuário
+  if (path === '/admin' || path === '/admin-dashboard') {
+    return user.role === 'admin';
   }
   
   // Rotas específicas para gerentes
