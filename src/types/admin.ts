@@ -1,5 +1,4 @@
-
-export type PlanType = 'Starter' | 'Professional' | 'Enterprise' | 'Free';
+export type PlanType = 'Starter' | 'Professional' | 'Enterprise' | 'Free' | 'Trial';
 export type StatusType = 'ativo' | 'inativo' | 'trial';
 
 export interface Company {
@@ -38,7 +37,7 @@ export interface AdminSettings {
   defaultTokenLimit: number;
 }
 
-// Novas interfaces para os limites dos planos
+// Interfaces para os limites dos planos
 export interface PlanLimits {
   tokensLimit: number;
   usersLimit: number;

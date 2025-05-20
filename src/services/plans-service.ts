@@ -1,6 +1,6 @@
 
 import { toast } from "sonner";
-import { PlanType, PlansConfiguration } from "@/types/admin";
+import { PlanType, PlansConfiguration, PlanLimits, PlanFeatures } from "@/types/admin";
 import { storageService } from "./storage-service";
 
 class PlansLimitService {
@@ -162,6 +162,7 @@ class PlansLimitService {
   private getNextPlanSuggestion(currentPlan: PlanType): string {
     switch (currentPlan) {
       case 'Free':
+        return 'Starter';
       case 'Trial':
         return 'Starter';
       case 'Starter':

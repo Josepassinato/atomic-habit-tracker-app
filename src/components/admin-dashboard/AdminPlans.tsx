@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
-import { PlansConfiguration, PlanLimits } from "@/types/admin";
+import { PlansConfiguration, PlanLimits, PlanFeatures } from "@/types/admin";
 import { plansLimitService } from "@/services/plans-service";
 import { toast } from "sonner";
 
@@ -28,31 +28,35 @@ const AdminPlans = () => {
 
   const handleInputChange = (
     planKey: keyof PlansConfiguration,
-    field: keyof PlanLimits | string,
+    field: string,
     value: number | boolean
   ) => {
     if (field.includes('.')) {
       // Para campos aninhados como "features.aiConsulting"
       const [parentField, childField] = field.split('.');
-      setPlansConfig((prev) => ({
-        ...prev,
-        [planKey]: {
-          ...prev[planKey],
-          [parentField]: {
-            ...prev[planKey][parentField as keyof PlanLimits],
-            [childField]: value
-          }
+      setPlansConfig((prev) => {
+        const updatedConfig = { ...prev };
+        if (parentField === 'features') {
+          updatedConfig[planKey] = {
+            ...updatedConfig[planKey],
+            features: {
+              ...updatedConfig[planKey].features,
+              [childField]: value
+            }
+          };
         }
-      }));
+        return updatedConfig;
+      });
     } else {
       // Para campos simples como "tokensLimit"
-      setPlansConfig((prev) => ({
-        ...prev,
-        [planKey]: {
-          ...prev[planKey],
+      setPlansConfig((prev) => {
+        const updatedConfig = { ...prev };
+        updatedConfig[planKey] = {
+          ...updatedConfig[planKey],
           [field]: value
-        }
-      }));
+        };
+        return updatedConfig;
+      });
     }
   };
 

@@ -1,11 +1,10 @@
-
 /**
  * Serviço para gerenciar o armazenamento persistente de configurações
  * Um wrapper em torno de localStorage mas que poderia ser facilmente
  * estendido para usar IndexedDB ou outra solução de armazenamento
  */
 
-type StorageKeys = "openai-api-key" | "user" | "admin-openai-api-key" | "language-preference" | "admin-supabase-api-key" | "admin-supabase-url";
+type StorageKeys = "openai-api-key" | "user" | "admin-openai-api-key" | "language-preference" | "admin-supabase-api-key" | "admin-supabase-url" | "admin-plans-config";
 
 class StorageService {
   private storagePrefix = "habitus-";
