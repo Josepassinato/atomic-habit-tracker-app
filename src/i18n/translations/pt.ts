@@ -13,6 +13,22 @@ export const ptTranslations = {
   logout: "Sair",
   onboarding: "Configuração de Equipe",
   
+  // Teams
+  teams: "Equipes",
+  newTeam: "Nova Equipe",
+  editTeam: "Editar Equipe",
+  deleteTeam: "Excluir Equipe",
+  teamName: "Nome da Equipe",
+  teamDescription: "Descrição da Equipe",
+  noTeams: "Nenhuma equipe cadastrada",
+  createTeam: "Criar Equipe",
+  updateTeam: "Atualizar Equipe",
+  teamCreated: "Equipe criada",
+  teamUpdated: "Equipe atualizada",
+  teamDeleted: "Equipe removida",
+  selectTeam: "Selecione uma equipe",
+  configureTeam: "Configurar",
+  
   // Landing page
   heroTitle: "Transforme sua",
   heroTitleHighlight: "equipe de vendas",

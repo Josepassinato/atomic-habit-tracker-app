@@ -13,6 +13,22 @@ export const esTranslations = {
   logout: "Cerrar Sesión",
   onboarding: "Configuración de Equipo",
   
+  // Teams
+  teams: "Equipos",
+  newTeam: "Nuevo Equipo",
+  editTeam: "Editar Equipo",
+  deleteTeam: "Eliminar Equipo",
+  teamName: "Nombre del Equipo",
+  teamDescription: "Descripción del Equipo",
+  noTeams: "No hay equipos registrados",
+  createTeam: "Crear Equipo",
+  updateTeam: "Actualizar Equipo",
+  teamCreated: "Equipo creado",
+  teamUpdated: "Equipo actualizado",
+  teamDeleted: "Equipo eliminado",
+  selectTeam: "Seleccione un equipo",
+  configureTeam: "Configurar",
+  
   // Landing page
   heroTitle: "Transforma tu",
   heroTitleHighlight: "equipo de ventas",
