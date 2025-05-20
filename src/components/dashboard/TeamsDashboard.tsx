@@ -1,13 +1,14 @@
 
-import React from "react";
+import React, { useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Users, TrendingUp, Flag } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import LoadingIntegracoes from "@/components/integracoes/LoadingIntegracoes";
+import { DashboardLoading } from "./DashboardLoading";
 import { useTeamDashboard } from "@/hooks/use-team-dashboard";
 import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 
 const TeamsDashboard: React.FC = () => {
   const { teamMetrics, loading, refreshTeamMetrics } = useTeamDashboard();
@@ -18,27 +19,52 @@ const TeamsDashboard: React.FC = () => {
     return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
   };
 
+  // Força uma atualização ao montar o componente
+  useEffect(() => {
+    refreshTeamMetrics();
+  }, []);
+
   if (loading) {
-    return <LoadingIntegracoes />;
+    return <DashboardLoading />;
   }
 
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Desempenho das Equipes</h2>
-        <Button 
-          variant="outline" 
-          size="sm"
-          onClick={() => navigate('/vendedores')}
-        >
-          Ver Detalhes
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            variant="outline" 
+            size="sm"
+            onClick={refreshTeamMetrics}
+          >
+            Atualizar
+          </Button>
+          <Button 
+            variant="default" 
+            size="sm"
+            onClick={() => navigate('/vendedores')}
+          >
+            Ver Detalhes
+          </Button>
+        </div>
       </div>
       
       {teamMetrics.length === 0 ? (
         <Card>
           <CardContent className="py-6 text-center">
-            <p className="text-muted-foreground">Nenhuma equipe configurada.</p>
+            <p className="text-muted-foreground">Nenhuma equipe encontrada. Verifique sua configuração de equipes.</p>
+            <Button 
+              variant="outline" 
+              size="sm"
+              className="mt-4"
+              onClick={() => {
+                toast.info("Para configurar equipes, acesse a página de vendedores.");
+                navigate('/vendedores');
+              }}
+            >
+              Configurar Equipes
+            </Button>
           </CardContent>
         </Card>
       ) : (
