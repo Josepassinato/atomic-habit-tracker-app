@@ -2,6 +2,7 @@
 import { supabaseConfigService } from "./supabase-config";
 import { supabaseConnectionService } from "./supabase-connection";
 import { supabaseSettingsService } from "./supabase-settings";
+import { supabaseDataSyncService } from "./supabase-data-sync";
 
 /**
  * Main Supabase service that combines all supabase related functionality
@@ -46,6 +47,27 @@ class SupabaseService {
 
   loadConfigFromDatabase() {
     return supabaseSettingsService.loadConfigFromDatabase();
+  }
+
+  // Data sync methods
+  syncTeamsToSupabase(teams: any[]) {
+    return supabaseDataSyncService.syncTeamsToSupabase(teams);
+  }
+
+  syncVendedoresToSupabase(vendedores: any[]) {
+    return supabaseDataSyncService.syncVendedoresToSupabase(vendedores);
+  }
+  
+  syncHabitosToSupabase(habitos: any[]) {
+    return supabaseDataSyncService.syncHabitosToSupabase(habitos);
+  }
+  
+  syncMetasToSupabase(metas: any[]) {
+    return supabaseDataSyncService.syncMetasToSupabase(metas);
+  }
+  
+  syncAllDataToSupabase() {
+    return supabaseDataSyncService.syncAllDataToSupabase();
   }
 }
 

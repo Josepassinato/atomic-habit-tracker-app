@@ -1,111 +1,66 @@
 
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
-import { NotificacoesBadge } from "@/components/notificacoes/NotificacoesProvider";
-import LanguageSelector from "@/components/LanguageSelector";
-import { useLanguage } from "@/i18n";
-import { ArrowLeft, LogOut } from "lucide-react";
-import { toast } from "sonner";
-import { storageService } from "@/services/storage-service";
+import { Menu } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import AppSidebar from "./AppSidebar";
+import ThemeSwitcher from "./ThemeSwitcher";
+import LanguageSelector from "./LanguageSelector";
+import { NotificacoesBadge } from "./notificacoes/NotificacoesProvider";
+import SupabaseSyncButton from "./SupabaseSyncButton";
+import { useSupabase } from "@/hooks/use-supabase";
 
-interface HeaderProps {
-  isLoggedIn?: boolean;
-  showBackButton?: boolean;
-}
-
-const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = true }) => {
-  const { t, language } = useLanguage();
+const Header: React.FC = () => {
   const navigate = useNavigate();
-  
-  const handleBack = () => {
-    navigate(-1);
-  };
-  
-  const handleLogout = () => {
-    if (isLoggedIn) {
-      storageService.removeItem('user');
-      
-      // Show toast message in the correct language
-      const logoutMessages = {
-        en: 'Logout successful',
-        es: 'Cierre de sesión exitoso',
-        pt: 'Logout realizado com sucesso'
-      };
-      toast.success(logoutMessages[language]);
-      
-      // Navigate to login page
-      navigate("/login");
-    }
-  };
+  const { isConfigured } = useSupabase();
   
   return (
-    <header className="border-b bg-white dark:bg-slate-900 dark:border-slate-800">
-      <div className="container flex h-16 items-center justify-between">
-        <div className="flex items-center gap-6">
-          {showBackButton && window.history.length > 1 && (
-            <Button variant="ghost" size="sm" onClick={handleBack} className="mr-2">
-              <ArrowLeft size={16} className="mr-2" />
-              {t('back')}
-            </Button>
-          )}
-          <Link to="/" className="flex items-center gap-2">
-            <div className="bg-primary p-1 rounded-sm">
-              <div className="h-5 w-5 bg-white dark:bg-slate-900 rounded-sm" />
+    <header className="sticky top-0 z-40 w-full border-b bg-background">
+      <div className="container flex h-16 items-center justify-between space-x-4 sm:space-x-0">
+        <div className="flex items-center gap-2">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="outline" size="icon" className="shrink-0 md:hidden">
+                <Menu className="h-5 w-5" />
+                <span className="sr-only">Toggle navigation menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-[300px] p-0">
+              <AppSidebar />
+            </SheetContent>
+          </Sheet>
+          <div onClick={() => navigate("/")} className="flex items-center gap-2 cursor-pointer">
+            <div className="bg-primary w-8 h-8 rounded-md flex items-center justify-center">
+              <span className="text-primary-foreground font-bold text-lg">H</span>
             </div>
-            <span className="font-bold">Habitus</span>
-          </Link>
-          
-          {isLoggedIn && (
-            <nav className="hidden md:flex gap-4">
-              <Link to="/dashboard" className="text-sm font-medium hover:text-primary">
-                {t('dashboard')}
-              </Link>
-              <Link to="/habitos" className="text-sm font-medium hover:text-primary">
-                {t('habits')}
-              </Link>
-              <Link to="/metas" className="text-sm font-medium hover:text-primary">
-                {t('goals')}
-              </Link>
-              <Link to="/relatorios" className="text-sm font-medium hover:text-primary">
-                {t('reports')}
-              </Link>
-            </nav>
-          )}
+            <span className="font-semibold text-lg">Habitus</span>
+          </div>
         </div>
         
-        <div className="flex items-center gap-3">
-          {isLoggedIn ? (
-            <>
-              <NotificacoesBadge />
-              <LanguageSelector />
-              <ThemeSwitcher />
-              <Button size="sm" variant="outline" asChild>
-                <Link to="/configuracoes">{t('settings')}</Link>
-              </Button>
-              <Button 
-                size="sm" 
-                variant="outline" 
-                onClick={handleLogout}
-                className="text-destructive hover:bg-destructive/10 hover:text-destructive"
-              >
-                <LogOut size={16} className="mr-2" />
-                {t('logout')}
-              </Button>
-            </>
-          ) : (
-            <>
-              <LanguageSelector />
-              <ThemeSwitcher />
-              <Button size="sm" variant="outline" asChild>
-                <Link to="/login">{t('login')}</Link>
-              </Button>
-              <Button size="sm" asChild>
-                <Link to="/registro">{t('register')}</Link>
-              </Button>
-            </>
+        <div className="flex items-center justify-end gap-2">
+          {isConfigured && (
+            <SupabaseSyncButton className="hidden md:flex" />
           )}
+          
+          <NotificacoesBadge />
+          <LanguageSelector />
+          <ThemeSwitcher />
+          
+          <Button 
+            variant="default" 
+            className="hidden md:block"
+            onClick={() => {
+              const user = localStorage.getItem("user");
+              if (user) {
+                navigate("/dashboard");
+              } else {
+                navigate("/login");
+              }
+            }}
+          >
+            Dashboard
+          </Button>
         </div>
       </div>
     </header>

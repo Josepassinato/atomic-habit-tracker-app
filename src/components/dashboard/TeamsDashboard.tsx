@@ -1,9 +1,8 @@
-
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, Flag, RefreshCw, CloudSync } from "lucide-react";
+import { Users, TrendingUp, Flag, RefreshCw, Database } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardLoading } from "./DashboardLoading";
 import { useTeamDashboard } from "@/hooks/use-team-dashboard";
@@ -45,7 +44,7 @@ const TeamsDashboard: React.FC = () => {
         <div className="flex gap-2 items-center">
           {isConfigured && (
             <Badge variant="outline" className="bg-green-50 text-green-700 flex items-center gap-1">
-              <CloudSync className="h-3 w-3" />
+              <Database className="h-3 w-3" />
               Sincronizado
             </Badge>
           )}
@@ -96,7 +95,7 @@ const TeamsDashboard: React.FC = () => {
                       toast.info("Conecte-se ao Supabase através do botão verde no canto superior direito.");
                     }}
                   >
-                    <CloudSync className="h-4 w-4 mr-2" />
+                    <Database className="h-4 w-4 mr-2" />
                     Conectar ao Supabase
                   </Button>
                 </div>
