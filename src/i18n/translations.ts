@@ -28,6 +28,7 @@ export interface Translations {
   invalidCredentials: string;
   loginError: string;
   checkCredentials: string;
+  loginTitle: string; // Added missing key
   
   // Password Recovery
   recoverPassword: string;
@@ -148,6 +149,7 @@ export const translations: { [key in Language]: Translations } = {
     invalidCredentials: 'Invalid credentials',
     loginError: 'Error logging in',
     checkCredentials: 'Check your credentials and try again.',
+    loginTitle: 'Enter your credentials to access your account',
     
     // Password Recovery
     recoverPassword: 'Recover password',
@@ -264,6 +266,7 @@ export const translations: { [key in Language]: Translations } = {
     invalidCredentials: 'Credenciales inválidas',
     loginError: 'Error al iniciar sesión',
     checkCredentials: 'Verifica tus credenciales e intenta nuevamente.',
+    loginTitle: 'Ingresa tus credenciales para acceder a tu cuenta',
     
     // Password Recovery
     recoverPassword: 'Recuperar contraseña',
@@ -380,6 +383,7 @@ export const translations: { [key in Language]: Translations } = {
     invalidCredentials: 'Credenciais inválidas',
     loginError: 'Erro ao fazer login',
     checkCredentials: 'Verifique suas credenciais e tente novamente.',
+    loginTitle: 'Digite suas credenciais para acessar sua conta',
     
     // Password Recovery
     recoverPassword: 'Recuperar senha',
