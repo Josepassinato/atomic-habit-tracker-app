@@ -1,9 +1,9 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, Flag } from "lucide-react";
+import { Users, TrendingUp, Flag, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardLoading } from "./DashboardLoading";
 import { useTeamDashboard } from "@/hooks/use-team-dashboard";
@@ -12,6 +12,7 @@ import { toast } from "sonner";
 
 const TeamsDashboard: React.FC = () => {
   const { teamMetrics, loading, refreshTeamMetrics } = useTeamDashboard();
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
 
   // Format to Brazilian Real
@@ -23,6 +24,13 @@ const TeamsDashboard: React.FC = () => {
   useEffect(() => {
     refreshTeamMetrics();
   }, []);
+
+  const handleRefresh = async () => {
+    setIsRefreshing(true);
+    await refreshTeamMetrics();
+    toast.success("Dados atualizados com sucesso!");
+    setIsRefreshing(false);
+  };
 
   if (loading) {
     return <DashboardLoading />;
@@ -36,9 +44,11 @@ const TeamsDashboard: React.FC = () => {
           <Button 
             variant="outline" 
             size="sm"
-            onClick={refreshTeamMetrics}
+            onClick={handleRefresh}
+            disabled={isRefreshing}
           >
-            Atualizar
+            <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
+            {isRefreshing ? "Atualizando..." : "Atualizar"}
           </Button>
           <Button 
             variant="default" 
@@ -59,8 +69,8 @@ const TeamsDashboard: React.FC = () => {
               size="sm"
               className="mt-4"
               onClick={() => {
-                toast.info("Para configurar equipes, acesse a página de vendedores.");
-                navigate('/vendedores');
+                toast.info("Para configurar equipes, acesse a página de onboarding.");
+                navigate('/onboarding');
               }}
             >
               Configurar Equipes

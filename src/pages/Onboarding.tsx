@@ -17,6 +17,7 @@ import { useForm, SubmitHandler } from "react-hook-form";
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { useTranslation } from "@/i18n/useTranslation";
+import { toast } from "sonner";
 
 // Define the team interface
 interface Team {
@@ -85,13 +86,35 @@ const Onboarding = () => {
   useEffect(() => {
     const savedTeams = localStorage.getItem("teams");
     if (savedTeams) {
-      setTeams(JSON.parse(savedTeams));
+      try {
+        const parsedTeams = JSON.parse(savedTeams);
+        console.log("Equipes carregadas do localStorage:", parsedTeams);
+        setTeams(parsedTeams);
+      } catch (error) {
+        console.error("Erro ao carregar equipes:", error);
+        toast({
+          title: "Erro ao carregar equipes",
+          description: "Não foi possível carregar as equipes salvas.",
+          variant: "destructive",
+        });
+      }
     }
   }, []);
 
   // Save teams to localStorage when they change
   useEffect(() => {
-    localStorage.setItem("teams", JSON.stringify(teams));
+    if (teams.length > 0) {
+      console.log("Salvando equipes no localStorage:", teams);
+      localStorage.setItem("teams", JSON.stringify(teams));
+      
+      // Também salva como 'equipes' para compatibilidade com a dashboard
+      localStorage.setItem("equipes", JSON.stringify(teams.map(team => ({
+        id: team.id,
+        nome: team.name,
+        empresa_id: '1', // valor padrão para teste
+        criado_em: new Date().toISOString()
+      }))));
+    }
   }, [teams]);
 
   // When a team is selected, load its data
@@ -160,15 +183,18 @@ const Onboarding = () => {
   const onTeamSubmit: SubmitHandler<TeamFormInput> = (data) => {
     if (editingTeamId) {
       // Update existing team
-      setTeams(teams.map(team => 
+      const updatedTeams = teams.map(team => 
         team.id === editingTeamId 
           ? { ...team, name: data.name }
           : team
-      ));
+      );
+      setTeams(updatedTeams);
       toast({
         title: "Time atualizado",
         description: `O time ${data.name} foi atualizado com sucesso.`,
       });
+      console.log("Time atualizado:", data.name, "ID:", editingTeamId);
+      console.log("Times após atualização:", updatedTeams);
     } else {
       // Create new team
       const newTeam: Team = {
@@ -183,11 +209,14 @@ const Onboarding = () => {
         comissoes: { base: "3", habitos: "2" }
       };
       
-      setTeams([...teams, newTeam]);
+      const newTeams = [...teams, newTeam];
+      setTeams(newTeams);
       toast({
         title: "Time criado",
         description: `O time ${data.name} foi criado com sucesso.`,
       });
+      console.log("Novo time criado:", newTeam);
+      console.log("Times após criação:", newTeams);
     }
     
     setTeamDialogOpen(false);
@@ -196,7 +225,8 @@ const Onboarding = () => {
   };
 
   const deleteTeam = (teamId: string) => {
-    setTeams(teams.filter(team => team.id !== teamId));
+    const updatedTeams = teams.filter(team => team.id !== teamId);
+    setTeams(updatedTeams);
     
     if (currentTeam?.id === teamId) {
       setCurrentTeam(null);
@@ -207,17 +237,21 @@ const Onboarding = () => {
       title: "Time removido",
       description: "O time foi removido com sucesso.",
     });
+    console.log("Time removido, ID:", teamId);
+    console.log("Times após remoção:", updatedTeams);
   };
 
   const editTeam = (team: Team) => {
     form.setValue("name", team.name);
     setEditingTeamId(team.id);
     setTeamDialogOpen(true);
+    console.log("Editando time:", team.name, "ID:", team.id);
   };
 
   const selectTeam = (team: Team) => {
     setCurrentTeam(team);
     setActiveStep("metas");
+    console.log("Time selecionado:", team.name, "ID:", team.id);
   };
   
   const handleNext = () => {
@@ -248,10 +282,26 @@ const Onboarding = () => {
     }
 
     // Update team in teams array
-    setTeams(teams.map(team => 
+    const updatedTeams = teams.map(team => 
       team.id === currentTeam.id ? updatedTeam : team
-    ));
+    );
+    setTeams(updatedTeams);
     setCurrentTeam(updatedTeam);
+    
+    console.log("Próximo passo:", activeStep);
+    console.log("Time atualizado:", updatedTeam);
+    console.log("Times após atualização:", updatedTeams);
+    
+    // Salva imediatamente no localStorage
+    localStorage.setItem("teams", JSON.stringify(updatedTeams));
+    
+    // Também salva como 'equipes' para compatibilidade com a dashboard
+    localStorage.setItem("equipes", JSON.stringify(updatedTeams.map(team => ({
+      id: team.id,
+      nome: team.name,
+      empresa_id: '1', // valor padrão para teste
+      criado_em: new Date().toISOString()
+    }))));
   };
 
   const handlePrevious = () => {
@@ -271,15 +321,75 @@ const Onboarding = () => {
       // Save all configuration
       await new Promise(resolve => setTimeout(resolve, 1500));
       
-      // Save to localStorage for demonstration
-      const userData = JSON.parse(localStorage.getItem("user") || "{}");
+      // Get current user data
+      const userDataStr = localStorage.getItem("user") || "{}";
+      let userData = {};
       
-      localStorage.setItem("user", JSON.stringify({
+      try {
+        userData = JSON.parse(userDataStr);
+      } catch (error) {
+        console.error("Erro ao parsear dados do usuário:", error);
+        userData = {};
+      }
+      
+      // Update user data
+      const updatedUserData = {
         ...userData,
         configurado: true,
         teams: teams,
         activeTeamId: currentTeam?.id
-      }));
+      };
+      
+      console.log("Dados do usuário atualizados:", updatedUserData);
+      
+      // Save to localStorage
+      localStorage.setItem("user", JSON.stringify(updatedUserData));
+      
+      // Salva membros mock para cada equipe se não existirem
+      if (!localStorage.getItem("vendedores")) {
+        const mockVendedores = teams.flatMap((team, index) => [
+          {
+            id: `v${index}1`,
+            nome: `Vendedor ${index+1}A`,
+            email: `vendedor${index+1}a@exemplo.com`,
+            equipe_id: team.id,
+            vendas_total: Math.floor(Math.random() * 100000) + 50000,
+            meta_atual: 150000,
+            taxa_conversao: (Math.random() * 0.3 + 0.2).toFixed(2),
+            criado_em: new Date().toISOString()
+          },
+          {
+            id: `v${index}2`,
+            nome: `Vendedor ${index+1}B`,
+            email: `vendedor${index+1}b@exemplo.com`,
+            equipe_id: team.id,
+            vendas_total: Math.floor(Math.random() * 100000) + 50000,
+            meta_atual: 150000,
+            taxa_conversao: (Math.random() * 0.3 + 0.2).toFixed(2),
+            criado_em: new Date().toISOString()
+          }
+        ]);
+        
+        localStorage.setItem("vendedores", JSON.stringify(mockVendedores));
+        console.log("Vendedores mock criados:", mockVendedores);
+      }
+      
+      // Adiciona hábitos mock para cada equipe
+      if (!localStorage.getItem("habitos_equipe")) {
+        const mockHabitos = teams.flatMap(team => 
+          team.habitos.map((habito, idx) => ({
+            id: `h${team.id}-${idx}`,
+            equipe_id: team.id,
+            descricao: habito,
+            concluido: Math.random() > 0.5,
+            data_criacao: new Date().toISOString(),
+            data_conclusao: Math.random() > 0.5 ? new Date().toISOString() : null
+          }))
+        );
+        
+        localStorage.setItem("habitos_equipe", JSON.stringify(mockHabitos));
+        console.log("Hábitos mock criados:", mockHabitos);
+      }
       
       toast({
         title: "Configuração concluída!",
@@ -288,6 +398,7 @@ const Onboarding = () => {
       
       navigate("/dashboard");
     } catch (error) {
+      console.error("Erro ao finalizar configuração:", error);
       toast({
         title: "Erro ao finalizar configuração",
         description: "Por favor, tente novamente.",
