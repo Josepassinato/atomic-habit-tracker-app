@@ -1,88 +1,14 @@
-import { toast } from "sonner";
-import { storageService } from "./storage-service";
 
-class SupabaseService {
-  private apiKeyCache: string | null = null;
-  private urlCache: string | null = null;
+import { storageService } from "../storage-service";
+import { supabaseConfigService } from "./supabase-config";
 
-  constructor() {
-    // Tenta recuperar as configurações do Supabase do storage service
-    this.apiKeyCache = storageService.getItem<string>("admin-supabase-api-key");
-    this.urlCache = storageService.getItem<string>("admin-supabase-url");
-  }
-
-  setApiKey(apiKey: string) {
-    this.apiKeyCache = apiKey;
-    storageService.setItem("admin-supabase-api-key", apiKey);
-    
-    // Tenta salvar a configuração no banco de dados se possível
-    this.saveConfigToDatabase();
-  }
-
-  getApiKey() {
-    // Sempre verifique o storage primeiro, caso tenha sido atualizado em outra aba
-    if (!this.apiKeyCache) {
-      this.apiKeyCache = storageService.getItem<string>("admin-supabase-api-key");
-    }
-    return this.apiKeyCache;
-  }
-
-  setUrl(url: string) {
-    this.urlCache = url;
-    storageService.setItem("admin-supabase-url", url);
-    
-    // Tenta salvar a configuração no banco de dados se possível
-    this.saveConfigToDatabase();
-  }
-
-  getUrl() {
-    // Sempre verifique o storage primeiro, caso tenha sido atualizado em outra aba
-    if (!this.urlCache) {
-      this.urlCache = storageService.getItem<string>("admin-supabase-url");
-    }
-    return this.urlCache;
-  }
-
-  isConfigured() {
-    return !!this.getApiKey() && !!this.getUrl();
-  }
-
-  // Método para testar a conexão com o Supabase
-  async testConnection() {
-    const url = this.getUrl();
-    const key = this.getApiKey();
-    
-    if (!url || !key) {
-      toast.error("URL e chave API do Supabase são necessários");
-      return false;
-    }
-
-    try {
-      // Requisição simples para verificar se as credenciais são válidas
-      const response = await fetch(`${url}/rest/v1/`, {
-        method: "GET",
-        headers: {
-          "apikey": key,
-          "Authorization": `Bearer ${key}`
-        }
-      });
-
-      if (response.ok) {
-        return true;
-      } else {
-        console.error("Erro ao conectar com Supabase:", await response.text());
-        return false;
-      }
-    } catch (error) {
-      console.error("Erro ao testar conexão com Supabase:", error);
-      return false;
-    }
-  }
-  
-  // Changed from private to public so it can be accessed from outside the class
+/**
+ * Manages Supabase settings storage and retrieval
+ */
+class SupabaseSettingsService {
   async saveConfigToDatabase() {
-    const url = this.getUrl();
-    const key = this.getApiKey();
+    const url = supabaseConfigService.getUrl();
+    const key = supabaseConfigService.getApiKey();
     
     if (!url || !key) {
       console.log("Configuração incompleta, não é possível salvar no banco");
@@ -187,8 +113,8 @@ class SupabaseService {
   
   // Carrega a configuração do banco de dados (se conectado)
   async loadConfigFromDatabase(): Promise<boolean> {
-    const url = this.getUrl();
-    const key = this.getApiKey();
+    const url = supabaseConfigService.getUrl();
+    const key = supabaseConfigService.getApiKey();
     
     if (!url || !key) {
       console.log("Configuração incompleta, não é possível carregar do banco");
@@ -215,13 +141,11 @@ class SupabaseService {
       if (config && config.length > 0) {
         // Atualiza o localStorage e os caches com os valores do banco
         if (config[0].supabase_url) {
-          this.urlCache = config[0].supabase_url;
-          storageService.setItem("admin-supabase-url", config[0].supabase_url);
+          supabaseConfigService.setUrl(config[0].supabase_url);
         }
         
         if (config[0].supabase_key) {
-          this.apiKeyCache = config[0].supabase_key;
-          storageService.setItem("admin-supabase-api-key", config[0].supabase_key);
+          supabaseConfigService.setApiKey(config[0].supabase_key);
         }
         
         if (config[0].openai_key) {
@@ -240,5 +164,4 @@ class SupabaseService {
   }
 }
 
-// Exporta uma instância única do serviço
-export const supabaseService = new SupabaseService();
+export const supabaseSettingsService = new SupabaseSettingsService();
