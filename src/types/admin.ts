@@ -30,6 +30,8 @@ export interface AdminMetrics {
 
 export interface AdminSettings {
   openAIApiKey?: string;
+  supabaseApiKey?: string;
+  supabaseUrl?: string;
   systemEmailAddress?: string;
   allowTrialAccounts: boolean;
   trialDurationDays: number;

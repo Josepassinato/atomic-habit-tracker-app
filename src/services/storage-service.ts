@@ -5,7 +5,7 @@
  * estendido para usar IndexedDB ou outra solução de armazenamento
  */
 
-type StorageKeys = "openai-api-key" | "user" | "admin-openai-api-key" | "language-preference";
+type StorageKeys = "openai-api-key" | "user" | "admin-openai-api-key" | "language-preference" | "admin-supabase-api-key" | "admin-supabase-url";
 
 class StorageService {
   private storagePrefix = "habitus-";

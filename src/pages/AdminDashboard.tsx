@@ -16,6 +16,8 @@ import AdminSettings from "@/components/admin-dashboard/AdminSettings";
 import AdminAnalytics from "@/components/admin-dashboard/AdminAnalytics";
 import { AdminMetrics, AdminSettings as AdminSettingsType } from "@/types/admin";
 import { getCurrentUser } from "@/utils/permissions";
+import { openAIService } from "@/services/openai-service";
+import { supabaseService } from "@/services/supabase-service";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -36,6 +38,8 @@ const AdminDashboard = () => {
   // Admin settings
   const [settings, setSettings] = useState<AdminSettingsType>({
     openAIApiKey: "",
+    supabaseApiKey: "",
+    supabaseUrl: "",
     systemEmailAddress: "admin@habitus.com",
     allowTrialAccounts: true,
     trialDurationDays: 14,
@@ -85,10 +89,28 @@ const AdminDashboard = () => {
       receitaMensal: 3988
     });
 
+    // Carregar configurações de APIs
+    const openAIKey = openAIService.getApiKey() || "";
+    const supabaseKey = supabaseService.getApiKey() || "";
+    const supabaseUrl = supabaseService.getUrl() || "";
+
     // Mock settings - in production, fetch from Supabase
     const savedSettings = localStorage.getItem("adminSettings");
     if (savedSettings) {
-      setSettings(JSON.parse(savedSettings));
+      const parsedSettings = JSON.parse(savedSettings);
+      setSettings({
+        ...parsedSettings,
+        openAIApiKey: openAIKey,
+        supabaseApiKey: supabaseKey,
+        supabaseUrl: supabaseUrl
+      });
+    } else {
+      setSettings(prev => ({
+        ...prev,
+        openAIApiKey: openAIKey,
+        supabaseApiKey: supabaseKey,
+        supabaseUrl: supabaseUrl
+      }));
     }
   };
 
