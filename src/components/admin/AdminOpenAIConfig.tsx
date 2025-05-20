@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,14 +8,17 @@ import { toast } from "sonner";
 import { openAIService } from "@/services/openai-service";
 
 const AdminOpenAIConfig: React.FC = () => {
-  const [apiKey, setApiKey] = useState<string>(() => {
-    return localStorage.getItem("admin-openai-api-key") || "";
-  });
+  const [apiKey, setApiKey] = useState<string>("");
+  
+  // Carrega a chave da API ao montar o componente
+  useEffect(() => {
+    const savedKey = openAIService.getApiKey() || "";
+    setApiKey(savedKey);
+  }, []);
 
   const salvarApiKey = () => {
     try {
       if (apiKey.trim()) {
-        localStorage.setItem("admin-openai-api-key", apiKey);
         openAIService.setApiKey(apiKey);
         toast.success("Chave da API salva com sucesso!");
       } else {

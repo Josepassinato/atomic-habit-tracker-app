@@ -8,6 +8,7 @@ import LanguageSelector from "@/components/LanguageSelector";
 import { useLanguage } from "@/i18n";
 import { ArrowLeft, LogOut } from "lucide-react";
 import { toast } from "sonner";
+import { storageService } from "@/services/storage-service";
 
 interface HeaderProps {
   isLoggedIn?: boolean;
@@ -24,7 +25,7 @@ const Header: React.FC<HeaderProps> = ({ isLoggedIn = false, showBackButton = tr
   
   const handleLogout = () => {
     if (isLoggedIn) {
-      localStorage.removeItem('user');
+      storageService.removeItem('user');
       
       // Show toast message in the correct language
       const logoutMessages = {

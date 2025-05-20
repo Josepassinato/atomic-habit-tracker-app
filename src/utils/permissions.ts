@@ -1,5 +1,6 @@
 
 import { UserAuth, UserRole } from "@/types/auth";
+import { storageService } from "@/services/storage-service";
 
 /**
  * Verifica se o usuário possui a permissão necessária
@@ -27,16 +28,11 @@ export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): bo
 };
 
 /**
- * Obtém o usuário atual do localStorage
+ * Obtém o usuário atual do armazenamento persistente
  */
 export const getCurrentUser = (): UserAuth | null => {
-  const userString = localStorage.getItem("user");
-  if (!userString) {
-    return null;
-  }
-  
   try {
-    const user = JSON.parse(userString) as UserAuth;
+    const user = storageService.getItem<UserAuth>("user");
     return user;
   } catch (error) {
     console.error("Erro ao obter usuário:", error);

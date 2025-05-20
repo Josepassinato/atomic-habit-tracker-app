@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -32,16 +31,8 @@ const ConsultoriaIA = () => {
 
   const verificarApiKey = () => {
     if (!openAIService.getApiKey()) {
-      const apiKey = window.prompt("Por favor, insira sua chave da API da OpenAI para continuar:");
-      
-      if (apiKey) {
-        openAIService.setApiKey(apiKey);
-        toast.success("Chave da API configurada com sucesso!");
-        return true;
-      } else {
-        toast.error("Chave da API necessária para usar o assistente.");
-        return false;
-      }
+      toast.error("Chave da API necessária para usar o assistente. Configure nas Configurações.");
+      return false;
     }
     return true;
   };

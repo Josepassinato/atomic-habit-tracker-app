@@ -1,5 +1,6 @@
 
 import { toast } from "sonner";
+import { storageService } from "./storage-service";
 
 // Define o tipo para as respostas da OpenAI
 interface OpenAIResponse {
@@ -11,24 +12,28 @@ interface OpenAIResponse {
 }
 
 class OpenAIService {
-  private apiKey: string | null = null;
+  private apiKeyCache: string | null = null;
 
   constructor() {
-    // Tenta recuperar a chave da API do admin, se existir
-    this.apiKey = localStorage.getItem("admin-openai-api-key") || null;
+    // Tenta recuperar a chave da API do storage service
+    this.apiKeyCache = storageService.getItem<string>("admin-openai-api-key");
   }
 
   setApiKey(apiKey: string) {
-    this.apiKey = apiKey;
-    localStorage.setItem("admin-openai-api-key", apiKey);
+    this.apiKeyCache = apiKey;
+    storageService.setItem("admin-openai-api-key", apiKey);
   }
 
   getApiKey() {
-    return this.apiKey;
+    // Sempre verifique o storage primeiro, caso tenha sido atualizado em outra aba
+    if (!this.apiKeyCache) {
+      this.apiKeyCache = storageService.getItem<string>("admin-openai-api-key");
+    }
+    return this.apiKeyCache;
   }
 
   async generateText(prompt: string, systemPrompt: string = "Você é um assistente especializado em vendas e produtividade para equipes comerciais."): Promise<string> {
-    if (!this.apiKey) {
+    if (!this.getApiKey()) {
       toast.error("API da OpenAI não configurada pelo administrador");
       return "O administrador do sistema precisa configurar a chave da API da OpenAI para habilitar esta funcionalidade.";
     }
@@ -38,7 +43,7 @@ class OpenAIService {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${this.apiKey}`,
+          Authorization: `Bearer ${this.getApiKey()}`,
         },
         body: JSON.stringify({
           model: "gpt-4o",

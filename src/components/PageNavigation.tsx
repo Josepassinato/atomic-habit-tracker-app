@@ -5,6 +5,7 @@ import { ArrowLeft, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
+import { storageService } from '@/services/storage-service';
 
 const PageNavigation = () => {
   const navigate = useNavigate();
@@ -15,8 +16,8 @@ const PageNavigation = () => {
   };
   
   const handleLogout = () => {
-    // Clear user data from localStorage
-    localStorage.removeItem('user');
+    // Clear user data from storage service
+    storageService.removeItem('user');
     
     // Show toast message in the correct language
     const logoutMessages = {
