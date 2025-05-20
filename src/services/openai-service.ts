@@ -1,6 +1,7 @@
 
 import { toast } from "sonner";
 import { storageService } from "./storage-service";
+import { supabaseService } from "./supabase-service";
 
 // Define o tipo para as respostas da OpenAI
 interface OpenAIResponse {
@@ -22,6 +23,11 @@ class OpenAIService {
   setApiKey(apiKey: string) {
     this.apiKeyCache = apiKey;
     storageService.setItem("admin-openai-api-key", apiKey);
+    
+    // Tenta salvar a configuração no banco se o Supabase estiver configurado
+    if (supabaseService.isConfigured()) {
+      supabaseService.saveConfigToDatabase();
+    }
   }
 
   getApiKey() {

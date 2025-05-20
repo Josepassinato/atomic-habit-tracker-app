@@ -94,23 +94,45 @@ const AdminDashboard = () => {
     const supabaseKey = supabaseService.getApiKey() || "";
     const supabaseUrl = supabaseService.getUrl() || "";
 
-    // Mock settings - in production, fetch from Supabase
-    const savedSettings = localStorage.getItem("adminSettings");
-    if (savedSettings) {
-      const parsedSettings = JSON.parse(savedSettings);
-      setSettings({
-        ...parsedSettings,
-        openAIApiKey: openAIKey,
-        supabaseApiKey: supabaseKey,
-        supabaseUrl: supabaseUrl
-      });
+    // Tentativa de carregar configurações do banco de dados
+    if (supabaseKey && supabaseUrl) {
+      try {
+        await supabaseService.loadConfigFromDatabase();
+        // Após carregar do banco, atualizamos as variáveis locais novamente
+        const refreshedOpenAIKey = openAIService.getApiKey() || "";
+        const refreshedSupabaseKey = supabaseService.getApiKey() || "";
+        const refreshedSupabaseUrl = supabaseService.getUrl() || "";
+        
+        setSettings(prev => ({
+          ...prev,
+          openAIApiKey: refreshedOpenAIKey,
+          supabaseApiKey: refreshedSupabaseKey,
+          supabaseUrl: refreshedSupabaseUrl
+        }));
+        
+        console.log("Configurações carregadas do banco de dados");
+      } catch (error) {
+        console.error("Erro ao carregar configurações do banco:", error);
+      }
     } else {
-      setSettings(prev => ({
-        ...prev,
-        openAIApiKey: openAIKey,
-        supabaseApiKey: supabaseKey,
-        supabaseUrl: supabaseUrl
-      }));
+      // Se não há conexão com Supabase, carregamos do localStorage
+      const savedSettings = localStorage.getItem("adminSettings");
+      if (savedSettings) {
+        const parsedSettings = JSON.parse(savedSettings);
+        setSettings({
+          ...parsedSettings,
+          openAIApiKey: openAIKey,
+          supabaseApiKey: supabaseKey,
+          supabaseUrl: supabaseUrl
+        });
+      } else {
+        setSettings(prev => ({
+          ...prev,
+          openAIApiKey: openAIKey,
+          supabaseApiKey: supabaseKey,
+          supabaseUrl: supabaseUrl
+        }));
+      }
     }
   };
 
@@ -118,7 +140,14 @@ const AdminDashboard = () => {
   const saveSettings = (newSettings: AdminSettingsType) => {
     setSettings(newSettings);
     localStorage.setItem("adminSettings", JSON.stringify(newSettings));
-    toast.success("Configurações salvas com sucesso");
+    
+    // Se o Supabase estiver configurado, tentamos salvar no banco também
+    if (supabaseService.isConfigured()) {
+      supabaseService.saveConfigToDatabase();
+      toast.success("Configurações salvas com sucesso no banco de dados");
+    } else {
+      toast.success("Configurações salvas localmente");
+    }
   };
 
   if (loading) {
