@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
 import Login from "./pages/Login";
 import Registro from "./pages/Registro";
+import RecuperarSenha from "./pages/RecuperarSenha"; // Adiciona a nova página
 import Onboarding from "./pages/Onboarding";
 import Dashboard from "./pages/Dashboard";
 import Admin from "./pages/Admin";
@@ -70,6 +71,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/recuperar-senha" element={<RecuperarSenha />} /> {/* Nova rota */}
         
         {/* Rotas protegidas */}
         <Route 

@@ -1,4 +1,3 @@
-
 // English translations
 export const enTranslations = {
   // Header
@@ -69,6 +68,21 @@ export const enTranslations = {
   invalidCredentials: "Invalid credentials",
   loginError: "Error logging in",
   checkCredentials: "Check your credentials and try again.",
+  
+  // Password recovery
+  recoverPassword: "Recover password",
+  passwordRecoveryEnterEmail: "Enter your email and we'll send you instructions to reset your password",
+  passwordRecoveryEmailSent: "Recovery email sent",
+  passwordRecoveryCheckEmail: "Please check your email for instructions on how to reset your password",
+  passwordRecoveryEmailSentDesc: "We've sent recovery instructions to your email",
+  passwordRecoveryFollowInstructions: "Follow the link in the email to reset your password. If you don't see the email, check your spam folder.",
+  passwordRecoveryError: "Error requesting password recovery",
+  passwordRecoveryTryAgain: "Please try again or contact support if the problem persists.",
+  sendRecoveryEmail: "Send recovery email",
+  sending: "Sending...",
+  tryAnotherEmail: "Try with another email",
+  rememberPassword: "Remember your password? Sign in",
+  backToLogin: "Back to login",
   
   // Not found
   notFoundTitle: "Oops! Page not found",

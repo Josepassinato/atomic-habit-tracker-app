@@ -1,4 +1,3 @@
-
 // Spanish translations
 export const esTranslations = {
   // Header
@@ -69,6 +68,21 @@ export const esTranslations = {
   invalidCredentials: "Credenciales inválidas",
   loginError: "Error al iniciar sesión",
   checkCredentials: "Verifica tus credenciales e intenta nuevamente.",
+  
+  // Password recovery
+  recoverPassword: "Recuperar contraseña",
+  passwordRecoveryEnterEmail: "Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña",
+  passwordRecoveryEmailSent: "Correo de recuperación enviado",
+  passwordRecoveryCheckEmail: "Por favor revisa tu correo electrónico para obtener instrucciones sobre cómo restablecer tu contraseña",
+  passwordRecoveryEmailSentDesc: "Hemos enviado instrucciones de recuperación a tu correo electrónico",
+  passwordRecoveryFollowInstructions: "Sigue el enlace en el correo electrónico para restablecer tu contraseña. Si no ves el correo, revisa tu carpeta de spam.",
+  passwordRecoveryError: "Error al solicitar recuperación de contraseña",
+  passwordRecoveryTryAgain: "Por favor intenta nuevamente o contacta al soporte si el problema persiste.",
+  sendRecoveryEmail: "Enviar correo de recuperación",
+  sending: "Enviando...",
+  tryAnotherEmail: "Intentar con otro correo",
+  rememberPassword: "¿Recuerdas tu contraseña? Inicia sesión",
+  backToLogin: "Volver al inicio de sesión",
   
   // Not found
   notFoundTitle: "¡Ups! Página no encontrada",
