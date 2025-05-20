@@ -88,67 +88,16 @@ export const useTeamDashboard = () => {
         }
         
         setTeamMetrics(metrics);
-        // Store in localStorage for offline mode
-        localStorage.setItem('team-metrics', JSON.stringify(metrics));
       } else {
-        // Fallback to localStorage
-        const savedMetrics = localStorage.getItem('team-metrics');
-        if (savedMetrics) {
-          setTeamMetrics(JSON.parse(savedMetrics));
-        } else {
-          // If no saved data, use sample data
-          generateSampleData();
-        }
+        setTeamMetrics([]);
+        toast.error("Configuração do Supabase não encontrada. Conecte-se para visualizar dados.");
       }
     } catch (error) {
       console.error("Erro ao buscar métricas das equipes:", error);
       toast.error("Não foi possível carregar as métricas das equipes");
-      
-      // Generate sample data as fallback
-      generateSampleData();
+      setTeamMetrics([]);
     } finally {
       setLoading(false);
-    }
-  };
-  
-  const generateSampleData = async () => {
-    try {
-      // Fallback to sample data - first try to get teams
-      const { data: equipes } = supabase 
-        ? await supabase.from('equipes').select('*')
-        : { data: null };
-      
-      const teams = equipes || [
-        { id: "1", nome: "Equipe Comercial" },
-        { id: "2", nome: "Equipe de Sucesso do Cliente" }
-      ];
-      
-      const sampleMetrics = teams.map(equipe => {
-        const metaTotal = Math.floor(Math.random() * 200000) + 100000;
-        const progressoMeta = Math.floor(Math.random() * 100);
-        const metaAtual = Math.floor((metaTotal * progressoMeta) / 100);
-        const habitosTotal = Math.floor(Math.random() * 10) + 5;
-        const progressoHabitos = Math.floor(Math.random() * 100);
-        const habitosConcluidos = Math.floor((habitosTotal * progressoHabitos) / 100);
-        
-        return {
-          id: equipe.id,
-          nome: equipe.nome,
-          vendedores: Math.floor(Math.random() * 10) + 2,
-          metaTotal,
-          metaAtual,
-          progressoMeta,
-          habitosConcluidos,
-          habitosTotal,
-          progressoHabitos
-        };
-      });
-      
-      setTeamMetrics(sampleMetrics);
-      localStorage.setItem('team-metrics', JSON.stringify(sampleMetrics));
-    } catch (error) {
-      console.error("Erro ao gerar dados de amostra:", error);
-      setTeamMetrics([]);
     }
   };
   

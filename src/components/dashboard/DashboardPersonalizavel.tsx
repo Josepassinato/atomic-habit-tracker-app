@@ -14,6 +14,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { useSupabase } from "@/hooks/use-supabase";
 
 interface Widget {
   id: string;
@@ -28,7 +29,7 @@ interface DashboardPersonalizavelProps {
   children?: React.ReactNode;
 }
 
-const widgetsDisponiveis: Widget[] = [
+const defaultWidgets: Widget[] = [
   { id: "habitos", tipo: "habitos", titulo: "Hábitos Atômicos", tamanho: "medio", ativo: true, ordem: 1 },
   { id: "metas", tipo: "metas", titulo: "Metas de Vendas", tamanho: "medio", ativo: true, ordem: 2 },
   { id: "consultoria", tipo: "consultoria", titulo: "Consultoria IA", tamanho: "grande", ativo: true, ordem: 3 },
@@ -38,27 +39,95 @@ const widgetsDisponiveis: Widget[] = [
 ];
 
 const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ children }) => {
-  const [widgets, setWidgets] = useState<Widget[]>(() => {
-    const savedWidgets = localStorage.getItem("dashboard-widgets");
-    return savedWidgets ? JSON.parse(savedWidgets) : widgetsDisponiveis;
-  });
-  
+  const { supabase, isConfigured } = useSupabase();
+  const [widgets, setWidgets] = useState<Widget[]>(defaultWidgets);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
   
   useEffect(() => {
+    const fetchWidgets = async () => {
+      try {
+        setLoading(true);
+        
+        // Primeiro tenta carregar do localStorage
+        const savedWidgets = localStorage.getItem("dashboard-widgets");
+        if (savedWidgets) {
+          setWidgets(JSON.parse(savedWidgets));
+          setLoading(false);
+          return;
+        }
+        
+        // Se não houver dados no localStorage, busca do Supabase
+        if (supabase && isConfigured) {
+          const user = localStorage.getItem("user") 
+            ? JSON.parse(localStorage.getItem("user")!) 
+            : null;
+            
+          if (user) {
+            const { data, error } = await supabase
+              .from('user_dashboard_widgets')
+              .select('*')
+              .eq('user_id', user.id);
+              
+            if (error) throw error;
+            
+            if (data && data.length > 0) {
+              setWidgets(data[0].widgets);
+              localStorage.setItem("dashboard-widgets", JSON.stringify(data[0].widgets));
+            } else {
+              setWidgets(defaultWidgets);
+              localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
+            }
+          } else {
+            setWidgets(defaultWidgets);
+            localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
+          }
+        } else {
+          setWidgets(defaultWidgets);
+          localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
+        }
+      } catch (error) {
+        console.error("Erro ao carregar widgets do dashboard:", error);
+        setWidgets(defaultWidgets);
+        localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    fetchWidgets();
+  }, [supabase, isConfigured]);
+  
+  const saveWidgets = async (updatedWidgets: Widget[]) => {
     try {
-      localStorage.setItem("dashboard-widgets", JSON.stringify(widgets));
+      localStorage.setItem("dashboard-widgets", JSON.stringify(updatedWidgets));
+      
+      if (supabase && isConfigured) {
+        const user = localStorage.getItem("user") 
+          ? JSON.parse(localStorage.getItem("user")!) 
+          : null;
+          
+        if (user) {
+          await supabase
+            .from('user_dashboard_widgets')
+            .upsert(
+              { user_id: user.id, widgets: updatedWidgets },
+              { onConflict: 'user_id' }
+            );
+        }
+      }
     } catch (error) {
-      console.error("Erro ao salvar widgets no localStorage:", error);
+      console.error("Erro ao salvar widgets no armazenamento:", error);
     }
-  }, [widgets]);
+  };
   
   const toggleWidget = (id: string) => {
-    setWidgets(
-      widgets.map(widget => 
-        widget.id === id ? { ...widget, ativo: !widget.ativo } : widget
-      )
+    const updatedWidgets = widgets.map(widget => 
+      widget.id === id ? { ...widget, ativo: !widget.ativo } : widget
     );
+    
+    setWidgets(updatedWidgets);
+    saveWidgets(updatedWidgets);
   };
   
   const reordenarWidgets = () => {
@@ -72,6 +141,7 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
       }));
     
     setWidgets(novaOrdem);
+    saveWidgets(novaOrdem);
   };
   
   const handleSalvarLayout = () => {
@@ -108,6 +178,15 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
   const widgetsAtivos = [...widgets]
     .filter(widget => widget.ativo)
     .sort((a, b) => a.ordem - b.ordem);
+  
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center p-8">
+        <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+        <span className="ml-3">Carregando dashboard...</span>
+      </div>
+    );
+  }
   
   return (
     <>
@@ -190,7 +269,7 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
                   <CardTitle>{widget.titulo}</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {/* Aqui entraria o conteúdo do widget */}
+                  {/* O conteúdo real será renderizado pelo componente pai */}
                   <div className="h-40 flex items-center justify-center border border-dashed rounded-md">
                     <span className="text-muted-foreground">Conteúdo do widget {widget.tipo}</span>
                   </div>
