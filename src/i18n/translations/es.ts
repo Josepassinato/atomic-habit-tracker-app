@@ -1,3 +1,4 @@
+
 // Spanish translations
 export const esTranslations = {
   // Header
@@ -10,6 +11,7 @@ export const esTranslations = {
   register: "Registrarse",
   back: "Regresar",
   logout: "Cerrar Sesión",
+  onboarding: "Configuración de Equipo",
   
   // Landing page
   heroTitle: "Transforma tu",

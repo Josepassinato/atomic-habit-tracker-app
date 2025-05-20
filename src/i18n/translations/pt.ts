@@ -1,3 +1,4 @@
+
 // Portuguese translations
 export const ptTranslations = {
   // Header
@@ -10,6 +11,7 @@ export const ptTranslations = {
   register: "Registrar",
   back: "Voltar",
   logout: "Sair",
+  onboarding: "Configuração de Equipe",
   
   // Landing page
   heroTitle: "Transforme sua",

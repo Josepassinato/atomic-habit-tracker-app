@@ -100,6 +100,9 @@ const AppSidebar = () => {
           <NavItem to="/configuracoes" icon={Settings}>
             {t('settings')}
           </NavItem>
+          <NavItem to="/onboarding" icon={Settings}>
+            {t('onboarding')}
+          </NavItem>
           <NavItem to="/tutorial" icon={HelpCircle}>
             Tutorial
           </NavItem>

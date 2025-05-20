@@ -1,3 +1,4 @@
+
 // English translations
 export const enTranslations = {
   // Header
@@ -10,6 +11,7 @@ export const enTranslations = {
   register: "Register",
   back: "Back",
   logout: "Logout",
+  onboarding: "Team Setup",
   
   // Landing page
   heroTitle: "Transform your",
