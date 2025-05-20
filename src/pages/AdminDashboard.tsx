@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -17,7 +16,7 @@ import AdminAnalytics from "@/components/admin-dashboard/AdminAnalytics";
 import { AdminMetrics, AdminSettings as AdminSettingsType } from "@/types/admin";
 import { getCurrentUser } from "@/utils/permissions";
 import { openAIService } from "@/services/openai-service";
-import { supabaseService } from "@/services/supabase-service";
+import { supabaseService } from "@/services/supabase";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();

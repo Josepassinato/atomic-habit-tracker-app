@@ -15,7 +15,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { AdminSettings as AdminSettingsType } from "@/types/admin";
 import { toast } from "sonner";
-import { supabaseService } from "@/services/supabase-service";
+import { supabaseService } from "@/services/supabase";
 import { openAIService } from "@/services/openai-service";
 import { KeyRound, Database } from "lucide-react";
 

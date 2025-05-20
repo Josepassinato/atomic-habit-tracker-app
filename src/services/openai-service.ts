@@ -1,7 +1,7 @@
 
 import { toast } from "sonner";
 import { storageService } from "./storage-service";
-import { supabaseService } from "./supabase-service";
+import { supabaseService } from "./supabase";
 
 // Define o tipo para as respostas da OpenAI
 interface OpenAIResponse {
