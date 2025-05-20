@@ -3,17 +3,19 @@ import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Users, TrendingUp, Flag, RefreshCw } from "lucide-react";
+import { Users, TrendingUp, Flag, RefreshCw, CloudSync } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DashboardLoading } from "./DashboardLoading";
 import { useTeamDashboard } from "@/hooks/use-team-dashboard";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import { useSupabase } from "@/hooks/use-supabase";
 
 const TeamsDashboard: React.FC = () => {
   const { teamMetrics, loading, refreshTeamMetrics } = useTeamDashboard();
   const [isRefreshing, setIsRefreshing] = useState(false);
   const navigate = useNavigate();
+  const { isConfigured } = useSupabase();
 
   // Format to Brazilian Real
   const formatCurrency = (value: number) => {
@@ -40,7 +42,13 @@ const TeamsDashboard: React.FC = () => {
     <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-2xl font-bold">Desempenho das Equipes</h2>
-        <div className="flex gap-2">
+        <div className="flex gap-2 items-center">
+          {isConfigured && (
+            <Badge variant="outline" className="bg-green-50 text-green-700 flex items-center gap-1">
+              <CloudSync className="h-3 w-3" />
+              Sincronizado
+            </Badge>
+          )}
           <Button 
             variant="outline" 
             size="sm"
@@ -64,17 +72,36 @@ const TeamsDashboard: React.FC = () => {
         <Card>
           <CardContent className="py-6 text-center">
             <p className="text-muted-foreground">Nenhuma equipe encontrada. Verifique sua configuração de equipes.</p>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="mt-4"
-              onClick={() => {
-                toast.info("Para configurar equipes, acesse a página de onboarding.");
-                navigate('/onboarding');
-              }}
-            >
-              Configurar Equipes
-            </Button>
+            <div className="mt-4 space-y-2">
+              <Button 
+                variant="default" 
+                size="sm"
+                onClick={() => {
+                  navigate('/onboarding');
+                }}
+              >
+                Configurar Equipes
+              </Button>
+              
+              {!isConfigured && (
+                <div className="pt-4 border-t mt-4">
+                  <p className="text-sm text-amber-600 mb-2">
+                    <strong>Recomendação:</strong> Conecte ao Supabase para garantir que suas equipes sejam salvas na nuvem.
+                  </p>
+                  <Button 
+                    variant="outline"
+                    size="sm"
+                    className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
+                    onClick={() => {
+                      toast.info("Conecte-se ao Supabase através do botão verde no canto superior direito.");
+                    }}
+                  >
+                    <CloudSync className="h-4 w-4 mr-2" />
+                    Conectar ao Supabase
+                  </Button>
+                </div>
+              )}
+            </div>
           </CardContent>
         </Card>
       ) : (
