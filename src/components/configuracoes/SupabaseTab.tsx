@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { Database, Sync } from "lucide-react";
+import { Database, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useSupabase } from "@/hooks/use-supabase";
 import { supabaseService } from "@/services/supabase";
@@ -146,7 +145,7 @@ const SupabaseTab = () => {
             onClick={syncData}
             disabled={isSyncing}
           >
-            <Sync className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+            <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
             {isSyncing ? "Sincronizando..." : "Sincronizar Dados"}
           </Button>
         )}

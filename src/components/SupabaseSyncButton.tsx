@@ -1,7 +1,7 @@
 
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Database } from "lucide-react";
+import { Database, RefreshCw } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
 import { supabaseService } from "@/services/supabase";
@@ -59,7 +59,7 @@ const SupabaseSyncButton: React.FC<SupabaseSyncButtonProps> = ({
       disabled={isSyncing}
       className={`flex items-center gap-2 ${className}`}
     >
-      <Database className={`h-4 w-4 ${isSyncing ? 'animate-pulse' : ''}`} />
+      <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-pulse' : ''}`} />
       {isSyncing ? "Sincronizando..." : "Sincronizar Dados"}
     </Button>
   );

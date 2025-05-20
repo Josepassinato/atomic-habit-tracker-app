@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -117,7 +116,7 @@ const Relatorios = () => {
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
-      <Header isLoggedIn={true} />
+      <Header />
       <main className="container flex-1 py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">Relatórios e Acompanhamento</h1>

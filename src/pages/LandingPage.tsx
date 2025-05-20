@@ -11,7 +11,7 @@ import Footer from "@/components/sections/Footer";
 const LandingPage = () => {
   return (
     <div className="flex min-h-screen flex-col">
-      <Header isLoggedIn={false} showBackButton={false} />
+      <Header />
       <Hero />
       <Features />
       <Testimonials />
