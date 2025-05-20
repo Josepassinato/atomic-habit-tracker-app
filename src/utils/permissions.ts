@@ -33,6 +33,7 @@ export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): bo
 export const getCurrentUser = (): UserAuth | null => {
   try {
     const user = storageService.getItem<UserAuth>("user");
+    console.log("Current user from storage:", user);
     return user;
   } catch (error) {
     console.error("Erro ao obter usuário:", error);
@@ -47,6 +48,7 @@ export const getCurrentUser = (): UserAuth | null => {
  */
 export const canAccessRoute = (path: string): boolean => {
   const user = getCurrentUser();
+  console.log("Checking access for path:", path, "User:", user);
   
   // Rotas públicas
   if (path === '/' || path === '/login' || path === '/registro') {

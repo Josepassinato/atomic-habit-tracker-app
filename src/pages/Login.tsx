@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { UserAuth, UserRole } from "@/types/auth";
 import { getCurrentUser } from "@/utils/permissions";
 import { useLanguage } from "@/i18n";
+import { storageService } from "@/services/storage-service";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -66,19 +67,23 @@ const Login = () => {
           equipe_id: equipeId
         };
         
-        // Store user in localStorage
-        localStorage.setItem("user", JSON.stringify(userData));
+        // Store user in localStorage using the storage service
+        storageService.setItem("user", userData);
         
         toast.success(t('loginSuccess'), {
           description: t('welcomeMessage').replace('{{role}}', role),
         });
         
-        // Redirect based on role
-        if (role === 'admin') {
-          navigate("/admin");
-        } else {
-          navigate("/dashboard");
-        }
+        console.log("Login successful, redirecting to:", role === 'admin' ? "/admin" : "/dashboard");
+        
+        // Redirect based on role with a small delay to ensure storage is complete
+        setTimeout(() => {
+          if (role === 'admin') {
+            navigate("/admin");
+          } else {
+            navigate("/dashboard");
+          }
+        }, 100);
       } else {
         throw new Error(t('invalidCredentials'));
       }

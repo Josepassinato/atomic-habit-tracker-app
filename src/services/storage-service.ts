@@ -13,7 +13,7 @@ class StorageService {
   /**
    * Salva um valor no armazenamento persistente
    */
-  setItem(key: StorageKeys, value: any): void {
+  setItem<T>(key: StorageKeys, value: T): void {
     try {
       const storageKey = this.storagePrefix + key;
       
@@ -24,6 +24,7 @@ class StorageService {
         localStorage.setItem(storageKey, String(value));
       }
       
+      console.log(`Item '${key}' saved to storage`);
       // Aqui poderia sincronizar com o servidor se necessário
       // this.syncWithServer(key, value);
     } catch (error) {
@@ -64,6 +65,7 @@ class StorageService {
       const storageKey = this.storagePrefix + key;
       localStorage.removeItem(storageKey);
       
+      console.log(`Item '${key}' removed from storage`);
       // Aqui poderia sincronizar com o servidor se necessário
       // this.removeFromServer(key);
     } catch (error) {
