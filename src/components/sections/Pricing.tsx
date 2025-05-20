@@ -1,72 +1,131 @@
-import React from "react";
+
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/i18n";
+import { plansLimitService } from "@/services/plans-service";
+import { PlansConfiguration } from "@/types/admin";
 
 const Pricing = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
+  const [plansConfig, setPlansConfig] = useState<PlansConfiguration>(
+    plansLimitService.getPlansConfig()
+  );
+
+  // Carrega configurações de planos do serviço
+  useEffect(() => {
+    setPlansConfig(plansLimitService.getPlansConfig());
+  }, []);
 
   // Pricing features by language
-  const pricingFeatures = {
-    en: {
-      startup: ["Up to 5 sellers", "Basic goals and habits", "Integration with 1 CRM"],
-      business: ["Up to 15 sellers", "Advanced AI consulting", "Multiple CRM integrations", "Advanced reports"],
-      enterprise: ["Unlimited sellers", "Custom consulting", "Dedicated API", "Priority support"]
-    },
-    es: {
-      startup: ["Hasta 5 vendedores", "Metas y hábitos básicos", "Integración con 1 CRM"],
-      business: ["Hasta 15 vendedores", "Consultoría IA avanzada", "Integraciones con múltiples CRMs", "Informes avanzados"],
-      enterprise: ["Vendedores ilimitados", "Consultoría personalizada", "API dedicada", "Soporte prioritario"]
-    },
-    pt: {
-      startup: ["Até 5 vendedores", "Metas e hábitos básicos", "Integração com 1 CRM"],
-      business: ["Até 15 vendedores", "Consultoria IA avançada", "Integrações com múltiplos CRMs", "Relatórios avançados"],
-      enterprise: ["Vendedores ilimitados", "Consultoria personalizada", "API dedicada", "Suporte prioritário"]
-    }
+  const generatePricingFeatures = (lang: string) => {
+    const localizedFeatures: Record<string, Record<string, string[]>> = {
+      en: {
+        starter: [
+          `Up to ${plansConfig.starter.usersLimit} sellers`,
+          "Basic goals and habits",
+          `Integration with ${plansConfig.starter.features.crmIntegrations} CRM`
+        ],
+        professional: [
+          `Up to ${plansConfig.professional.usersLimit} sellers`,
+          plansConfig.professional.features.aiConsulting ? "Advanced AI consulting" : "Basic AI consulting",
+          `Multiple CRM integrations (${plansConfig.professional.features.crmIntegrations})`,
+          plansConfig.professional.features.advancedReports ? "Advanced reports" : "Basic reports"
+        ],
+        enterprise: [
+          `${plansConfig.enterprise.usersLimit}+ sellers`,
+          "Custom consulting",
+          plansConfig.enterprise.features.customApi ? "Dedicated API" : "API access",
+          plansConfig.enterprise.features.prioritySupport ? "Priority support" : "Premium support"
+        ]
+      },
+      es: {
+        starter: [
+          `Hasta ${plansConfig.starter.usersLimit} vendedores`,
+          "Metas y hábitos básicos",
+          `Integración con ${plansConfig.starter.features.crmIntegrations} CRM`
+        ],
+        professional: [
+          `Hasta ${plansConfig.professional.usersLimit} vendedores`,
+          plansConfig.professional.features.aiConsulting ? "Consultoría IA avanzada" : "Consultoría IA básica",
+          `Integraciones con múltiples CRMs (${plansConfig.professional.features.crmIntegrations})`,
+          plansConfig.professional.features.advancedReports ? "Informes avanzados" : "Informes básicos"
+        ],
+        enterprise: [
+          `${plansConfig.enterprise.usersLimit}+ vendedores`,
+          "Consultoría personalizada",
+          plansConfig.enterprise.features.customApi ? "API dedicada" : "Acceso API",
+          plansConfig.enterprise.features.prioritySupport ? "Soporte prioritario" : "Soporte premium"
+        ]
+      },
+      pt: {
+        starter: [
+          `Até ${plansConfig.starter.usersLimit} vendedores`,
+          "Metas e hábitos básicos",
+          `Integração com ${plansConfig.starter.features.crmIntegrations} CRM`
+        ],
+        professional: [
+          `Até ${plansConfig.professional.usersLimit} vendedores`,
+          plansConfig.professional.features.aiConsulting ? "Consultoria IA avançada" : "Consultoria IA básica",
+          `Integrações com múltiplos CRMs (${plansConfig.professional.features.crmIntegrations})`,
+          plansConfig.professional.features.advancedReports ? "Relatórios avançados" : "Relatórios básicos"
+        ],
+        enterprise: [
+          `${plansConfig.enterprise.usersLimit}+ vendedores`,
+          "Consultoria personalizada",
+          plansConfig.enterprise.features.customApi ? "API dedicada" : "Acesso API",
+          plansConfig.enterprise.features.prioritySupport ? "Suporte prioritário" : "Suporte premium"
+        ]
+      }
+    };
+
+    return localizedFeatures[lang] || localizedFeatures.en;
   };
+
+  const pricingFeatures = generatePricingFeatures(language);
 
   // Price displays
   const priceDisplay = {
     en: {
-      startup: "299",
-      business: "699",
-      enterprise: "1499"
+      starter: plansConfig.starter.price.toString(),
+      business: plansConfig.professional.price.toString(),
+      enterprise: plansConfig.enterprise.price.toString()
     },
     es: {
-      startup: "299",
-      business: "699",
-      enterprise: "1499"
+      starter: plansConfig.starter.price.toString(),
+      business: plansConfig.professional.price.toString(),
+      enterprise: plansConfig.enterprise.price.toString()
     },
     pt: {
-      startup: "299",
-      business: "699",
-      enterprise: "1499"
+      starter: plansConfig.starter.price.toString(),
+      business: plansConfig.professional.price.toString(),
+      enterprise: plansConfig.enterprise.price.toString()
     }
   };
 
   // Button texts
   const buttonTexts = {
     en: {
-      startup: "Start now",
+      starter: "Start now",
       business: "Choose Business",
       enterprise: "Talk to sales"
     },
     es: {
-      startup: "Comenzar ahora",
+      starter: "Comenzar ahora",
       business: "Elegir Business",
       enterprise: "Hablar con ventas"
     },
     pt: {
-      startup: "Começar agora",
+      starter: "Começar agora",
       business: "Escolher Business",
       enterprise: "Falar com vendas"
     }
   };
 
-  const currentFeatures = pricingFeatures[language];
+  const currentFeatures = pricingFeatures;
   const currentPrices = priceDisplay[language];
   const currentButtons = buttonTexts[language];
 
@@ -79,14 +138,14 @@ const Pricing = () => {
           <Card>
             <CardHeader>
               <CardTitle>{t('startupPlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">R${currentPrices.startup}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">R${currentPrices.starter}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('startupDesc')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-2">
-                {currentFeatures.startup.map((feature, index) => (
+                {currentFeatures.starter.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <Check className="mr-2 h-5 w-5 text-primary" />
                     <span>{feature}</span>
@@ -94,7 +153,7 @@ const Pricing = () => {
                 ))}
               </ul>
               <Button className="w-full" onClick={() => navigate("/registro")}>
-                {currentButtons.startup}
+                {currentButtons.starter}
               </Button>
             </CardContent>
           </Card>
@@ -112,7 +171,7 @@ const Pricing = () => {
             </CardHeader>
             <CardContent className="space-y-4">
               <ul className="space-y-2">
-                {currentFeatures.business.map((feature, index) => (
+                {currentFeatures.professional.map((feature, index) => (
                   <li key={index} className="flex items-start">
                     <Check className="mr-2 h-5 w-5 text-primary" />
                     <span>{feature}</span>

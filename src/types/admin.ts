@@ -37,3 +37,26 @@ export interface AdminSettings {
   trialDurationDays: number;
   defaultTokenLimit: number;
 }
+
+// Novas interfaces para os limites dos planos
+export interface PlanLimits {
+  tokensLimit: number;
+  usersLimit: number;
+  features: PlanFeatures;
+  price: number;
+}
+
+export interface PlanFeatures {
+  aiConsulting: boolean;
+  crmIntegrations: number;
+  advancedReports: boolean;
+  prioritySupport: boolean;
+  customApi: boolean;
+}
+
+export interface PlansConfiguration {
+  starter: PlanLimits;
+  professional: PlanLimits;
+  enterprise: PlanLimits;
+  trial: PlanLimits;
+}

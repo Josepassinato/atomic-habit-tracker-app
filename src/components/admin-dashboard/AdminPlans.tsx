@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -11,8 +11,58 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
+import { PlansConfiguration, PlanLimits } from "@/types/admin";
+import { plansLimitService } from "@/services/plans-service";
+import { toast } from "sonner";
 
 const AdminPlans = () => {
+  const [plansConfig, setPlansConfig] = useState<PlansConfiguration>(
+    plansLimitService.getPlansConfig()
+  );
+
+  const handleSavePlan = (planKey: keyof PlansConfiguration) => {
+    plansLimitService.savePlansConfig(plansConfig);
+    toast.success(`Plano ${planKey} atualizado com sucesso!`);
+  };
+
+  const handleInputChange = (
+    planKey: keyof PlansConfiguration,
+    field: keyof PlanLimits | string,
+    value: number | boolean
+  ) => {
+    if (field.includes('.')) {
+      // Para campos aninhados como "features.aiConsulting"
+      const [parentField, childField] = field.split('.');
+      setPlansConfig((prev) => ({
+        ...prev,
+        [planKey]: {
+          ...prev[planKey],
+          [parentField]: {
+            ...prev[planKey][parentField as keyof PlanLimits],
+            [childField]: value
+          }
+        }
+      }));
+    } else {
+      // Para campos simples como "tokensLimit"
+      setPlansConfig((prev) => ({
+        ...prev,
+        [planKey]: {
+          ...prev[planKey],
+          [field]: value
+        }
+      }));
+    }
+  };
+
+  // Salvar se houver alterações ao desmontar o componente
+  useEffect(() => {
+    return () => {
+      plansLimitService.savePlansConfig(plansConfig);
+    };
+  }, [plansConfig]);
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
       <Card>
@@ -25,19 +75,47 @@ const AdminPlans = () => {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="starter-price">Preço mensal (R$)</Label>
-            <Input id="starter-price" defaultValue="197" />
+            <Input 
+              id="starter-price" 
+              value={plansConfig.starter.price} 
+              onChange={(e) => handleInputChange('starter', 'price', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="starter-tokens">Limite de tokens</Label>
-            <Input id="starter-tokens" defaultValue="50000" />
+            <Input 
+              id="starter-tokens" 
+              value={plansConfig.starter.tokensLimit}
+              onChange={(e) => handleInputChange('starter', 'tokensLimit', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="starter-users">Limite de usuários</Label>
-            <Input id="starter-users" defaultValue="5" />
+            <Input 
+              id="starter-users" 
+              value={plansConfig.starter.usersLimit}
+              onChange={(e) => handleInputChange('starter', 'usersLimit', parseInt(e.target.value) || 0)}
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="starter-ai"
+              checked={plansConfig.starter.features.aiConsulting}
+              onCheckedChange={(checked) => handleInputChange('starter', 'features.aiConsulting', checked)}
+            />
+            <Label htmlFor="starter-ai">Consultoria IA</Label>
+          </div>
+          <div>
+            <Label htmlFor="starter-crm">Integrações CRM</Label>
+            <Input 
+              id="starter-crm" 
+              value={plansConfig.starter.features.crmIntegrations}
+              onChange={(e) => handleInputChange('starter', 'features.crmIntegrations', parseInt(e.target.value) || 0)}
+            />
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Salvar alterações</Button>
+          <Button className="w-full" onClick={() => handleSavePlan('starter')}>Salvar alterações</Button>
         </CardFooter>
       </Card>
       
@@ -51,19 +129,47 @@ const AdminPlans = () => {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="pro-price">Preço mensal (R$)</Label>
-            <Input id="pro-price" defaultValue="497" />
+            <Input 
+              id="pro-price" 
+              value={plansConfig.professional.price}
+              onChange={(e) => handleInputChange('professional', 'price', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="pro-tokens">Limite de tokens</Label>
-            <Input id="pro-tokens" defaultValue="100000" />
+            <Input 
+              id="pro-tokens" 
+              value={plansConfig.professional.tokensLimit}
+              onChange={(e) => handleInputChange('professional', 'tokensLimit', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="pro-users">Limite de usuários</Label>
-            <Input id="pro-users" defaultValue="15" />
+            <Input 
+              id="pro-users" 
+              value={plansConfig.professional.usersLimit}
+              onChange={(e) => handleInputChange('professional', 'usersLimit', parseInt(e.target.value) || 0)}
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="pro-ai"
+              checked={plansConfig.professional.features.aiConsulting}
+              onCheckedChange={(checked) => handleInputChange('professional', 'features.aiConsulting', checked)}
+            />
+            <Label htmlFor="pro-ai">Consultoria IA</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="pro-reports"
+              checked={plansConfig.professional.features.advancedReports}
+              onCheckedChange={(checked) => handleInputChange('professional', 'features.advancedReports', checked)}
+            />
+            <Label htmlFor="pro-reports">Relatórios avançados</Label>
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Salvar alterações</Button>
+          <Button className="w-full" onClick={() => handleSavePlan('professional')}>Salvar alterações</Button>
         </CardFooter>
       </Card>
       
@@ -77,19 +183,55 @@ const AdminPlans = () => {
         <CardContent className="space-y-4">
           <div>
             <Label htmlFor="ent-price">Preço mensal (R$)</Label>
-            <Input id="ent-price" defaultValue="997" />
+            <Input 
+              id="ent-price" 
+              value={plansConfig.enterprise.price}
+              onChange={(e) => handleInputChange('enterprise', 'price', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="ent-tokens">Limite de tokens</Label>
-            <Input id="ent-tokens" defaultValue="500000" />
+            <Input 
+              id="ent-tokens" 
+              value={plansConfig.enterprise.tokensLimit}
+              onChange={(e) => handleInputChange('enterprise', 'tokensLimit', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="ent-users">Limite de usuários</Label>
-            <Input id="ent-users" defaultValue="50" />
+            <Input 
+              id="ent-users" 
+              value={plansConfig.enterprise.usersLimit}
+              onChange={(e) => handleInputChange('enterprise', 'usersLimit', parseInt(e.target.value) || 0)}
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="ent-ai"
+              checked={plansConfig.enterprise.features.aiConsulting}
+              onCheckedChange={(checked) => handleInputChange('enterprise', 'features.aiConsulting', checked)}
+            />
+            <Label htmlFor="ent-ai">Consultoria IA</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="ent-support"
+              checked={plansConfig.enterprise.features.prioritySupport}
+              onCheckedChange={(checked) => handleInputChange('enterprise', 'features.prioritySupport', checked)}
+            />
+            <Label htmlFor="ent-support">Suporte prioritário</Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="ent-api"
+              checked={plansConfig.enterprise.features.customApi}
+              onCheckedChange={(checked) => handleInputChange('enterprise', 'features.customApi', checked)}
+            />
+            <Label htmlFor="ent-api">API dedicada</Label>
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Salvar alterações</Button>
+          <Button className="w-full" onClick={() => handleSavePlan('enterprise')}>Salvar alterações</Button>
         </CardFooter>
       </Card>
       
@@ -103,19 +245,35 @@ const AdminPlans = () => {
         <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <Label htmlFor="trial-days">Duração (dias)</Label>
-            <Input id="trial-days" defaultValue="14" />
+            <Input 
+              id="trial-days" 
+              defaultValue="14" 
+            />
           </div>
           <div>
             <Label htmlFor="trial-tokens">Limite de tokens</Label>
-            <Input id="trial-tokens" defaultValue="25000" />
+            <Input 
+              id="trial-tokens" 
+              value={plansConfig.trial.tokensLimit}
+              onChange={(e) => handleInputChange('trial', 'tokensLimit', parseInt(e.target.value) || 0)}
+            />
           </div>
           <div>
             <Label htmlFor="trial-users">Limite de usuários</Label>
-            <Input id="trial-users" defaultValue="3" />
+            <Input 
+              id="trial-users" 
+              value={plansConfig.trial.usersLimit}
+              onChange={(e) => handleInputChange('trial', 'usersLimit', parseInt(e.target.value) || 0)}
+            />
           </div>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Salvar configurações de trial</Button>
+          <Button 
+            className="w-full"
+            onClick={() => handleSavePlan('trial')}
+          >
+            Salvar configurações de trial
+          </Button>
         </CardFooter>
       </Card>
     </div>
