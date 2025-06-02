@@ -36,83 +36,83 @@ const AdminUsers = () => {
     setLoading(true);
     
     try {
-      // Dados fictícios para fallback
+      // Mock data in English
       const mockCompanies: Company[] = [
         {
           id: "1",
-          nome: "TechSolutions Ltda",
-          segmento: "Tecnologia",
+          nome: "TechSolutions Ltd",
+          segmento: "Technology",
           plano: "Enterprise",
           data_cadastro: "2025-02-15",
           status: "ativo",
-          email_contato: "contato@techsolutions.com"
+          email_contato: "contact@techsolutions.com"
         },
         {
           id: "2",
-          nome: "Vendas Globais SA",
-          segmento: "Varejo",
+          nome: "Global Sales Corp",
+          segmento: "Retail",
           plano: "Professional",
           data_cadastro: "2025-03-21",
           status: "ativo",
-          email_contato: "adm@vendasglobais.com"
+          email_contato: "admin@globalsales.com"
         },
         {
           id: "3",
-          nome: "Marketing Digital Express",
+          nome: "Digital Marketing Express",
           segmento: "Marketing",
           plano: "Starter",
           data_cadastro: "2025-04-05",
           status: "trial",
-          email_contato: "info@mkdigital.com"
+          email_contato: "info@digitalmarketing.com"
         },
         {
           id: "4",
-          nome: "Consultoria Nexus",
-          segmento: "Consultoria",
+          nome: "Nexus Consulting",
+          segmento: "Consulting",
           plano: "Professional",
           data_cadastro: "2025-03-10",
           status: "ativo",
-          email_contato: "contato@nexus.com.br"
+          email_contato: "contact@nexus.com"
         },
         {
           id: "5",
-          nome: "Imobiliária Futuro",
-          segmento: "Imobiliário",
+          nome: "Future Real Estate",
+          segmento: "Real Estate",
           plano: "Starter",
           data_cadastro: "2025-02-28",
           status: "inativo",
-          email_contato: "vendas@imobiliariafuturo.com"
+          email_contato: "sales@futurerealestate.com"
         }
       ];
       
       if (supabase) {
-        // Buscar dados do Supabase
+        // Fetch data from Supabase
         const { data, error } = await supabase
           .from('empresas')
           .select('*');
         
         if (error) {
-          console.error("Erro ao buscar empresas:", error);
+          console.error("Error fetching companies:", error);
           throw error;
         }
         
         if (data && data.length > 0) {
           setCompanies(data);
         } else {
-          // Se não houver dados no Supabase, inicializa com dados padrão
+          // If no data in Supabase, initialize with default data
           const { error: insertError } = await supabase
             .from('empresas')
             .upsert(mockCompanies);
           
           if (insertError) {
-            console.error("Erro ao inserir empresas:", insertError);
+            console.error("Error inserting companies:", insertError);
             throw insertError;
           }
           
           setCompanies(mockCompanies);
         }
       } else {
-        // Fallback para dados locais
+        // Fallback to local data
         const savedCompanies = localStorage.getItem('admin_companies');
         if (savedCompanies) {
           setCompanies(JSON.parse(savedCompanies));
@@ -122,28 +122,28 @@ const AdminUsers = () => {
         }
       }
     } catch (error) {
-      console.error("Erro ao carregar empresas:", error);
-      toast.error("Não foi possível carregar a lista de empresas");
+      console.error("Error loading companies:", error);
+      toast.error("Unable to load company list");
       
-      // Fallback para dados mockados em caso de erro
+      // Fallback to mock data in case of error
       const mockCompanies: Company[] = [
         {
           id: "1",
-          nome: "TechSolutions Ltda",
-          segmento: "Tecnologia",
+          nome: "TechSolutions Ltd",
+          segmento: "Technology",
           plano: "Enterprise",
           data_cadastro: "2025-02-15",
           status: "ativo",
-          email_contato: "contato@techsolutions.com"
+          email_contato: "contact@techsolutions.com"
         },
         {
           id: "2",
-          nome: "Vendas Globais SA",
-          segmento: "Varejo",
+          nome: "Global Sales Corp",
+          segmento: "Retail",
           plano: "Professional",
           data_cadastro: "2025-03-21",
           status: "ativo",
-          email_contato: "adm@vendasglobais.com"
+          email_contato: "admin@globalsales.com"
         }
       ];
       
@@ -154,8 +154,8 @@ const AdminUsers = () => {
   };
   
   const handleAddCompany = () => {
-    // Implementação futura para adicionar empresas
-    toast.info("Funcionalidade de adicionar empresa em desenvolvimento");
+    // Future implementation for adding companies
+    toast.info("Add company functionality in development");
   };
   
   const filteredCompanies = companies.filter(company => 
@@ -167,40 +167,40 @@ const AdminUsers = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gerenciamento de Empresas</CardTitle>
+        <CardTitle>Company Management</CardTitle>
         <CardDescription>
-          Gerencie todas as empresas cadastradas na plataforma.
+          Manage all companies registered on the platform.
         </CardDescription>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Buscar empresas..."
+              placeholder="Search companies..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button onClick={handleAddCompany}>Adicionar Empresa</Button>
+          <Button onClick={handleAddCompany}>Add Company</Button>
         </div>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex justify-center p-4">
             <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-            <span className="ml-2">Carregando...</span>
+            <span className="ml-2">Loading...</span>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Segmento</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Segment</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Plano</TableHead>
+                <TableHead>Plan</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Data de Cadastro</TableHead>
+                <TableHead>Registration Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -220,21 +220,21 @@ const AdminUsers = () => {
                             : "bg-red-100 text-red-800"
                       }`}>
                         {company.status === "ativo" 
-                          ? "Ativo" 
+                          ? "Active" 
                           : company.status === "trial" 
                             ? "Trial" 
-                            : "Inativo"}
+                            : "Inactive"}
                       </span>
                     </TableCell>
                     <TableCell>
-                      {new Date(company.data_cadastro).toLocaleDateString("pt-BR")}
+                      {new Date(company.data_cadastro).toLocaleDateString("en-US")}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
                   <TableCell colSpan={6} className="text-center">
-                    Nenhuma empresa encontrada
+                    No companies found
                   </TableCell>
                 </TableRow>
               )}

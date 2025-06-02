@@ -98,15 +98,15 @@ const Vendedores = () => {
   };
 
   const adicionarVendedor = () => {
-    toast.success("Vendedor adicionado com sucesso!");
+    toast.success("Sales rep added successfully!");
   };
 
   const salvarVendedor = () => {
-    toast.success("Vendedor salvo com sucesso!");
+    toast.success("Sales rep saved successfully!");
   };
 
   const excluirVendedor = () => {
-    toast.success("Vendedor excluído com sucesso!");
+    toast.success("Sales rep deleted successfully!");
   };
 
   return (
@@ -116,29 +116,29 @@ const Vendedores = () => {
         <div className="mx-auto max-w-7xl space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold">Gerenciar Vendedores</h1>
+              <h1 className="text-3xl font-bold">Manage Sales Reps</h1>
               <p className="text-muted-foreground">
-                Acompanhe o desempenho e gerencie sua equipe de vendas
+                Track performance and manage your sales team
               </p>
             </div>
             <Button className="flex items-center gap-2">
               <Plus className="h-4 w-4" />
-              Adicionar Vendedor
+              Add Sales Rep
             </Button>
           </div>
 
           <Card>
             <CardHeader>
-              <CardTitle>Adicionar Novo Vendedor</CardTitle>
+              <CardTitle>Add New Sales Rep</CardTitle>
               <CardDescription>
-                Preencha os campos abaixo para adicionar um novo vendedor à sua
-                equipe.
+                Fill in the fields below to add a new sales rep to your
+                team.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="nome">Nome</Label>
+                  <Label htmlFor="nome">Name</Label>
                   <Input
                     type="text"
                     id="nome"
@@ -160,14 +160,14 @@ const Vendedores = () => {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="equipe">Equipe</Label>
+                  <Label htmlFor="equipe">Team</Label>
                   <select
                     id="equipe"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                     value={novoVendedor.equipeId}
                     onChange={handleEquipeChange}
                   >
-                    <option value="">Selecione uma equipe</option>
+                    <option value="">Select a team</option>
                     {equipes.map((equipe) => (
                       <option key={equipe.id} value={equipe.id}>
                         {equipe.name}
@@ -176,7 +176,7 @@ const Vendedores = () => {
                   </select>
                 </div>
                 <div>
-                  <Label htmlFor="meta">Meta Mensal</Label>
+                  <Label htmlFor="meta">Monthly Goal</Label>
                   <Input
                     type="number"
                     id="meta"
@@ -186,20 +186,20 @@ const Vendedores = () => {
                   />
                 </div>
               </div>
-              <Button onClick={adicionarVendedor}>Adicionar Vendedor</Button>
+              <Button onClick={adicionarVendedor}>Add Sales Rep</Button>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">
-                <CardTitle>Lista de Vendedores</CardTitle>
+                <CardTitle>Sales Reps List</CardTitle>
                 <select
                   className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                   value={filtroEquipe}
                   onChange={handleFiltroEquipeChange}
                 >
-                  <option value="">Todas as Equipes</option>
+                  <option value="">All Teams</option>
                   {equipes.map((equipe) => (
                     <option key={equipe.id} value={equipe.id}>
                       {equipe.name}
@@ -208,7 +208,7 @@ const Vendedores = () => {
                 </select>
               </div>
               <CardDescription>
-                Acompanhe o desempenho individual de cada vendedor.
+                Track individual performance of each sales rep.
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -217,22 +217,22 @@ const Vendedores = () => {
                   <thead>
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Nome
+                        Name
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Email
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Equipe
+                        Team
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Meta
+                        Goal
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Progresso
+                        Progress
                       </th>
                       <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Ações
+                        Actions
                       </th>
                     </tr>
                   </thead>
