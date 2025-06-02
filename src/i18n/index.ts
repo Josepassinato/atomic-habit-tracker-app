@@ -1,12 +1,13 @@
 
 import React from 'react';
 
-// Mock i18n system - everything returns English text directly
+// Enhanced i18n system with comprehensive English translations
 export const useLanguage = () => {
   return {
     t: (key: string) => {
-      // Simple key-to-text mapping for common translations
+      // Comprehensive key-to-text mapping for English translations
       const translations: Record<string, string> = {
+        // Navigation and general
         'dashboard': 'Dashboard',
         'habits': 'Habits',
         'goals': 'Goals',
@@ -15,6 +16,19 @@ export const useLanguage = () => {
         'onboarding': 'Onboarding',
         'logout': 'Logout',
         'back': 'Back',
+        'cancel': 'Cancel',
+        'save': 'Save',
+        'edit': 'Edit',
+        'delete': 'Delete',
+        'add': 'Add',
+        'remove': 'Remove',
+        'close': 'Close',
+        'open': 'Open',
+        'yes': 'Yes',
+        'no': 'No',
+        'loading': 'Loading...',
+        
+        // Progress and tracking
         'todayProgress': "Today's progress",
         'habitsOf': 'habits of',
         'verified': 'verified',
@@ -24,12 +38,29 @@ export const useLanguage = () => {
         'noHabitsYet': 'No habits created yet. Start building your success!',
         'suggestPersonalizedHabits': 'Suggest Personalized Habits',
         'atomicHabitsDaily': 'Daily Atomic Habits',
+        'atomicHabits': 'Atomic Habits',
+        'myHabits': 'My Habits',
+        'newHabit': 'New Habit',
+        'list': 'List',
+        'calendar': 'Calendar',
+        'performance': 'Performance',
+        'statistics': 'Statistics',
+        'completed': 'Completed',
+        'total': 'Total',
+        'weeklyProgress': 'Weekly Progress',
+        
+        // Notifications
         'notifications': 'Notifications',
+        'welcomeMessage': 'Welcome back, {{role}}!',
+        'dailyCompletion': 'You have 3 habits to complete today.',
+        
+        // Dashboard customization
         'customizeDashboard': 'Customize Dashboard',
         'selectWidgets': 'Select and reorder widgets to customize your dashboard',
         'layoutSaved': 'Layout saved successfully!',
-        'cancel': 'Cancel',
         'saveLayout': 'Save Layout',
+        
+        // Settings
         'notificationPreferences': 'Notification Preferences',
         'configureNotifications': 'Configure how you receive notifications',
         'emailNotifications': 'Email Notifications',
@@ -50,9 +81,14 @@ export const useLanguage = () => {
         'changePassword': 'Change Password',
         'twoFactorAuth': 'Two-Factor Authentication',
         'deleteAccount': 'Delete Account',
+        
+        // AI Features
         'aiFeatures': 'AI Features',
         'aiResourcesInfo': 'AI resources and integrations management',
         'aiManagedBySaas': 'AI features are managed by our SaaS platform and require no additional configuration.',
+        'aiHabitsFeedback': 'Great progress on your habits! Keep maintaining consistency to achieve your sales goals.',
+        
+        // Landing page
         'heroTitle': 'Transform Your Sales Performance with',
         'heroTitleHighlight': 'Smart AI',
         'heroDescription': 'Automate goals, track atomic habits, and receive intelligent rewards based on real performance',

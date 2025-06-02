@@ -29,19 +29,19 @@ export const useRelatorioData = () => {
     console.log("Generating report for period:", selectedPeriod);
   };
 
-  // Convert to expected format for Portuguese component names
-  const vendedoresFiltrados = filteredSalesReps.map(rep => ({
+  // Convert to expected format with English names
+  const filteredSalesRepsEnglish = filteredSalesReps.map(rep => ({
     id: rep.id,
-    nome: rep.name,
-    equipe: teams.find(t => t.id === rep.team_id)?.name || 'Unknown',
-    vendas: rep.total_sales,
-    meta: rep.current_goal,
-    conversao: rep.conversion_rate
+    name: rep.name,
+    team: teams.find(t => t.id === rep.team_id)?.name || 'Unknown',
+    sales: rep.total_sales,
+    goal: rep.current_goal,
+    conversion: rep.conversion_rate
   }));
 
-  const equipes = teams.map(team => ({
+  const teamsEnglish = teams.map(team => ({
     id: team.id,
-    nome: team.name
+    name: team.name
   }));
 
   return {
@@ -62,9 +62,9 @@ export const useRelatorioData = () => {
     generateReport,
     isLoading,
     
-    // Portuguese names for backward compatibility
-    equipes,
-    vendedoresFiltrados,
+    // Backward compatibility with Portuguese names (mapped to English data)
+    equipes: teamsEnglish,
+    vendedoresFiltrados: filteredSalesRepsEnglish,
     periodoSelecionado: selectedPeriod,
     setPeriodoSelecionado: setSelectedPeriod,
     equipeId: teamId,

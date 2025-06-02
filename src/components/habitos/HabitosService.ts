@@ -1,159 +1,159 @@
 
-import { Habito, ModeloNegocio } from "./types";
+import { Habito, BusinessModel } from "./types";
 
-export const habitosIniciais: Habito[] = [
+export const initialHabits: Habito[] = [
   {
     id: 1,
-    titulo: "Verify if contacts were registered in CRM",
-    descricao: "Check registration and data quality",
-    cumprido: false,
-    verificado: false,
-    verificacaoNecessaria: true,
-    horario: "09:00",
-    recorrencia: "daily"
+    title: "Verify if contacts were registered in CRM",
+    description: "Check registration and data quality",
+    completed: false,
+    verified: false,
+    verificationRequired: true,
+    schedule: "09:00",
+    recurrence: "daily"
   },
   {
     id: 2,
-    titulo: "Micro Dose Training",
-    descricao: "Read content and validate learning",
-    cumprido: false,
-    verificado: false,
-    verificacaoNecessaria: true,
-    horario: "15:00",
-    recorrencia: "daily"
+    title: "Micro Dose Training",
+    description: "Read content and validate learning",
+    completed: false,
+    verified: false,
+    verificationRequired: true,
+    schedule: "15:00",
+    recurrence: "daily"
   },
   {
     id: 3,
-    titulo: "CRM Insights Registration",
-    descricao: "Document important interactions",
-    cumprido: false,
-    verificado: false,
-    verificacaoNecessaria: true,
-    horario: "16:30",
-    recorrencia: "daily"
+    title: "CRM Insights Registration",
+    description: "Document important interactions",
+    completed: false,
+    verified: false,
+    verificationRequired: true,
+    schedule: "16:30",
+    recurrence: "daily"
   },
   {
     id: 4,
-    titulo: "End of Day",
-    descricao: "Reflection on achievements and improvements",
-    cumprido: false,
-    verificado: false,
-    verificacaoNecessaria: false,
-    horario: "18:00",
-    recorrencia: "daily"
+    title: "End of Day",
+    description: "Reflection on achievements and improvements",
+    completed: false,
+    verified: false,
+    verificationRequired: false,
+    schedule: "18:00",
+    recurrence: "daily"
   }
 ];
 
-export const getFeedbackIA = async (habitos: Habito[]): Promise<string> => {
-  const habitosCumpridos = habitos.filter(h => h.cumprido).length;
-  const totalHabitos = habitos.length;
-  const percentualCumprimento = (habitosCumpridos / totalHabitos) * 100;
+export const getAIFeedback = async (habits: Habito[]): Promise<string> => {
+  const completedHabits = habits.filter(h => h.completed).length;
+  const totalHabits = habits.length;
+  const completionPercentage = (completedHabits / totalHabits) * 100;
 
   await new Promise(resolve => setTimeout(resolve, 2000));
 
-  if (percentualCumprimento === 100) {
+  if (completionPercentage === 100) {
     return "Excellent! You completed all your habits today. This consistency will drive exceptional results in your sales performance.";
-  } else if (percentualCumprimento >= 75) {
+  } else if (completionPercentage >= 75) {
     return "Great progress! You're on the right track. Try to maintain this consistency to maximize your sales results.";
-  } else if (percentualCumprimento >= 50) {
+  } else if (completionPercentage >= 50) {
     return "Good start! To boost your sales performance, focus on completing more daily habits. Small consistent actions generate big results.";
   } else {
     return "There's room for improvement. Start with one habit at a time and build momentum gradually. Consistency is key to sales success.";
   }
 };
 
-export const gerarHabitosSugeridos = async (modelo: ModeloNegocio): Promise<Habito[]> => {
+export const generateSuggestedHabits = async (model: BusinessModel): Promise<Habito[]> => {
   await new Promise(resolve => setTimeout(resolve, 3000));
 
-  const habitosPorSegmento: Record<string, Habito[]> = {
+  const habitsBySegment: Record<string, Habito[]> = {
     "SaaS": [
       {
         id: Date.now() + 1,
-        titulo: "Daily Product Demo",
-        descricao: "Conduct live product demonstrations",
-        cumprido: false,
-        verificado: false,
-        verificacaoNecessaria: true,
-        horario: "10:00",
-        recorrencia: "daily"
+        title: "Daily Product Demo",
+        description: "Conduct live product demonstrations",
+        completed: false,
+        verified: false,
+        verificationRequired: true,
+        schedule: "10:00",
+        recurrence: "daily"
       },
       {
         id: Date.now() + 2,
-        titulo: "Customer Success Follow-up",
-        descricao: "Contact existing customers about satisfaction",
-        cumprido: false,
-        verificado: false,
-        verificacaoNecessaria: false,
-        horario: "14:00",
-        recorrencia: "daily"
+        title: "Customer Success Follow-up",
+        description: "Contact existing customers about satisfaction",
+        completed: false,
+        verified: false,
+        verificationRequired: false,
+        schedule: "14:00",
+        recurrence: "daily"
       }
     ],
     "E-commerce": [
       {
         id: Date.now() + 3,
-        titulo: "Marketplace Updates",
-        descricao: "Update product listings and promotions",
-        cumprido: false,
-        verificado: false,
-        verificacaoNecessaria: true,
-        horario: "08:00",
-        recorrencia: "daily"
+        title: "Marketplace Updates",
+        description: "Update product listings and promotions",
+        completed: false,
+        verified: false,
+        verificationRequired: true,
+        schedule: "08:00",
+        recurrence: "daily"
       },
       {
         id: Date.now() + 4,
-        titulo: "Conversion Analysis",
-        descricao: "Analyze conversion metrics and optimize",
-        cumprido: false,
-        verificado: false,
-        verificacaoNecessaria: false,
-        horario: "17:00",
-        recorrencia: "daily"
+        title: "Conversion Analysis",
+        description: "Analyze conversion metrics and optimize",
+        completed: false,
+        verified: false,
+        verificationRequired: false,
+        schedule: "17:00",
+        recurrence: "daily"
       }
     ],
     "Consulting": [
       {
         id: Date.now() + 5,
-        titulo: "Expertise Content",
-        descricao: "Create content demonstrating expertise",
-        cumprido: false,
-        verificado: false,
-        verificacaoNecessaria: true,
-        horario: "11:00",
-        recorrencia: "daily"
+        title: "Expertise Content",
+        description: "Create content demonstrating expertise",
+        completed: false,
+        verified: false,
+        verificationRequired: true,
+        schedule: "11:00",
+        recurrence: "daily"
       },
       {
         id: Date.now() + 6,
-        titulo: "Network Building",
-        descricao: "Connect with potential partners and clients",
-        cumprido: false,
-        verificado: false,
-        verificacaoNecessaria: false,
-        horario: "16:00",
-        recorrencia: "daily"
+        title: "Network Building",
+        description: "Connect with potential partners and clients",
+        completed: false,
+        verified: false,
+        verificationRequired: false,
+        schedule: "16:00",
+        recurrence: "daily"
       }
     ]
   };
 
-  return habitosPorSegmento[modelo.segmento] || [
+  return habitsBySegment[model.segment] || [
     {
       id: Date.now() + 7,
-      titulo: "Daily Prospecting",
-      descricao: "Research and contact new prospects",
-      cumprido: false,
-      verificado: false,
-      verificacaoNecessaria: true,
-      horario: "09:00",
-      recorrencia: "daily"
+      title: "Daily Prospecting",
+      description: "Research and contact new prospects",
+      completed: false,
+      verified: false,
+      verificationRequired: true,
+      schedule: "09:00",
+      recurrence: "daily"
     },
     {
       id: Date.now() + 8,
-      titulo: "Skills Development",
-      descricao: "Study sales techniques and market trends",
-      cumprido: false,
-      verificado: false,
-      verificacaoNecessaria: false,
-      horario: "13:00",
-      recorrencia: "daily"
+      title: "Skills Development",
+      description: "Study sales techniques and market trends",
+      completed: false,
+      verified: false,
+      verificationRequired: false,
+      schedule: "13:00",
+      recurrence: "daily"
     }
   ];
 };

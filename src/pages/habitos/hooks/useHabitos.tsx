@@ -5,104 +5,104 @@ import { Habito } from "@/components/habitos/types";
 import { HabitoEvidenciaType } from "@/components/habitos/HabitoEvidencia";
 import { toast } from "sonner";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
-import { habitosIniciais } from "@/components/habitos/HabitosService";
+import { initialHabits } from "@/components/habitos/HabitosService";
 import { TrendingUp, Zap, Award } from "lucide-react";
 
-type ConquistaRecente = {
+type RecentAchievement = {
   id: number;
-  titulo: string;
-  descricao: string;
-  icone: JSX.Element;
-  progresso: number;
-  completa: boolean;
+  title: string;
+  description: string;
+  icon: JSX.Element;
+  progress: number;
+  complete: boolean;
 };
 
 export const useHabitos = () => {
   const { adicionarNotificacao } = useNotificacoes();
   
   // State for achievements and points from gamification system
-  const [pontos, setPontos] = useState(150);
-  const [nivel, setNivel] = useState(2);
-  const [conquistasRecentes, setConquistasRecentes] = useState([
+  const [points, setPoints] = useState(150);
+  const [level, setLevel] = useState(2);
+  const [recentAchievements, setRecentAchievements] = useState([
     {
       id: 1,
-      titulo: "Weekly Consistency",
-      descricao: "Complete all habits for 5 consecutive days",
-      icone: <TrendingUp className="h-4 w-4 text-blue-600" />,
-      progresso: 60,
-      completa: false
+      title: "Weekly Consistency",
+      description: "Complete all habits for 5 consecutive days",
+      icon: <TrendingUp className="h-4 w-4 text-blue-600" />,
+      progress: 60,
+      complete: false
     },
     {
       id: 2,
-      titulo: "CRM Master",
-      descricao: "Update CRM for 10 consecutive days",
-      icone: <Zap className="h-4 w-4 text-amber-600" />,
-      progresso: 100,
-      completa: true
+      title: "CRM Master",
+      description: "Update CRM for 10 consecutive days",
+      icon: <Zap className="h-4 w-4 text-amber-600" />,
+      progress: 100,
+      complete: true
     },
     {
       id: 3,
-      titulo: "Healthy Pipeline",
-      descricao: "Maintain 20 active leads in pipeline",
-      icone: <Award className="h-4 w-4 text-purple-600" />,
-      progresso: 75,
-      completa: false
+      title: "Healthy Pipeline",
+      description: "Maintain 20 active leads in pipeline",
+      icon: <Award className="h-4 w-4 text-purple-600" />,
+      progress: 75,
+      complete: false
     }
   ]);
   
-  const [habitos, setHabitos] = useState<Habito[]>(() => {
+  const [habits, setHabits] = useState<Habito[]>(() => {
     const saved = localStorage.getItem("habits");
-    return saved ? JSON.parse(saved) : habitosIniciais;
+    return saved ? JSON.parse(saved) : initialHabits;
   });
   
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [habitosPorDia, setHabitosPorDia] = useState<Record<string, { total: number; completos: number }>>({});
+  const [habitsByDay, setHabitsByDay] = useState<Record<string, { total: number; completed: number }>>({});
 
   // Generate data for calendar
   useEffect(() => {
     // Generate mock data for calendar for last 30 days
     const today = new Date();
-    const dadosPorDia: Record<string, { total: number; completos: number }> = {};
+    const dataByDay: Record<string, { total: number; completed: number }> = {};
     
     // Fill with mock data
     for (let i = 0; i < 30; i++) {
-      const data = new Date();
-      data.setDate(today.getDate() - i);
-      const dataFormatada = format(data, "yyyy-MM-dd");
+      const date = new Date();
+      date.setDate(today.getDate() - i);
+      const formattedDate = format(date, "yyyy-MM-dd");
       
       // For past days, generate random data
       if (i > 0) {
-        const totalHabitos = 3;
-        const habitosCompletos = Math.floor(Math.random() * (totalHabitos + 1));
-        dadosPorDia[dataFormatada] = {
-          total: totalHabitos,
-          completos: habitosCompletos
+        const totalHabits = 3;
+        const completedHabits = Math.floor(Math.random() * (totalHabits + 1));
+        dataByDay[formattedDate] = {
+          total: totalHabits,
+          completed: completedHabits
         };
       } else {
         // For today, use real data
-        dadosPorDia[dataFormatada] = {
-          total: habitos.length,
-          completos: habitos.filter(h => h.cumprido).length
+        dataByDay[formattedDate] = {
+          total: habits.length,
+          completed: habits.filter(h => h.completed).length
         };
       }
     }
     
-    setHabitosPorDia(dadosPorDia);
-  }, [habitos]);
+    setHabitsByDay(dataByDay);
+  }, [habits]);
   
   // Save habits to localStorage whenever they change
   useEffect(() => {
-    localStorage.setItem("habits", JSON.stringify(habitos));
-  }, [habitos]);
+    localStorage.setItem("habits", JSON.stringify(habits));
+  }, [habits]);
 
   // Function to mark habits as completed
-  const handleMarcarConcluido = useCallback((id: number) => {
-    setHabitos(prev => prev.map(habito => 
-      habito.id === id ? { ...habito, cumprido: true } : habito
+  const handleMarkCompleted = useCallback((id: number) => {
+    setHabits(prev => prev.map(habit => 
+      habit.id === id ? { ...habit, completed: true } : habit
     ));
     
     // Add points when a habit is completed
-    setPontos(prev => prev + 10);
+    setPoints(prev => prev + 10);
     
     // Add notification
     adicionarNotificacao({
@@ -117,13 +117,13 @@ export const useHabitos = () => {
   }, [adicionarNotificacao]);
 
   // Function to register habit evidence
-  const handleEvidenciaSubmitted = useCallback((habitoId: number, evidencia: HabitoEvidenciaType) => {
-    setHabitos(prev => prev.map(habito => 
-      habito.id === habitoId ? { ...habito, evidencia } : habito
+  const handleEvidenceSubmitted = useCallback((habitId: number, evidence: HabitoEvidenciaType) => {
+    setHabits(prev => prev.map(habit => 
+      habit.id === habitId ? { ...habit, evidence } : habit
     ));
     
     // Add extra points for submitting evidence
-    setPontos(prev => prev + 5);
+    setPoints(prev => prev + 5);
     
     adicionarNotificacao({
       titulo: "Evidence submitted",
@@ -139,18 +139,18 @@ export const useHabitos = () => {
   }, []);
 
   // Function to add new habit
-  const handleAddNewHabito = useCallback(() => {
+  const handleAddNewHabit = useCallback(() => {
     // Add a new habit with unique ID
-    const novoHabito: Habito = {
-      id: Math.max(0, ...habitos.map(h => h.id)) + 1,
-      titulo: "New habit",
-      descricao: "Description of new habit",
-      cumprido: false,
-      horario: "10:00",
-      dataCriacao: new Date().toISOString()
+    const newHabit: Habito = {
+      id: Math.max(0, ...habits.map(h => h.id)) + 1,
+      title: "New habit",
+      description: "Description of new habit",
+      completed: false,
+      schedule: "10:00",
+      createdAt: new Date().toISOString()
     };
     
-    setHabitos(prev => [...prev, novoHabito]);
+    setHabits(prev => [...prev, newHabit]);
     
     adicionarNotificacao({
       titulo: "New habit added",
@@ -161,18 +161,26 @@ export const useHabitos = () => {
     toast.success("New habit added!", {
       description: "Configure the title and description by editing the habit."
     });
-  }, [habitos, adicionarNotificacao]);
+  }, [habits, adicionarNotificacao]);
 
   return {
-    habitos,
-    conquistasRecentes,
-    pontos,
-    nivel,
+    habitos: habits, // Keep Portuguese property name for backward compatibility
+    habits,
+    conquistasRecentes: recentAchievements, // Keep Portuguese property name for backward compatibility
+    recentAchievements,
+    pontos: points, // Keep Portuguese property name for backward compatibility
+    points,
+    nivel: level, // Keep Portuguese property name for backward compatibility
+    level,
     selectedDate,
-    habitosPorDia,
-    handleMarcarConcluido,
-    handleEvidenciaSubmitted,
+    habitosPorDia: habitsByDay, // Keep Portuguese property name for backward compatibility
+    habitsByDay,
+    handleMarcarConcluido: handleMarkCompleted, // Keep Portuguese name for backward compatibility
+    handleMarkCompleted,
+    handleEvidenciaSubmitted: handleEvidenceSubmitted, // Keep Portuguese name for backward compatibility
+    handleEvidenceSubmitted,
     handleCalendarDaySelect,
-    handleAddNewHabito
+    handleAddNewHabito: handleAddNewHabit, // Keep Portuguese name for backward compatibility
+    handleAddNewHabit
   };
 };

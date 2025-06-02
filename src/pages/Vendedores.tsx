@@ -12,100 +12,100 @@ import { toast } from "sonner";
 import { useTeams, useSalesReps } from "@/hooks/use-supabase";
 
 const Vendedores = () => {
-  const [vendedorSelecionado, setVendedorSelecionado] = useState<string>("");
-  const [filtroEquipe, setFiltroEquipe] = useState<string>("");
-  const [novoVendedor, setNovoVendedor] = useState({
-    nome: "",
+  const [selectedSalesRep, setSelectedSalesRep] = useState<string>("");
+  const [teamFilter, setTeamFilter] = useState<string>("");
+  const [newSalesRep, setNewSalesRep] = useState({
+    name: "",
     email: "",
-    equipeId: "",
-    meta: 100000
+    teamId: "",
+    goal: 100000
   });
 
-  const { teams: equipes, loading: loadingEquipes } = useTeams();
-  const { salesReps: vendedores, loading: loadingVendedores } = useSalesReps();
+  const { teams, loading: loadingTeams } = useTeams();
+  const { salesReps, loading: loadingSalesReps } = useSalesReps();
 
-  const vendedoresFiltrados = filtroEquipe
-    ? vendedores.filter((vendedor) => vendedor.team_id === filtroEquipe)
-    : vendedores;
+  const filteredSalesReps = teamFilter
+    ? salesReps.filter((salesRep) => salesRep.team_id === teamFilter)
+    : salesReps;
 
   const [editMode, setEditMode] = useState(false);
-  const [editingVendedorId, setEditingVendedorId] = useState<string | null>(null);
-  const [editingVendedor, setEditingVendedor] = useState({
-    nome: "",
+  const [editingSalesRepId, setEditingSalesRepId] = useState<string | null>(null);
+  const [editingSalesRep, setEditingSalesRep] = useState({
+    name: "",
     email: "",
-    equipeId: "",
-    meta: 100000
+    teamId: "",
+    goal: 100000
   });
 
   useEffect(() => {
-    if (vendedorSelecionado) {
-      const vendedor = vendedores.find((vendedor) => vendedor.id === vendedorSelecionado);
-      if (vendedor) {
-        setEditingVendedor({
-          nome: vendedor.name,
-          email: vendedor.email,
-          equipeId: vendedor.team_id,
-          meta: vendedor.current_goal
+    if (selectedSalesRep) {
+      const salesRep = salesReps.find((rep) => rep.id === selectedSalesRep);
+      if (salesRep) {
+        setEditingSalesRep({
+          name: salesRep.name,
+          email: salesRep.email,
+          teamId: salesRep.team_id,
+          goal: salesRep.current_goal
         });
       }
     }
-  }, [vendedorSelecionado, vendedores]);
+  }, [selectedSalesRep, salesReps]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNovoVendedor({
-      ...novoVendedor,
+    setNewSalesRep({
+      ...newSalesRep,
       [e.target.name]: e.target.value
     });
   };
 
   const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingVendedor({
-      ...editingVendedor,
+    setEditingSalesRep({
+      ...editingSalesRep,
       [e.target.name]: e.target.value
     });
   };
 
-  const handleEquipeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setNovoVendedor({
-      ...novoVendedor,
-      equipeId: e.target.value
+  const handleTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setNewSalesRep({
+      ...newSalesRep,
+      teamId: e.target.value
     });
   };
 
-  const handleEditEquipeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setEditingVendedor({
-      ...editingVendedor,
-      equipeId: e.target.value
+  const handleEditTeamChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEditingSalesRep({
+      ...editingSalesRep,
+      teamId: e.target.value
     });
   };
 
-  const handleMetaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setNovoVendedor({
-      ...novoVendedor,
-      meta: parseInt(e.target.value)
+  const handleGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewSalesRep({
+      ...newSalesRep,
+      goal: parseInt(e.target.value)
     });
   };
 
-  const handleEditMetaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEditingVendedor({
-      ...editingVendedor,
-      meta: parseInt(e.target.value)
+  const handleEditGoalChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingSalesRep({
+      ...editingSalesRep,
+      goal: parseInt(e.target.value)
     });
   };
 
-  const handleFiltroEquipeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    setFiltroEquipe(e.target.value);
+  const handleTeamFilterChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setTeamFilter(e.target.value);
   };
 
-  const adicionarVendedor = () => {
+  const addSalesRep = () => {
     toast.success("Sales rep added successfully!");
   };
 
-  const salvarVendedor = () => {
+  const saveSalesRep = () => {
     toast.success("Sales rep saved successfully!");
   };
 
-  const excluirVendedor = () => {
+  const deleteSalesRep = () => {
     toast.success("Sales rep deleted successfully!");
   };
 
@@ -131,19 +131,18 @@ const Vendedores = () => {
             <CardHeader>
               <CardTitle>Add New Sales Rep</CardTitle>
               <CardDescription>
-                Fill in the fields below to add a new sales rep to your
-                team.
+                Fill in the fields below to add a new sales rep to your team.
               </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="nome">Name</Label>
+                  <Label htmlFor="name">Name</Label>
                   <Input
                     type="text"
-                    id="nome"
-                    name="nome"
-                    value={novoVendedor.nome}
+                    id="name"
+                    name="name"
+                    value={newSalesRep.name}
                     onChange={handleInputChange}
                   />
                 </div>
@@ -153,40 +152,40 @@ const Vendedores = () => {
                     type="email"
                     id="email"
                     name="email"
-                    value={novoVendedor.email}
+                    value={newSalesRep.email}
                     onChange={handleInputChange}
                   />
                 </div>
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="equipe">Team</Label>
+                  <Label htmlFor="team">Team</Label>
                   <select
-                    id="equipe"
+                    id="team"
                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    value={novoVendedor.equipeId}
-                    onChange={handleEquipeChange}
+                    value={newSalesRep.teamId}
+                    onChange={handleTeamChange}
                   >
                     <option value="">Select a team</option>
-                    {equipes.map((equipe) => (
-                      <option key={equipe.id} value={equipe.id}>
-                        {equipe.name}
+                    {teams.map((team) => (
+                      <option key={team.id} value={team.id}>
+                        {team.name}
                       </option>
                     ))}
                   </select>
                 </div>
                 <div>
-                  <Label htmlFor="meta">Monthly Goal</Label>
+                  <Label htmlFor="goal">Monthly Goal</Label>
                   <Input
                     type="number"
-                    id="meta"
-                    name="meta"
-                    value={novoVendedor.meta}
-                    onChange={handleMetaChange}
+                    id="goal"
+                    name="goal"
+                    value={newSalesRep.goal}
+                    onChange={handleGoalChange}
                   />
                 </div>
               </div>
-              <Button onClick={adicionarVendedor}>Add Sales Rep</Button>
+              <Button onClick={addSalesRep}>Add Sales Rep</Button>
             </CardContent>
           </Card>
 
@@ -196,13 +195,13 @@ const Vendedores = () => {
                 <CardTitle>Sales Reps List</CardTitle>
                 <select
                   className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  value={filtroEquipe}
-                  onChange={handleFiltroEquipeChange}
+                  value={teamFilter}
+                  onChange={handleTeamFilterChange}
                 >
                   <option value="">All Teams</option>
-                  {equipes.map((equipe) => (
-                    <option key={equipe.id} value={equipe.id}>
-                      {equipe.name}
+                  {teams.map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.name}
                     </option>
                   ))}
                 </select>
@@ -237,28 +236,26 @@ const Vendedores = () => {
                     </tr>
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
-                    {vendedoresFiltrados.map((vendedor) => (
-                      <tr key={vendedor.id}>
+                    {filteredSalesReps.map((salesRep) => (
+                      <tr key={salesRep.id}>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm font-medium text-gray-900">
-                            {vendedor.name}
+                            {salesRep.name}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500">
-                            {vendedor.email}
+                            {salesRep.email}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500">
-                            {
-                              equipes.find((equipe) => equipe.id === vendedor.team_id)?.name
-                            }
+                            {teams.find((team) => team.id === salesRep.team_id)?.name}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500">
-                            ${vendedor.current_goal.toLocaleString()}
+                            ${salesRep.current_goal.toLocaleString()}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
@@ -277,12 +274,12 @@ const Vendedores = () => {
                             size="icon"
                             onClick={() => {
                               setEditMode(true);
-                              setVendedorSelecionado(vendedor.id);
+                              setSelectedSalesRep(salesRep.id);
                             }}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="ghost" size="icon" onClick={excluirVendedor}>
+                          <Button variant="ghost" size="icon" onClick={deleteSalesRep}>
                             <Trash2 className="h-4 w-4" />
                           </Button>
                         </td>
