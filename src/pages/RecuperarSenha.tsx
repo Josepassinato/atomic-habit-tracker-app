@@ -26,9 +26,9 @@ const RecuperarSenha = () => {
       // Simulate password recovery email
       await new Promise(resolve => setTimeout(resolve, 1000));
       setEnviado(true);
-      toast.success("Email de recuperação enviado!");
+      toast.success("Recovery email sent!");
     } catch (error) {
-      toast.error("Erro ao enviar email de recuperação");
+      toast.error("Error sending recovery email");
     } finally {
       setLoading(false);
     }
@@ -39,18 +39,18 @@ const RecuperarSenha = () => {
       <div className="p-4">
         <Button variant="ghost" size="sm" onClick={handleBack} className="flex items-center gap-2">
           <ArrowLeft size={16} />
-          Voltar
+          Back
         </Button>
       </div>
       
       <div className="flex-1 flex items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Recuperar senha</CardTitle>
+            <CardTitle className="text-2xl">Recover password</CardTitle>
             <CardDescription>
               {enviado 
-                ? "Verifique seu email para redefinir sua senha"
-                : "Digite seu email para receber as instruções"
+                ? "Check your email to reset your password"
+                : "Enter your email to receive instructions"
               }
             </CardDescription>
           </CardHeader>
@@ -62,35 +62,35 @@ const RecuperarSenha = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="seu@email.com"
+                    placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     required
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? "Enviando..." : "Enviar instruções"}
+                  {loading ? "Sending..." : "Send instructions"}
                 </Button>
               </form>
             ) : (
               <div className="text-center space-y-4">
                 <p className="text-sm text-muted-foreground">
-                  Enviamos um email para <strong>{email}</strong> com as instruções 
-                  para redefinir sua senha.
+                  We sent an email to <strong>{email}</strong> with instructions 
+                  to reset your password.
                 </p>
                 <Button
                   variant="outline"
                   onClick={() => setEnviado(false)}
                   className="w-full"
                 >
-                  Enviar novamente
+                  Send again
                 </Button>
               </div>
             )}
             
             <div className="mt-6 text-center">
               <Link to="/login" className="text-sm text-primary hover:underline">
-                Voltar para o login
+                Back to login
               </Link>
             </div>
           </CardContent>
