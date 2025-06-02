@@ -18,6 +18,7 @@ import Tutorial from "./pages/Tutorial";
 import Configuracoes from "./pages/Configuracoes";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import Header from "./components/Header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import AppSidebar from "@/components/AppSidebar";
 import { Toaster } from "sonner";
@@ -48,18 +49,21 @@ const ProtectedRoute = ({
   return <>{children}</>;
 };
 
-// Componente para aplicar o layout da aplicação com sidebar
+// Componente para aplicar o layout da aplicação com sidebar e header
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <SidebarProvider>
-      <div className="flex min-h-screen w-full bg-background">
-        <AppSidebar />
-        <div className="flex-1 overflow-auto">
-          <PageNavigation />
-          {children}
+    <div className="flex min-h-screen w-full bg-background">
+      <Header />
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full bg-background pt-16">
+          <AppSidebar />
+          <div className="flex-1 overflow-auto">
+            <PageNavigation />
+            {children}
+          </div>
         </div>
-      </div>
-    </SidebarProvider>
+      </SidebarProvider>
+    </div>
   );
 };
 
@@ -176,9 +180,7 @@ function App() {
           path="/relatorios" 
           element={
             <ProtectedRoute requiredRole="gerente">
-              <AppLayout>
-                <Relatorios />
-              </AppLayout>
+              <Relatorios />
             </ProtectedRoute>
           } 
         />
