@@ -57,8 +57,8 @@ const HabitsTracker: React.FC<HabitsTrackerProps> = ({ className }) => {
         <FeedbackIA feedback={feedback} />
         
         <SugestaoHabitosDialog
-          dialogAberto={dialogOpen}
-          setDialogAberto={setDialogOpen}
+          open={dialogOpen}
+          onOpenChange={setDialogOpen}
           modeloNegocio={businessModel}
           onInputChange={handleInputChange}
           habitosSugeridos={suggestedHabits}
