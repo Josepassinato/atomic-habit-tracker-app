@@ -85,15 +85,15 @@ const DashboardSummary = () => {
   }, [supabase, isConfigured, metaVendas, habitosCumpridos]);
 
   const getSalesGoalText = () => {
-    if (metaVendas >= 100) return t('complete') || "Complete";
-    if (metaVendas >= 80) return t('onTrack') || "On Track";
-    return t('inProgress') || "In Progress";
+    if (metaVendas >= 100) return "Complete";
+    if (metaVendas >= 80) return "On Track";
+    return "In Progress";
   };
 
   const getHabitsText = () => {
-    if (habitosCumpridos >= 90) return t('excellent') || "Excellent";
-    if (habitosCumpridos >= 70) return t('good') || "Good";
-    return t('needsImprovement') || "Needs Improvement";
+    if (habitosCumpridos >= 90) return "Excellent";
+    if (habitosCumpridos >= 70) return "Good";
+    return "Needs Improvement";
   };
 
   return (
@@ -107,7 +107,7 @@ const DashboardSummary = () => {
           {loading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">{t('loading') || "Loading..."}</span>
+              <span className="text-sm text-muted-foreground">Loading...</span>
             </div>
           ) : (
             <>
@@ -119,7 +119,7 @@ const DashboardSummary = () => {
               </div>
               <Progress className="mt-2" value={metaVendas} />
               <p className="mt-2 text-sm text-muted-foreground">
-                {t('currentBonus') || "Current bonus"}: {metaVendas >= 100 ? "3%" : metaVendas >= 80 ? "1.5%" : "0%"}
+                Current bonus: {metaVendas >= 100 ? "3%" : metaVendas >= 80 ? "1.5%" : "0%"}
               </p>
             </>
           )}
@@ -135,7 +135,7 @@ const DashboardSummary = () => {
           {loading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">{t('loading') || "Loading..."}</span>
+              <span className="text-sm text-muted-foreground">Loading...</span>
             </div>
           ) : (
             <>
@@ -147,7 +147,7 @@ const DashboardSummary = () => {
               </div>
               <Progress className="mt-2" value={habitosCumpridos} />
               <p className="mt-2 text-sm text-muted-foreground">
-                {t('currentBonus') || "Current bonus"}: {habitosCumpridos >= 90 ? "2%" : habitosCumpridos >= 70 ? "1%" : "0%"}
+                Current bonus: {habitosCumpridos >= 90 ? "2%" : habitosCumpridos >= 70 ? "1%" : "0%"}
               </p>
             </>
           )}
@@ -163,25 +163,25 @@ const DashboardSummary = () => {
           {loading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">{t('loading') || "Loading..."}</span>
+              <span className="text-sm text-muted-foreground">Loading...</span>
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between">
                 <div className="text-3xl font-bold">{bonusTotal}%</div>
-                <Badge>{t('monthlyReward') || "Monthly Reward"}</Badge>
+                <Badge>Monthly Reward</Badge>
               </div>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span>{t('salesGoal') || "Sales Goal"}</span>
+                  <span>Sales Goal</span>
                   <span className="font-medium">{metaVendas >= 100 ? "3.0%" : metaVendas >= 80 ? "1.5%" : "0.0%"}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>{t('habitsCompletion') || "Habits Completion"}</span>
+                  <span>Habits Completion</span>
                   <span className="font-medium">{habitosCumpridos >= 90 ? "2.0%" : habitosCumpridos >= 70 ? "1.0%" : "0.0%"}</span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-2 font-medium">
-                  <span>{t('total') || "Total"}</span>
+                  <span>Total</span>
                   <span>{bonusTotal}%</span>
                 </div>
               </div>
