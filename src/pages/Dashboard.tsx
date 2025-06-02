@@ -7,7 +7,7 @@ import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
-import TeamsDashboard from "@/components/dashboard/TeamsDashboard";
+import TeamsDashboardAvancado from "@/components/dashboard/TeamsDashboardAvancado";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 
 const Dashboard = () => {
@@ -75,7 +75,7 @@ const Dashboard = () => {
             </div>
           </div>
           
-          <TeamsDashboard />
+          <TeamsDashboardAvancado />
         </DashboardPersonalizavel>
       </main>
     </div>

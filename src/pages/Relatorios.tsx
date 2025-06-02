@@ -1,14 +1,17 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
 import { RelatorioDashboardCards } from "@/components/relatorios/RelatorioDashboardCards";
 import { RelatorioFiltros } from "@/components/relatorios/RelatorioFiltros";
 import { RelatorioTabs } from "@/components/relatorios/RelatorioTabs";
+import RelatoriosAvancados from "@/components/relatorios/RelatoriosAvancados";
+import NotificacoesEmpresa from "@/components/notificacoes/NotificacoesEmpresa";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useRelatorioData } from "@/hooks/useRelatorioData";
 import VerificacaoHabitos from "@/components/habitos/VerificacaoHabitos";
 import { Button } from "@/components/ui/button";
-import { Download, Mail } from "lucide-react";
+import { Download, Mail, Bell, BarChart3 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { toast } from "sonner";
@@ -28,10 +31,11 @@ const Relatorios = () => {
     totalMetas,
     percentualMeta,
     mediaConversao,
-    generateReport
+    generateReport,
+    isLoading
   } = useRelatorioData();
   
-  const [activeTab, setActiveTab] = useState<string>("desempenho");
+  const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
   const [emailDestino, setEmailDestino] = useState("");
 
@@ -119,7 +123,10 @@ const Relatorios = () => {
       <Header />
       <main className="container flex-1 py-6">
         <div className="flex justify-between items-center mb-6">
-          <h1 className="text-3xl font-bold">Relatórios e Acompanhamento</h1>
+          <div>
+            <h1 className="text-3xl font-bold">Painel da Empresa</h1>
+            <p className="text-muted-foreground">Relatórios, alertas e análises em tempo real</p>
+          </div>
           <div className="flex gap-2">
             <Button variant="outline" onClick={handleDownloadRelatorio} className="flex items-center gap-2">
               <Download className="h-4 w-4" />
@@ -134,17 +141,29 @@ const Relatorios = () => {
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="mb-2">
-            <TabsTrigger value="desempenho">Desempenho de Vendas</TabsTrigger>
+            <TabsTrigger value="dashboard" className="flex items-center gap-2">
+              <BarChart3 className="h-4 w-4" />
+              Dashboard
+            </TabsTrigger>
+            <TabsTrigger value="relatorios-avancados" className="flex items-center gap-2">
+              <Download className="h-4 w-4" />
+              Relatórios Avançados
+            </TabsTrigger>
+            <TabsTrigger value="notificacoes" className="flex items-center gap-2">
+              <Bell className="h-4 w-4" />
+              Notificações
+            </TabsTrigger>
             <TabsTrigger value="habitos">Verificação de Hábitos</TabsTrigger>
           </TabsList>
           
-          <TabsContent value="desempenho" className="space-y-6">
+          <TabsContent value="dashboard" className="space-y-6">
             {/* Card de resumo */}
             <RelatorioDashboardCards 
               totalVendas={totalVendas}
               totalMetas={totalMetas}
               percentualMeta={percentualMeta}
               mediaConversao={mediaConversao}
+              isLoading={isLoading}
             />
 
             {/* Filtros de relatório */}
@@ -164,6 +183,14 @@ const Relatorios = () => {
               vendedoresFiltrados={vendedoresFiltrados}
               equipes={equipes}
             />
+          </TabsContent>
+
+          <TabsContent value="relatorios-avancados">
+            <RelatoriosAvancados />
+          </TabsContent>
+
+          <TabsContent value="notificacoes">
+            <NotificacoesEmpresa />
           </TabsContent>
           
           <TabsContent value="habitos">
