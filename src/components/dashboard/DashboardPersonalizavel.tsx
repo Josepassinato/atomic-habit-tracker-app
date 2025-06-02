@@ -4,21 +4,19 @@ import { DashboardCustomizeDialog } from "./DashboardCustomizeDialog";
 import { DashboardWidgetGrid } from "./DashboardWidgetGrid";
 import { DashboardLoading } from "./DashboardLoading";
 import { useDashboardWidgets } from "./hooks/useDashboardWidgets";
-import { useLanguage } from "@/i18n";
 
-interface DashboardPersonalizavelProps {
+interface CustomizableDashboardProps {
   children?: React.ReactNode;
 }
 
-const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ children }) => {
+const CustomizableDashboard: React.FC<CustomizableDashboardProps> = ({ children }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
-  const { t } = useLanguage();
   const {
     widgets,
-    widgetsAtivos,
+    widgetsAtivos: activeWidgets,
     loading,
     toggleWidget,
-    reordenarWidgets,
+    reordenarWidgets: reorderWidgets,
     moveWidgetUp,
     moveWidgetDown
   } = useDashboardWidgets();
@@ -36,17 +34,17 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
           toggleWidget={toggleWidget}
           moveWidgetUp={moveWidgetUp}
           moveWidgetDown={moveWidgetDown}
-          reordenarWidgets={reordenarWidgets}
+          reordenarWidgets={reorderWidgets}
           open={dialogOpen}
           setOpen={setDialogOpen}
         />
       </div>
 
-      <DashboardWidgetGrid widgetsAtivos={widgetsAtivos} />
+      <DashboardWidgetGrid widgetsAtivos={activeWidgets} />
       
       {children}
     </>
   );
 };
 
-export default DashboardPersonalizavel;
+export default CustomizableDashboard;

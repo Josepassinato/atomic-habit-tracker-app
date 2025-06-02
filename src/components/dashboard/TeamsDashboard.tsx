@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -16,12 +17,12 @@ const TeamsDashboard: React.FC = () => {
   const navigate = useNavigate();
   const { isConfigured } = useSupabase();
 
-  // Format to Brazilian Real
+  // Format to USD currency
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
   };
 
-  // Força uma atualização ao montar o componente
+  // Force update when component mounts
   useEffect(() => {
     refreshTeamMetrics();
   }, []);
@@ -29,7 +30,7 @@ const TeamsDashboard: React.FC = () => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refreshTeamMetrics();
-    toast.success("Dados atualizados com sucesso!");
+    toast.success("Data updated successfully!");
     setIsRefreshing(false);
   };
 
@@ -40,12 +41,12 @@ const TeamsDashboard: React.FC = () => {
   return (
     <div className="mt-6">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold">Desempenho das Equipes</h2>
+        <h2 className="text-2xl font-bold">Team Performance</h2>
         <div className="flex gap-2 items-center">
           {isConfigured && (
             <Badge variant="outline" className="bg-green-50 text-green-700 flex items-center gap-1">
               <Database className="h-3 w-3" />
-              Sincronizado
+              Synchronized
             </Badge>
           )}
           <Button 
@@ -55,14 +56,14 @@ const TeamsDashboard: React.FC = () => {
             disabled={isRefreshing}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? "Atualizando..." : "Atualizar"}
+            {isRefreshing ? "Updating..." : "Refresh"}
           </Button>
           <Button 
             variant="default" 
             size="sm"
             onClick={() => navigate('/vendedores')}
           >
-            Ver Detalhes
+            View Details
           </Button>
         </div>
       </div>
@@ -70,7 +71,7 @@ const TeamsDashboard: React.FC = () => {
       {teamMetrics.length === 0 ? (
         <Card>
           <CardContent className="py-6 text-center">
-            <p className="text-muted-foreground">Nenhuma equipe encontrada. Verifique sua configuração de equipes.</p>
+            <p className="text-muted-foreground">No teams found. Check your team configuration.</p>
             <div className="mt-4 space-y-2">
               <Button 
                 variant="default" 
@@ -79,24 +80,24 @@ const TeamsDashboard: React.FC = () => {
                   navigate('/onboarding');
                 }}
               >
-                Configurar Equipes
+                Configure Teams
               </Button>
               
               {!isConfigured && (
                 <div className="pt-4 border-t mt-4">
                   <p className="text-sm text-amber-600 mb-2">
-                    <strong>Recomendação:</strong> Conecte ao Supabase para garantir que suas equipes sejam salvas na nuvem.
+                    <strong>Recommendation:</strong> Connect to Supabase to ensure your teams are saved in the cloud.
                   </p>
                   <Button 
                     variant="outline"
                     size="sm"
                     className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
                     onClick={() => {
-                      toast.info("Conecte-se ao Supabase através do botão verde no canto superior direito.");
+                      toast.info("Connect to Supabase through the green button in the top right corner.");
                     }}
                   >
                     <Database className="h-4 w-4 mr-2" />
-                    Conectar ao Supabase
+                    Connect to Supabase
                   </Button>
                 </div>
               )}
@@ -113,10 +114,10 @@ const TeamsDashboard: React.FC = () => {
                     <Users className="h-5 w-5 text-primary" />
                     {team.nome}
                   </CardTitle>
-                  <Badge variant="secondary">{team.vendedores} vendedores</Badge>
+                  <Badge variant="secondary">{team.vendedores} sales reps</Badge>
                 </div>
                 <CardDescription>
-                  {formatCurrency(team.metaAtual)} de {formatCurrency(team.metaTotal)}
+                  {formatCurrency(team.metaAtual)} of {formatCurrency(team.metaTotal)}
                 </CardDescription>
               </CardHeader>
               <CardContent className="pt-4">
@@ -125,7 +126,7 @@ const TeamsDashboard: React.FC = () => {
                     <div className="flex items-center justify-between mb-1">
                       <div className="text-sm font-medium flex items-center gap-1">
                         <TrendingUp className="h-4 w-4 text-primary" />
-                        Progresso da Meta
+                        Goal Progress
                       </div>
                       <span className={`text-sm font-bold ${team.progressoMeta >= 75 ? 'text-green-500' : team.progressoMeta >= 50 ? 'text-amber-500' : 'text-red-500'}`}>
                         {team.progressoMeta}%
@@ -138,10 +139,10 @@ const TeamsDashboard: React.FC = () => {
                     <div className="flex items-center justify-between mb-1">
                       <div className="text-sm font-medium flex items-center gap-1">
                         <Flag className="h-4 w-4 text-primary" />
-                        Hábitos Completados
+                        Habits Completed
                       </div>
                       <span className={`text-sm font-bold ${team.progressoHabitos >= 75 ? 'text-green-500' : team.progressoHabitos >= 50 ? 'text-amber-500' : 'text-red-500'}`}>
-                        {team.habitosConcluidos} de {team.habitosTotal} ({team.progressoHabitos}%)
+                        {team.habitosConcluidos} of {team.habitosTotal} ({team.progressoHabitos}%)
                       </span>
                     </div>
                     <Progress value={team.progressoHabitos} className="h-2" />
