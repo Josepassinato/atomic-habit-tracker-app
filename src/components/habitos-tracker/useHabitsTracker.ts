@@ -9,33 +9,42 @@ import { Habit, BusinessModel } from "../habits/types";
 const convertToEnglishHabits = (habitos: any[]): Habit[] => {
   return habitos.map(habito => ({
     id: habito.id,
-    titulo: habito.titulo,
-    descricao: habito.descricao,
-    cumprido: habito.cumprido,
-    horario: habito.horario,
+    titulo: habito.titulo || habito.title,
+    descricao: habito.descricao || habito.description,
+    cumprido: habito.cumprido !== undefined ? habito.cumprido : habito.completed,
+    horario: habito.horario || habito.schedule,
     evidencia: habito.evidencia ? {
-      type: habito.evidencia.tipo || 'text',
+      type: habito.evidencia.tipo === 'texto' ? 'text' : 
+            habito.evidencia.tipo === 'screenshot' ? 'screenshot' : 
+            habito.evidencia.tipo === 'arquivo' ? 'file' : 'text',
       content: habito.evidencia.conteudo || habito.evidencia.content || '',
       timestamp: habito.evidencia.timestamp || new Date().toISOString()
     } : undefined,
-    verificacaoNecessaria: habito.verificacaoNecessaria,
-    verificado: habito.verificado,
-    dataCriacao: habito.dataCriacao
+    verificacaoNecessaria: habito.verificacaoNecessaria !== undefined ? habito.verificacaoNecessaria : habito.verificationRequired,
+    verificado: habito.verificado !== undefined ? habito.verificado : habito.verified,
+    dataCriacao: habito.dataCriacao || habito.createdAt
   }));
 };
 
-// Map English evidence types to Portuguese
-const mapEvidenceTypeToPortuguese = (type: "text" | "screenshot" | "file"): "texto" | "screenshot" | "arquivo" => {
-  switch (type) {
-    case "text":
-      return "texto";
-    case "screenshot":
-      return "screenshot";
-    case "file":
-      return "arquivo";
-    default:
-      return "texto";
-  }
+// Convert English habits to Portuguese format for service calls
+const convertToPortugueseHabits = (habits: Habit[]) => {
+  return habits.map(habit => ({
+    id: habit.id,
+    titulo: habit.titulo,
+    descricao: habit.descricao,
+    cumprido: habit.cumprido,
+    horario: habit.horario,
+    evidencia: habit.evidencia ? {
+      tipo: habit.evidencia.type === 'text' ? 'texto' : 
+            habit.evidencia.type === 'screenshot' ? 'screenshot' : 
+            habit.evidencia.type === 'file' ? 'arquivo' : 'texto',
+      conteudo: habit.evidencia.content,
+      timestamp: habit.evidencia.timestamp
+    } : undefined,
+    verificacaoNecessaria: habit.verificacaoNecessaria,
+    verificado: habit.verificado,
+    dataCriacao: habit.dataCriacao
+  }));
 };
 
 export const useHabitsTracker = () => {
@@ -109,21 +118,7 @@ export const useHabitsTracker = () => {
     setLoadingFeedback(true);
     try {
       // Convert to Portuguese format for the service call
-      const habitosForService = habits.map(habit => ({
-        id: habit.id,
-        titulo: habit.titulo,
-        descricao: habit.descricao,
-        cumprido: habit.cumprido,
-        horario: habit.horario,
-        evidencia: habit.evidencia ? {
-          tipo: mapEvidenceTypeToPortuguese(habit.evidencia.type),
-          conteudo: habit.evidencia.content,
-          timestamp: habit.evidencia.timestamp
-        } : undefined,
-        verificacaoNecessaria: habit.verificacaoNecessaria,
-        verificado: habit.verificado,
-        dataCriacao: habit.dataCriacao
-      }));
+      const habitosForService = convertToPortugueseHabits(habits);
       
       const feedbackMessage = await getFeedbackIA(habitosForService);
       setFeedback(feedbackMessage);
@@ -150,12 +145,12 @@ export const useHabitsTracker = () => {
   const suggestPersonalizedHabits = useCallback(async () => {
     setLoadingSuggestions(true);
     try {
-      // Convert to Portuguese format for the service call
+      // Create proper Portuguese business model object for service call
       const modeloNegocio = {
-        segmento: businessModel.segmento,
-        cicloVenda: businessModel.cicloVenda,
-        tamEquipe: businessModel.tamEquipe,
-        objetivoPrincipal: businessModel.objetivoPrincipal
+        segment: businessModel.segmento,
+        salesCycle: businessModel.cicloVenda,
+        teamSize: businessModel.tamEquipe,
+        mainObjective: businessModel.objetivoPrincipal
       };
       
       const personalizedHabits = await gerarHabitosSugeridos(modeloNegocio);

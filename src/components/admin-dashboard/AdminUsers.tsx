@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -17,7 +16,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Company } from "@/types/admin";
+import { Company, PlanType, StatusType } from "@/types/admin";
 import { Search } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
@@ -36,51 +35,51 @@ const AdminUsers = () => {
     setLoading(true);
     
     try {
-      // Mock data in English
+      // Mock data with proper types
       const mockCompanies: Company[] = [
         {
           id: "1",
           name: "TechSolutions Ltd",
           segment: "Technology",
-          plan: "Enterprise",
+          plan: "Enterprise" as PlanType,
           registration_date: "2025-02-15",
-          status: "active",
+          status: "active" as StatusType,
           contact_email: "contact@techsolutions.com"
         },
         {
           id: "2",
           name: "Global Sales Corp",
           segment: "Retail",
-          plan: "Professional",
+          plan: "Professional" as PlanType,
           registration_date: "2025-03-21",
-          status: "active",
+          status: "active" as StatusType,
           contact_email: "admin@globalsales.com"
         },
         {
           id: "3",
           name: "Digital Marketing Express",
           segment: "Marketing",
-          plan: "Starter",
+          plan: "Starter" as PlanType,
           registration_date: "2025-04-05",
-          status: "trial",
+          status: "trial" as StatusType,
           contact_email: "info@digitalmarketing.com"
         },
         {
           id: "4",
           name: "Nexus Consulting",
           segment: "Consulting",
-          plan: "Professional",
+          plan: "Professional" as PlanType,
           registration_date: "2025-03-10",
-          status: "active",
+          status: "active" as StatusType,
           contact_email: "contact@nexus.com"
         },
         {
           id: "5",
           name: "Future Real Estate",
           segment: "Real Estate",
-          plan: "Starter",
+          plan: "Starter" as PlanType,
           registration_date: "2025-02-28",
-          status: "inactive",
+          status: "inactive" as StatusType,
           contact_email: "sales@futurerealestate.com"
         }
       ];
@@ -97,14 +96,14 @@ const AdminUsers = () => {
         }
         
         if (data && data.length > 0) {
-          // Map Supabase data to expected format
-          const mappedData = data.map(company => ({
+          // Map Supabase data to expected format with proper types
+          const mappedData: Company[] = data.map(company => ({
             id: company.id,
             name: company.name,
             segment: company.segment || 'Unknown',
-            plan: 'Professional', // Default plan
+            plan: 'Professional' as PlanType,
             registration_date: new Date(company.created_at).toISOString().split('T')[0],
-            status: 'active', // Default status
+            status: 'active' as StatusType,
             contact_email: `contact@${company.name.toLowerCase().replace(/\s+/g, '')}.com`
           }));
           setCompanies(mappedData);
@@ -132,18 +131,18 @@ const AdminUsers = () => {
           id: "1",
           name: "TechSolutions Ltd",
           segment: "Technology",
-          plan: "Enterprise",
+          plan: "Enterprise" as PlanType,
           registration_date: "2025-02-15",
-          status: "active",
+          status: "active" as StatusType,
           contact_email: "contact@techsolutions.com"
         },
         {
           id: "2",
           name: "Global Sales Corp",
           segment: "Retail",
-          plan: "Professional",
+          plan: "Professional" as PlanType,
           registration_date: "2025-03-21",
-          status: "active",
+          status: "active" as StatusType,
           contact_email: "admin@globalsales.com"
         }
       ];
