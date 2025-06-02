@@ -3,15 +3,23 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import RelatoriosHeader from "@/components/relatorios/RelatoriosHeader";
-import RelatoriosTabsNavigation from "@/components/relatorios/RelatoriosTabsNavigation";
-import RelatoriosFooter from "@/components/relatorios/RelatoriosFooter";
+import { RelatoriosHeader } from "@/components/relatorios/RelatoriosHeader";
+import { RelatoriosTabsNavigation } from "@/components/relatorios/RelatoriosTabsNavigation";
+import { RelatoriosFooter } from "@/components/relatorios/RelatoriosFooter";
 
 const Relatorios = () => {
   const navigate = useNavigate();
 
   const handleBack = () => {
     navigate(-1);
+  };
+
+  const handleDownloadRelatorio = () => {
+    console.log("Download relatório");
+  };
+
+  const handleOpenEmailDialog = () => {
+    console.log("Open email dialog");
   };
 
   return (
@@ -24,7 +32,10 @@ const Relatorios = () => {
       </div>
 
       <div className="container py-6">
-        <RelatoriosHeader />
+        <RelatoriosHeader 
+          onDownloadRelatorio={handleDownloadRelatorio}
+          onOpenEmailDialog={handleOpenEmailDialog}
+        />
         <RelatoriosTabsNavigation />
         <RelatoriosFooter />
       </div>

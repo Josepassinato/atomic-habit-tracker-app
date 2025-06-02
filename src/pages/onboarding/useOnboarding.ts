@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -366,6 +365,7 @@ export const useOnboarding = () => {
     loading,
     teams,
     currentTeam,
+    setCurrentTeam,
     teamDialogOpen,
     setTeamDialogOpen,
     editingTeamId,
