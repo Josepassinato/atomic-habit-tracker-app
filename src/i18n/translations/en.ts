@@ -1,4 +1,3 @@
-
 // English translations
 export const enTranslations = {
   // Header
@@ -35,6 +34,25 @@ export const enTranslations = {
   cancel: "Cancel",
   saveLayout: "Save Layout",
   layoutSaved: "Dashboard layout saved successfully!",
+  
+  // Dashboard Summary
+  salesGoal: "Sales Goal",
+  currentMonthProgress: "Current month progress",
+  atomicHabits: "Atomic Habits", 
+  dailyCompletion: "Daily completion",
+  totalBonus: "Total Bonus",
+  accumulatedReward: "Accumulated reward",
+  monthlyReward: "Monthly Reward",
+  currentBonus: "Current bonus",
+  habitsCompletion: "Habits Completion",
+  total: "Total",
+  loading: "Loading...",
+  complete: "Complete",
+  onTrack: "On Track", 
+  inProgress: "In Progress",
+  excellent: "Excellent",
+  good: "Good",
+  needsImprovement: "Needs Improvement",
   
   // Landing page
   heroTitle: "Transform your",
