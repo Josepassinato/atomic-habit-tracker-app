@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,7 @@ interface TeamFormInput {
 }
 
 const Onboarding = () => {
-  const [activeStep, setActiveStep] = useState("equipes");
+  const [activeStep, setActiveStep] = useState("teams");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -56,21 +57,21 @@ const Onboarding = () => {
   const [teamDialogOpen, setTeamDialogOpen] = useState(false);
   const [editingTeamId, setEditingTeamId] = useState<string | null>(null);
   
-  // State for metas and hábitos
+  // State for goals and habits
   const [metaMensal, setMetaMensal] = useState("");
   const [metaDiaria, setMetaDiaria] = useState("");
   
   const [habitosSelecionados, setHabitosSelecionados] = useState<string[]>([]);
   
-  // State for recompensas
+  // State for rewards
   const [recompensaTipo, setRecompensaTipo] = useState("individual");
   const [recompensaDescricao, setRecompensaDescricao] = useState("");
   const [recompensasMetas, setRecompensasMetas] = useState<{descricao: string; tipo: string}[]>([
-    { descricao: "Café da manhã especial para o time", tipo: "equipe" },
-    { descricao: "Folga no dia do aniversário", tipo: "individual" }
+    { descricao: "Special breakfast for the team", tipo: "equipe" },
+    { descricao: "Day off on birthday", tipo: "individual" }
   ]);
   
-  // State for commissões
+  // State for commissions
   const [comissaoBase, setComissaoBase] = useState("3");
   const [comissaoHabitos, setComissaoHabitos] = useState("2");
   const [isComissaoAberta, setIsComissaoAberta] = useState(false);
@@ -88,13 +89,13 @@ const Onboarding = () => {
     if (savedTeams) {
       try {
         const parsedTeams = JSON.parse(savedTeams);
-        console.log("Equipes carregadas do localStorage:", parsedTeams);
+        console.log("Teams loaded from localStorage:", parsedTeams);
         setTeams(parsedTeams);
       } catch (error) {
-        console.error("Erro ao carregar equipes:", error);
+        console.error("Error loading teams:", error);
         toast({
-          title: "Erro ao carregar equipes",
-          description: "Não foi possível carregar as equipes salvas.",
+          title: "Error loading teams",
+          description: "Could not load saved teams.",
           variant: "destructive",
         });
       }
@@ -104,14 +105,14 @@ const Onboarding = () => {
   // Save teams to localStorage when they change
   useEffect(() => {
     if (teams.length > 0) {
-      console.log("Salvando equipes no localStorage:", teams);
+      console.log("Saving teams to localStorage:", teams);
       localStorage.setItem("teams", JSON.stringify(teams));
       
-      // Também salva como 'equipes' para compatibilidade com a dashboard
+      // Also save as 'equipes' for compatibility with dashboard
       localStorage.setItem("equipes", JSON.stringify(teams.map(team => ({
         id: team.id,
         nome: team.name,
-        empresa_id: '1', // valor padrão para teste
+        empresa_id: '1', // default value for testing
         criado_em: new Date().toISOString()
       }))));
     }
@@ -132,8 +133,8 @@ const Onboarding = () => {
       setMetaDiaria("");
       setHabitosSelecionados([]);
       setRecompensasMetas([
-        { descricao: "Café da manhã especial para o time", tipo: "equipe" },
-        { descricao: "Folga no dia do aniversário", tipo: "individual" }
+        { descricao: "Special breakfast for the team", tipo: "equipe" },
+        { descricao: "Day off on birthday", tipo: "individual" }
       ]);
       setComissaoBase("3");
       setComissaoHabitos("2");
@@ -141,12 +142,12 @@ const Onboarding = () => {
   }, [currentTeam]);
   
   const habitosRecomendados = [
-    "Fazer 10 ligações por dia",
-    "Registrar todas as interações no CRM",
-    "Fazer follow-up em até 24h",
-    "Realizar reuniões de planejamento diárias",
-    "Estudar sobre o mercado por 15min diariamente",
-    "Solicitar feedbacks após cada negociação"
+    "Make 10 calls per day",
+    "Record all interactions in CRM",
+    "Follow up within 24 hours",
+    "Hold daily planning meetings",
+    "Study the market for 15 minutes daily",
+    "Request feedback after each negotiation"
   ];
   
   const handleHabitoToggle = (habito: string) => {
@@ -160,8 +161,8 @@ const Onboarding = () => {
   const adicionarRecompensa = () => {
     if (recompensaDescricao.trim() === "") {
       toast({
-        title: "Descrição obrigatória",
-        description: "Por favor, descreva a recompensa.",
+        title: "Description required",
+        description: "Please describe the reward.",
         variant: "destructive",
       });
       return;
@@ -190,11 +191,11 @@ const Onboarding = () => {
       );
       setTeams(updatedTeams);
       toast({
-        title: "Time atualizado",
-        description: `O time ${data.name} foi atualizado com sucesso.`,
+        title: "Team updated",
+        description: `Team ${data.name} was updated successfully.`,
       });
-      console.log("Time atualizado:", data.name, "ID:", editingTeamId);
-      console.log("Times após atualização:", updatedTeams);
+      console.log("Team updated:", data.name, "ID:", editingTeamId);
+      console.log("Teams after update:", updatedTeams);
     } else {
       // Create new team
       const newTeam: Team = {
@@ -203,8 +204,8 @@ const Onboarding = () => {
         metas: { mensal: "", diaria: "" },
         habitos: [],
         recompensas: [
-          { descricao: "Café da manhã especial para o time", tipo: "equipe" },
-          { descricao: "Folga no dia do aniversário", tipo: "individual" }
+          { descricao: "Special breakfast for the team", tipo: "equipe" },
+          { descricao: "Day off on birthday", tipo: "individual" }
         ],
         comissoes: { base: "3", habitos: "2" }
       };
@@ -212,11 +213,11 @@ const Onboarding = () => {
       const newTeams = [...teams, newTeam];
       setTeams(newTeams);
       toast({
-        title: "Time criado",
-        description: `O time ${data.name} foi criado com sucesso.`,
+        title: "Team created",
+        description: `Team ${data.name} was created successfully.`,
       });
-      console.log("Novo time criado:", newTeam);
-      console.log("Times após criação:", newTeams);
+      console.log("New team created:", newTeam);
+      console.log("Teams after creation:", newTeams);
     }
     
     setTeamDialogOpen(false);
@@ -230,35 +231,35 @@ const Onboarding = () => {
     
     if (currentTeam?.id === teamId) {
       setCurrentTeam(null);
-      setActiveStep("equipes");
+      setActiveStep("teams");
     }
     
     toast({
-      title: "Time removido",
-      description: "O time foi removido com sucesso.",
+      title: "Team removed",
+      description: "Team was removed successfully.",
     });
-    console.log("Time removido, ID:", teamId);
-    console.log("Times após remoção:", updatedTeams);
+    console.log("Team removed, ID:", teamId);
+    console.log("Teams after removal:", updatedTeams);
   };
 
   const editTeam = (team: Team) => {
     form.setValue("name", team.name);
     setEditingTeamId(team.id);
     setTeamDialogOpen(true);
-    console.log("Editando time:", team.name, "ID:", team.id);
+    console.log("Editing team:", team.name, "ID:", team.id);
   };
 
   const selectTeam = (team: Team) => {
     setCurrentTeam(team);
-    setActiveStep("metas");
-    console.log("Time selecionado:", team.name, "ID:", team.id);
+    setActiveStep("goals");
+    console.log("Team selected:", team.name, "ID:", team.id);
   };
   
   const handleNext = () => {
     if (!currentTeam) {
       toast({
-        title: "Selecione um time",
-        description: "Por favor, selecione ou crie um time antes de continuar.",
+        title: "Select a team",
+        description: "Please select or create a team before continuing.",
         variant: "destructive",
       });
       return;
@@ -267,16 +268,16 @@ const Onboarding = () => {
     // Save current step data
     const updatedTeam = { ...currentTeam };
 
-    if (activeStep === "metas") {
+    if (activeStep === "goals") {
       updatedTeam.metas = { mensal: metaMensal, diaria: metaDiaria };
-      setActiveStep("habitos");
-    } else if (activeStep === "habitos") {
+      setActiveStep("habits");
+    } else if (activeStep === "habits") {
       updatedTeam.habitos = habitosSelecionados;
-      setActiveStep("recompensas");
-    } else if (activeStep === "recompensas") {
+      setActiveStep("rewards");
+    } else if (activeStep === "rewards") {
       updatedTeam.recompensas = recompensasMetas;
       updatedTeam.comissoes = { base: comissaoBase, habitos: comissaoHabitos };
-      setActiveStep("integracao");
+      setActiveStep("integrations");
     } else {
       handleFinish();
     }
@@ -288,29 +289,29 @@ const Onboarding = () => {
     setTeams(updatedTeams);
     setCurrentTeam(updatedTeam);
     
-    console.log("Próximo passo:", activeStep);
-    console.log("Time atualizado:", updatedTeam);
-    console.log("Times após atualização:", updatedTeams);
+    console.log("Next step:", activeStep);
+    console.log("Team updated:", updatedTeam);
+    console.log("Teams after update:", updatedTeams);
     
-    // Salva imediatamente no localStorage
+    // Save immediately to localStorage
     localStorage.setItem("teams", JSON.stringify(updatedTeams));
     
-    // Também salva como 'equipes' para compatibilidade com a dashboard
+    // Also save as 'equipes' for compatibility with dashboard
     localStorage.setItem("equipes", JSON.stringify(updatedTeams.map(team => ({
       id: team.id,
       nome: team.name,
-      empresa_id: '1', // valor padrão para teste
+      empresa_id: '1', // default value for testing
       criado_em: new Date().toISOString()
     }))));
   };
 
   const handlePrevious = () => {
-    if (activeStep === "habitos") {
-      setActiveStep("metas");
-    } else if (activeStep === "recompensas") {
-      setActiveStep("habitos");
-    } else if (activeStep === "integracao") {
-      setActiveStep("recompensas");
+    if (activeStep === "habits") {
+      setActiveStep("goals");
+    } else if (activeStep === "rewards") {
+      setActiveStep("habits");
+    } else if (activeStep === "integrations") {
+      setActiveStep("rewards");
     }
   };
   
@@ -328,7 +329,7 @@ const Onboarding = () => {
       try {
         userData = JSON.parse(userDataStr);
       } catch (error) {
-        console.error("Erro ao parsear dados do usuário:", error);
+        console.error("Error parsing user data:", error);
         userData = {};
       }
       
@@ -340,18 +341,18 @@ const Onboarding = () => {
         activeTeamId: currentTeam?.id
       };
       
-      console.log("Dados do usuário atualizados:", updatedUserData);
+      console.log("Updated user data:", updatedUserData);
       
       // Save to localStorage
       localStorage.setItem("user", JSON.stringify(updatedUserData));
       
-      // Salva membros mock para cada equipe se não existirem
+      // Save mock members for each team if they don't exist
       if (!localStorage.getItem("vendedores")) {
         const mockVendedores = teams.flatMap((team, index) => [
           {
             id: `v${index}1`,
-            nome: `Vendedor ${index+1}A`,
-            email: `vendedor${index+1}a@exemplo.com`,
+            nome: `Salesperson ${index+1}A`,
+            email: `salesperson${index+1}a@example.com`,
             equipe_id: team.id,
             vendas_total: Math.floor(Math.random() * 100000) + 50000,
             meta_atual: 150000,
@@ -360,8 +361,8 @@ const Onboarding = () => {
           },
           {
             id: `v${index}2`,
-            nome: `Vendedor ${index+1}B`,
-            email: `vendedor${index+1}b@exemplo.com`,
+            nome: `Salesperson ${index+1}B`,
+            email: `salesperson${index+1}b@example.com`,
             equipe_id: team.id,
             vendas_total: Math.floor(Math.random() * 100000) + 50000,
             meta_atual: 150000,
@@ -371,10 +372,10 @@ const Onboarding = () => {
         ]);
         
         localStorage.setItem("vendedores", JSON.stringify(mockVendedores));
-        console.log("Vendedores mock criados:", mockVendedores);
+        console.log("Mock salespeople created:", mockVendedores);
       }
       
-      // Adiciona hábitos mock para cada equipe
+      // Add mock habits for each team
       if (!localStorage.getItem("habitos_equipe")) {
         const mockHabitos = teams.flatMap(team => 
           team.habitos.map((habito, idx) => ({
@@ -388,20 +389,20 @@ const Onboarding = () => {
         );
         
         localStorage.setItem("habitos_equipe", JSON.stringify(mockHabitos));
-        console.log("Hábitos mock criados:", mockHabitos);
+        console.log("Mock habits created:", mockHabitos);
       }
       
       toast({
-        title: "Configuração concluída!",
-        description: "As configurações das equipes foram salvas com sucesso.",
+        title: "Configuration completed!",
+        description: "Team configurations have been saved successfully.",
       });
       
       navigate("/dashboard");
     } catch (error) {
-      console.error("Erro ao finalizar configuração:", error);
+      console.error("Error finishing configuration:", error);
       toast({
-        title: "Erro ao finalizar configuração",
-        description: "Por favor, tente novamente.",
+        title: "Error finishing configuration",
+        description: "Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -417,40 +418,40 @@ const Onboarding = () => {
             {t('onboarding')}
           </CardTitle>
           <CardDescription>
-            Configure equipes e defina metas, hábitos e recompensas personalizadas
+            Configure teams and define personalized goals, habits and rewards
           </CardDescription>
         </CardHeader>
         
         <CardContent>
           <Tabs value={activeStep} onValueChange={setActiveStep} className="w-full">
-            <TabsList className="grid w-full grid-cols-4">
-              <TabsTrigger value="equipes">Equipes</TabsTrigger>
-              <TabsTrigger value="metas" disabled={!currentTeam}>Metas</TabsTrigger>
-              <TabsTrigger value="habitos" disabled={!currentTeam}>Hábitos</TabsTrigger>
-              <TabsTrigger value="recompensas" disabled={!currentTeam}>Recompensas</TabsTrigger>
-              <TabsTrigger value="integracao" disabled={!currentTeam}>Integrações</TabsTrigger>
+            <TabsList className="grid w-full grid-cols-5">
+              <TabsTrigger value="teams">Teams</TabsTrigger>
+              <TabsTrigger value="goals" disabled={!currentTeam}>Goals</TabsTrigger>
+              <TabsTrigger value="habits" disabled={!currentTeam}>Habits</TabsTrigger>
+              <TabsTrigger value="rewards" disabled={!currentTeam}>Rewards</TabsTrigger>
+              <TabsTrigger value="integrations" disabled={!currentTeam}>Integrations</TabsTrigger>
             </TabsList>
             
-            {/* Tab de Equipes */}
-            <TabsContent value="equipes" className="space-y-4 pt-4">
+            {/* Teams Tab */}
+            <TabsContent value="teams" className="space-y-4 pt-4">
               <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium">Equipes cadastradas</h3>
+                <h3 className="text-lg font-medium">Registered teams</h3>
                 
-                {/* Dialog para adicionar/editar equipe */}
+                {/* Dialog for adding/editing team */}
                 <Dialog open={teamDialogOpen} onOpenChange={setTeamDialogOpen}>
                   <DialogTrigger asChild>
                     <Button>
                       <Plus className="h-4 w-4 mr-2" />
-                      Nova Equipe
+                      New Team
                     </Button>
                   </DialogTrigger>
                   <DialogContent>
                     <DialogHeader>
-                      <DialogTitle>{editingTeamId ? "Editar Equipe" : "Nova Equipe"}</DialogTitle>
+                      <DialogTitle>{editingTeamId ? "Edit Team" : "New Team"}</DialogTitle>
                       <DialogDescription>
                         {editingTeamId 
-                          ? "Atualize as informações da equipe abaixo"
-                          : "Preencha as informações para criar uma nova equipe"
+                          ? "Update the team information below"
+                          : "Fill in the information to create a new team"
                         }
                       </DialogDescription>
                     </DialogHeader>
@@ -462,12 +463,12 @@ const Onboarding = () => {
                           name="name"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Nome da equipe</FormLabel>
+                              <FormLabel>Team name</FormLabel>
                               <FormControl>
-                                <Input placeholder="Ex: Vendas Corporativas" {...field} />
+                                <Input placeholder="Ex: Corporate Sales" {...field} />
                               </FormControl>
                               <FormDescription>
-                                Forneça um nome claro e descritivo para a equipe.
+                                Provide a clear and descriptive name for the team.
                               </FormDescription>
                               <FormMessage />
                             </FormItem>
@@ -480,10 +481,10 @@ const Onboarding = () => {
                             form.reset();
                             setEditingTeamId(null);
                           }}>
-                            Cancelar
+                            Cancel
                           </Button>
                           <Button type="submit">
-                            {editingTeamId ? "Atualizar" : "Criar"}
+                            {editingTeamId ? "Update" : "Create"}
                           </Button>
                         </DialogFooter>
                       </form>
@@ -495,12 +496,12 @@ const Onboarding = () => {
               {teams.length === 0 ? (
                 <div className="text-center py-10 border-2 border-dashed border-gray-200 rounded-lg">
                   <Users className="mx-auto h-12 w-12 text-gray-400" />
-                  <h3 className="mt-2 text-sm font-medium text-gray-900">Nenhuma equipe cadastrada</h3>
-                  <p className="mt-1 text-sm text-gray-500">Comece criando uma nova equipe.</p>
+                  <h3 className="mt-2 text-sm font-medium text-gray-900">No teams registered</h3>
+                  <p className="mt-1 text-sm text-gray-500">Start by creating a new team.</p>
                   <div className="mt-6">
                     <Button onClick={() => setTeamDialogOpen(true)}>
                       <Plus className="h-4 w-4 mr-2" />
-                      Nova Equipe
+                      New Team
                     </Button>
                   </div>
                 </div>
@@ -512,7 +513,7 @@ const Onboarding = () => {
                         <div>
                           <h3 className="font-medium text-lg">{team.name}</h3>
                           <p className="text-sm text-muted-foreground">
-                            {team.habitos.length} hábitos configurados
+                            {team.habitos.length} habits configured
                           </p>
                         </div>
                         <div className="flex space-x-2">
@@ -534,10 +535,10 @@ const Onboarding = () => {
                           {currentTeam?.id === team.id ? (
                             <>
                               <Check className="mr-2 h-4 w-4" /> 
-                              Selecionado
+                              Selected
                             </>
                           ) : (
-                            "Configurar"
+                            "Configure"
                           )}
                         </Button>
                       </div>
@@ -547,22 +548,22 @@ const Onboarding = () => {
               )}
             </TabsContent>
             
-            {/* Aba de Metas */}
-            <TabsContent value="metas" className="space-y-4 pt-4">
+            {/* Goals Tab */}
+            <TabsContent value="goals" className="space-y-4 pt-4">
               {currentTeam && (
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <h3 className="text-lg font-medium">Metas para: {currentTeam.name}</h3>
+                    <h3 className="text-lg font-medium">Goals for: {currentTeam.name}</h3>
                     <Badge variant="outline">{currentTeam.name}</Badge>
                   </div>
                   
                   <p className="text-sm text-muted-foreground mb-4">
-                    Estabeleça metas realistas para esta equipe alcançar
+                    Set realistic goals for this team to achieve
                   </p>
                   
                   <div className="space-y-4">
                     <div>
-                      <Label htmlFor="metaMensal">Meta de vendas mensal (R$)</Label>
+                      <Label htmlFor="metaMensal">Monthly sales goal ($)</Label>
                       <Input 
                         id="metaMensal" 
                         type="number" 
@@ -573,7 +574,7 @@ const Onboarding = () => {
                     </div>
                     
                     <div>
-                      <Label htmlFor="metaDiaria">Meta de vendas diária (R$)</Label>
+                      <Label htmlFor="metaDiaria">Daily sales goal ($)</Label>
                       <Input 
                         id="metaDiaria" 
                         type="number" 
@@ -587,25 +588,25 @@ const Onboarding = () => {
               )}
             </TabsContent>
             
-            {/* Aba de Hábitos */}
-            <TabsContent value="habitos" className="space-y-4 pt-4">
+            {/* Habits Tab */}
+            <TabsContent value="habits" className="space-y-4 pt-4">
               {currentTeam && (
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <h3 className="text-lg font-medium">Hábitos para: {currentTeam.name}</h3>
+                    <h3 className="text-lg font-medium">Habits for: {currentTeam.name}</h3>
                     <Badge variant="outline">{currentTeam.name}</Badge>
                   </div>
                   
                   <div className="flex items-center justify-between mb-2">
                     <p className="text-sm text-muted-foreground">
-                      Escolha hábitos que ajudarão esta equipe a atingir as metas
+                      Choose habits that will help this team achieve their goals
                     </p>
                     
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button variant="outline" size="sm" className="flex gap-2">
                           <HelpCircle className="h-4 w-4" />
-                          Ajuda da IA
+                          AI Help
                         </Button>
                       </PopoverTrigger>
                       <PopoverContent className="w-96 p-0" align="end">
@@ -633,20 +634,20 @@ const Onboarding = () => {
               )}
             </TabsContent>
             
-            {/* Aba de Recompensas */}
-            <TabsContent value="recompensas" className="space-y-4 pt-4">
+            {/* Rewards Tab */}
+            <TabsContent value="rewards" className="space-y-4 pt-4">
               {currentTeam && (
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <h3 className="text-lg font-medium">Recompensas para: {currentTeam.name}</h3>
+                    <h3 className="text-lg font-medium">Rewards for: {currentTeam.name}</h3>
                     <Badge variant="outline">{currentTeam.name}</Badge>
                   </div>
                   
                   <p className="text-sm text-muted-foreground mb-4">
-                    Estabeleça incentivos para celebrar conquistas de metas e hábitos
+                    Set incentives to celebrate goal and habit achievements
                   </p>
                   
-                  {/* Seção de Comissões */}
+                  {/* Commissions Section */}
                   <Collapsible 
                     open={isComissaoAberta} 
                     onOpenChange={setIsComissaoAberta}
@@ -656,10 +657,10 @@ const Onboarding = () => {
                       <div className="flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-2 text-blue-800">
                           <Percent className="h-5 w-5" />
-                          <h4 className="font-semibold">Percentuais de Comissão</h4>
+                          <h4 className="font-semibold">Commission Percentages</h4>
                         </div>
                         <Button variant="ghost" size="sm">
-                          {isComissaoAberta ? "Fechar" : "Abrir"}
+                          {isComissaoAberta ? "Close" : "Open"}
                         </Button>
                       </div>
                     </CollapsibleTrigger>
@@ -667,7 +668,7 @@ const Onboarding = () => {
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <Label htmlFor="comissaoBase" className="text-blue-700">
-                            Comissão base sobre vendas (%)
+                            Base commission on sales (%)
                           </Label>
                           <Input 
                             id="comissaoBase" 
@@ -678,12 +679,12 @@ const Onboarding = () => {
                             className="bg-white mt-1"
                           />
                           <p className="text-xs text-blue-600 mt-1">
-                            Percentual padrão sobre todas as vendas
+                            Standard percentage on all sales
                           </p>
                         </div>
                         <div>
                           <Label htmlFor="comissaoHabitos" className="text-blue-700">
-                            Bônus por cumprir hábitos (%)
+                            Bonus for completing habits (%)
                           </Label>
                           <Input 
                             id="comissaoHabitos" 
@@ -694,14 +695,14 @@ const Onboarding = () => {
                             className="bg-white mt-1"
                           />
                           <p className="text-xs text-blue-600 mt-1">
-                            Percentual adicional ao atingir 100% dos hábitos
+                            Additional percentage when achieving 100% of habits
                           </p>
                         </div>
                       </div>
                       <div className="bg-blue-100 p-3 rounded-md">
                         <p className="text-sm text-blue-800">
-                          Total potencial: <span className="font-bold">{Number(comissaoBase) + Number(comissaoHabitos)}%</span> 
-                          (Comissão base: {comissaoBase}% + Bônus por hábitos: {comissaoHabitos}%)
+                          Total potential: <span className="font-bold">{Number(comissaoBase) + Number(comissaoHabitos)}%</span> 
+                          (Base commission: {comissaoBase}% + Habit bonus: {comissaoHabitos}%)
                         </p>
                       </div>
                     </CollapsibleContent>
@@ -710,20 +711,20 @@ const Onboarding = () => {
                   <div className="bg-purple-50 p-4 rounded-md mb-4 border border-purple-100">
                     <div className="flex items-center gap-2 mb-2 text-purple-800">
                       <Trophy className="h-5 w-5" />
-                      <h4 className="font-semibold">Por que recompensas são importantes?</h4>
+                      <h4 className="font-semibold">Why are rewards important?</h4>
                     </div>
                     <p className="text-sm text-purple-700">
-                      Recompensas aumentam a motivação e engajamento, reforçando comportamentos positivos 
-                      e ajudando a criar uma cultura de reconhecimento na equipe.
+                      Rewards increase motivation and engagement, reinforcing positive behaviors 
+                      and helping to create a culture of recognition in the team.
                     </p>
                   </div>
                   
                   <div className="space-y-4 mb-6">
                     <div>
-                      <Label htmlFor="recompensaDescricao">Descrição da recompensa</Label>
+                      <Label htmlFor="recompensaDescricao">Reward description</Label>
                       <Textarea 
                         id="recompensaDescricao" 
-                        placeholder="Ex: Vale-presente de R$100 para quem bater 120% da meta" 
+                        placeholder="Ex: $100 gift card for whoever hits 120% of goal" 
                         value={recompensaDescricao}
                         onChange={(e) => setRecompensaDescricao(e.target.value)}
                         className="mt-1"
@@ -731,7 +732,7 @@ const Onboarding = () => {
                     </div>
                     
                     <div className="space-y-2">
-                      <Label>Tipo de recompensa</Label>
+                      <Label>Reward type</Label>
                       <RadioGroup value={recompensaTipo} onValueChange={setRecompensaTipo} className="flex space-x-4">
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="individual" id="individual" />
@@ -739,21 +740,21 @@ const Onboarding = () => {
                         </div>
                         <div className="flex items-center space-x-2">
                           <RadioGroupItem value="equipe" id="equipe" />
-                          <Label htmlFor="equipe" className="cursor-pointer">Equipe</Label>
+                          <Label htmlFor="equipe" className="cursor-pointer">Team</Label>
                         </div>
                       </RadioGroup>
                     </div>
                     
                     <Button onClick={adicionarRecompensa} className="w-full">
                       <Gift className="mr-2 h-4 w-4" />
-                      Adicionar recompensa
+                      Add reward
                     </Button>
                   </div>
                   
                   <div className="space-y-2">
-                    <h4 className="font-medium text-sm">Recompensas adicionadas:</h4>
+                    <h4 className="font-medium text-sm">Added rewards:</h4>
                     {recompensasMetas.length === 0 ? (
-                      <p className="text-sm text-muted-foreground">Nenhuma recompensa adicionada ainda</p>
+                      <p className="text-sm text-muted-foreground">No rewards added yet</p>
                     ) : (
                       <div className="space-y-3">
                         {recompensasMetas.map((recompensa, index) => (
@@ -768,7 +769,7 @@ const Onboarding = () => {
                                 <span>{recompensa.descricao}</span>
                               </div>
                               <Badge variant="outline" className="mt-1">
-                                {recompensa.tipo === "individual" ? "Individual" : "Equipe"}
+                                {recompensa.tipo === "individual" ? "Individual" : "Team"}
                               </Badge>
                             </div>
                             <Button 
@@ -776,7 +777,7 @@ const Onboarding = () => {
                               size="sm"
                               onClick={() => removerRecompensa(index)}
                             >
-                              Remover
+                              Remove
                             </Button>
                           </div>
                         ))}
@@ -787,17 +788,17 @@ const Onboarding = () => {
               )}
             </TabsContent>
             
-            {/* Aba de Integração */}
-            <TabsContent value="integracao" className="space-y-4 pt-4">
+            {/* Integrations Tab */}
+            <TabsContent value="integrations" className="space-y-4 pt-4">
               {currentTeam && (
                 <div>
                   <div className="flex items-center space-x-2 mb-4">
-                    <h3 className="text-lg font-medium">Integrações para: {currentTeam.name}</h3>
+                    <h3 className="text-lg font-medium">Integrations for: {currentTeam.name}</h3>
                     <Badge variant="outline">{currentTeam.name}</Badge>
                   </div>
                   
                   <p className="text-sm text-muted-foreground mb-4">
-                    Conecte o Habitus com as ferramentas que você já utiliza
+                    Connect Habitus with the tools you already use
                   </p>
                   
                   <div className="space-y-4">
@@ -805,30 +806,30 @@ const Onboarding = () => {
                       <div className="flex-1">
                         <h4 className="font-medium">HubSpot</h4>
                         <p className="text-sm text-muted-foreground">
-                          Integre seus contatos e negócios
+                          Integrate your contacts and deals
                         </p>
                       </div>
-                      <Button variant="outline">Conectar</Button>
+                      <Button variant="outline">Connect</Button>
                     </div>
                     
                     <div className="flex items-center p-3 border rounded-md">
                       <div className="flex-1">
                         <h4 className="font-medium">Pipedrive</h4>
                         <p className="text-sm text-muted-foreground">
-                          Sincronize seus funis de vendas
+                          Sync your sales funnels
                         </p>
                       </div>
-                      <Button variant="outline">Conectar</Button>
+                      <Button variant="outline">Connect</Button>
                     </div>
                     
                     <div className="flex items-center p-3 border rounded-md">
                       <div className="flex-1">
                         <h4 className="font-medium">WhatsApp Business</h4>
                         <p className="text-sm text-muted-foreground">
-                          Envie notificações via WhatsApp
+                          Send notifications via WhatsApp
                         </p>
                       </div>
-                      <Button variant="outline">Conectar</Button>
+                      <Button variant="outline">Connect</Button>
                     </div>
                   </div>
                 </div>
@@ -843,23 +844,23 @@ const Onboarding = () => {
               variant="outline" 
               onClick={() => navigate("/dashboard")}
             >
-              Pular por agora
+              Skip for now
             </Button>
             
             <div className="flex space-x-2">
-              {activeStep !== "equipes" && (
+              {activeStep !== "teams" && (
                 <Button 
                   variant="outline" 
                   onClick={handlePrevious}
                 >
-                  Anterior
+                  Previous
                 </Button>
               )}
               
               <Button onClick={handleNext} disabled={loading}>
-                {activeStep === "integracao" 
-                  ? loading ? "Finalizando..." : "Finalizar" 
-                  : "Próximo"
+                {activeStep === "integrations" 
+                  ? loading ? "Finishing..." : "Finish" 
+                  : "Next"
                 }
               </Button>
             </div>
