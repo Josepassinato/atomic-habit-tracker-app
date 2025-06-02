@@ -65,11 +65,13 @@ export const useLanguage = () => {
         'atomicHabitsTitle': 'Atomic Habits',
         'atomicHabitsDesc': 'Small daily actions that generate big results',
         'autoRewardsTitle': 'Automatic Rewards',
-        'autoRewardsDesc': 'Transparent rewards based on real performance'
+        'autoRewardsDesc': 'Transparent rewards based on real performance',
+        'apisAndIntegrations': 'APIs and Integrations',
+        'privacy': 'Privacy'
       };
       return translations[key] || key;
     },
-    language: 'en' as const
+    language: 'en' as 'en' | 'pt' | 'es'
   };
 };
 
