@@ -1,10 +1,10 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
-import AIFeedback from "../habits/AIFeedback";
-import HabitSuggestionDialog from "../habits/HabitSuggestionDialog";
+import FeedbackIA from "../habitos/FeedbackIA";
+import SugestaoHabitosDialog from "../habitos/SugestaoHabitosDialog";
 import HabitsStats from "./HabitsStats";
-import HabitsList from "./HabitsList";
+import HabitosList from "./HabitosList";
 import HabitsActions from "./HabitsActions";
 import { useHabitosTracker } from "./useHabitosTracker";
 import { HabitsTrackerProps } from "./types";
@@ -47,24 +47,24 @@ const HabitsTracker: React.FC<HabitsTrackerProps> = ({ className }) => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <HabitsList 
-          habits={habits}
-          onEvidenceSubmitted={handleEvidenceSubmitted}
-          onMarkCompleted={markAsCompleted}
-          onOpenSuggestDialog={() => setDialogOpen(true)}
+        <HabitosList 
+          habitos={habits}
+          onEvidenciaSubmitted={handleEvidenceSubmitted}
+          onMarcarConcluido={markAsCompleted}
+          onAbrirDialogoSugestao={() => setDialogOpen(true)}
         />
         
-        <AIFeedback feedback={feedback} />
+        <FeedbackIA feedback={feedback} />
         
-        <HabitSuggestionDialog
-          open={dialogOpen}
-          onOpenChange={setDialogOpen}
-          businessModel={businessModel}
+        <SugestaoHabitosDialog
+          dialogAberto={dialogOpen}
+          setDialogAberto={setDialogOpen}
+          modeloNegocio={businessModel}
           onInputChange={handleInputChange}
-          suggestedHabits={suggestedHabits}
-          onSuggestHabits={suggestPersonalizedHabits}
-          onAddHabits={addSuggestedHabits}
-          loadingSuggestions={loadingSuggestions}
+          habitosSugeridos={suggestedHabits}
+          onSugerirHabitos={suggestPersonalizedHabits}
+          onAdicionarHabitos={addSuggestedHabits}
+          carregandoSugestoes={loadingSuggestions}
         />
       </CardContent>
       <CardFooter>

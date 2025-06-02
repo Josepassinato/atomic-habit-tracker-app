@@ -1,7 +1,15 @@
 
 import React from "react";
 import { Progress } from "@/components/ui/progress";
-import { HabitsStatsProps } from "./types";
+import { Habito } from "../habitos/types";
+
+interface HabitsStatsProps {
+  habits: Habito[];
+  completedHabits: number;
+  verifiedHabits: number;
+  progress: number;
+  animateProgress: boolean;
+}
 
 const HabitsStats: React.FC<HabitsStatsProps> = ({
   habits,
