@@ -11,6 +11,22 @@ interface DashboardWidgetGridProps {
 export const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({ widgetsAtivos }) => {
   const { t } = useLanguage();
   
+  // Translation mapping for widget titles
+  const translateWidgetTitle = (titulo: string) => {
+    const translations: Record<string, string> = {
+      'Hábitos Atômicos': 'Atomic Habits',
+      'Metas de Vendas': 'Sales Goals',
+      'Consultoria IA': 'AI Consulting',
+      'Integrações CRM': 'CRM Integrations',
+      'habitos': 'Atomic Habits',
+      'metas': 'Sales Goals',
+      'consultoria': 'AI Consulting',
+      'crm': 'CRM Integrations'
+    };
+    
+    return translations[titulo] || titulo;
+  };
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {widgetsAtivos.map((widget) => {
@@ -23,7 +39,7 @@ export const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({ widget
           <div key={widget.id} className={`${colSpan}`}>
             <Card className="h-full">
               <CardHeader className="pb-2">
-                <CardTitle>{widget.titulo}</CardTitle>
+                <CardTitle>{translateWidgetTitle(widget.titulo)}</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-40 flex items-center justify-center border border-dashed rounded-md">

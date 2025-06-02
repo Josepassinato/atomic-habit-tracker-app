@@ -1,143 +1,149 @@
 
 import { useState, useEffect } from "react";
-import { useSupabase } from "@/hooks/use-supabase";
+import { Widget } from "../types/widget.types";
 import { toast } from "sonner";
-import { Widget, defaultWidgets } from "../types/widget.types";
+
+const defaultWidgets: Widget[] = [
+  {
+    id: "1",
+    titulo: "Atomic Habits",
+    tipo: "habits",
+    tamanho: "medio",
+    ativo: true,
+    ordem: 1
+  },
+  {
+    id: "2", 
+    titulo: "Sales Goals",
+    tipo: "goals",
+    tamanho: "medio",
+    ativo: true,
+    ordem: 2
+  },
+  {
+    id: "3",
+    titulo: "AI Consulting", 
+    tipo: "ai",
+    tamanho: "grande",
+    ativo: true,
+    ordem: 3
+  },
+  {
+    id: "4",
+    titulo: "CRM Integrations",
+    tipo: "crm", 
+    tamanho: "pequeno",
+    ativo: true,
+    ordem: 4
+  }
+];
 
 export const useDashboardWidgets = () => {
-  const { supabase, isConfigured } = useSupabase();
-  const [widgets, setWidgets] = useState<Widget[]>(defaultWidgets);
+  const [widgets, setWidgets] = useState<Widget[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
-    const fetchWidgets = async () => {
-      try {
-        setLoading(true);
-        
-        // Primeiro tenta carregar do localStorage
-        const savedWidgets = localStorage.getItem("dashboard-widgets");
-        if (savedWidgets) {
-          setWidgets(JSON.parse(savedWidgets));
-          setLoading(false);
-          return;
-        }
-        
-        // Se não houver dados no localStorage, busca do Supabase
-        if (supabase && isConfigured) {
-          const user = localStorage.getItem("user") 
-            ? JSON.parse(localStorage.getItem("user")!) 
-            : null;
-            
-          if (user) {
-            const { data, error } = await supabase
-              .from('user_dashboard_widgets')
-              .select('*')
-              .eq('user_id', user.id);
-              
-            if (error) throw error;
-            
-            if (data && data.length > 0) {
-              setWidgets(data[0].widgets);
-              localStorage.setItem("dashboard-widgets", JSON.stringify(data[0].widgets));
-            } else {
-              setWidgets(defaultWidgets);
-              localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
-            }
-          } else {
-            setWidgets(defaultWidgets);
-            localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
-          }
-        } else {
-          setWidgets(defaultWidgets);
-          localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
-        }
-      } catch (error) {
-        console.error("Erro ao carregar widgets do dashboard:", error);
-        setWidgets(defaultWidgets);
-        localStorage.setItem("dashboard-widgets", JSON.stringify(defaultWidgets));
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchWidgets();
-  }, [supabase, isConfigured]);
-  
-  const saveWidgets = async (updatedWidgets: Widget[]) => {
+    carregarWidgets();
+  }, []);
+
+  const carregarWidgets = () => {
     try {
-      localStorage.setItem("dashboard-widgets", JSON.stringify(updatedWidgets));
-      
-      if (supabase && isConfigured) {
-        const user = localStorage.getItem("user") 
-          ? JSON.parse(localStorage.getItem("user")!) 
-          : null;
-          
-        if (user) {
-          await supabase
-            .from('user_dashboard_widgets')
-            .upsert(
-              { user_id: user.id, widgets: updatedWidgets },
-              { onConflict: 'user_id' }
-            );
-        }
+      const saved = localStorage.getItem('dashboard_widgets');
+      if (saved) {
+        const savedWidgets = JSON.parse(saved);
+        // Translate any Portuguese titles to English
+        const translatedWidgets = savedWidgets.map((widget: Widget) => ({
+          ...widget,
+          titulo: translateToEnglish(widget.titulo)
+        }));
+        setWidgets(translatedWidgets);
+      } else {
+        setWidgets(defaultWidgets);
+        localStorage.setItem('dashboard_widgets', JSON.stringify(defaultWidgets));
       }
     } catch (error) {
-      console.error("Erro ao salvar widgets no armazenamento:", error);
+      console.error("Error loading widgets:", error);
+      setWidgets(defaultWidgets);
+    } finally {
+      setLoading(false);
     }
   };
-  
+
+  const translateToEnglish = (titulo: string) => {
+    const translations: Record<string, string> = {
+      'Hábitos Atômicos': 'Atomic Habits',
+      'Metas de Vendas': 'Sales Goals', 
+      'Consultoria IA': 'AI Consulting',
+      'Integrações CRM': 'CRM Integrations'
+    };
+    return translations[titulo] || titulo;
+  };
+
+  const salvarWidgets = (novosWidgets: Widget[]) => {
+    try {
+      localStorage.setItem('dashboard_widgets', JSON.stringify(novosWidgets));
+      setWidgets(novosWidgets);
+    } catch (error) {
+      console.error("Error saving widgets:", error);
+      toast.error("Error saving layout");
+    }
+  };
+
   const toggleWidget = (id: string) => {
-    const updatedWidgets = widgets.map(widget => 
+    const novosWidgets = widgets.map(widget =>
       widget.id === id ? { ...widget, ativo: !widget.ativo } : widget
     );
-    
-    setWidgets(updatedWidgets);
-    saveWidgets(updatedWidgets);
+    salvarWidgets(novosWidgets);
   };
-  
+
+  const moveWidgetUp = (id: string) => {
+    const currentIndex = widgets.findIndex(w => w.id === id);
+    if (currentIndex > 0) {
+      const novosWidgets = [...widgets];
+      [novosWidgets[currentIndex], novosWidgets[currentIndex - 1]] = 
+        [novosWidgets[currentIndex - 1], novosWidgets[currentIndex]];
+      
+      // Update ordem
+      novosWidgets.forEach((widget, index) => {
+        widget.ordem = index + 1;
+      });
+      
+      salvarWidgets(novosWidgets);
+    }
+  };
+
+  const moveWidgetDown = (id: string) => {
+    const currentIndex = widgets.findIndex(w => w.id === id);
+    if (currentIndex < widgets.length - 1) {
+      const novosWidgets = [...widgets];
+      [novosWidgets[currentIndex], novosWidgets[currentIndex + 1]] = 
+        [novosWidgets[currentIndex + 1], novosWidgets[currentIndex]];
+      
+      // Update ordem
+      novosWidgets.forEach((widget, index) => {
+        widget.ordem = index + 1;
+      });
+      
+      salvarWidgets(novosWidgets);
+    }
+  };
+
   const reordenarWidgets = () => {
-    // Reordena os widgets com base na propriedade 'ordem'
-    // e atualiza os números de ordem corretamente
-    let novaOrdem = [...widgets]
+    const widgetsOrdenados = widgets
       .sort((a, b) => a.ordem - b.ordem)
       .map((widget, index) => ({
         ...widget,
         ordem: index + 1
       }));
     
-    setWidgets(novaOrdem);
-    saveWidgets(novaOrdem);
-  };
-  
-  const moveWidgetUp = (id: string) => {
-    const index = widgets.findIndex(w => w.id === id);
-    if (index <= 0) return;
-    
-    const newWidgets = [...widgets];
-    const tempOrdem = newWidgets[index].ordem;
-    newWidgets[index].ordem = newWidgets[index - 1].ordem;
-    newWidgets[index - 1].ordem = tempOrdem;
-    
-    setWidgets(newWidgets);
-  };
-  
-  const moveWidgetDown = (id: string) => {
-    const index = widgets.findIndex(w => w.id === id);
-    if (index === -1 || index === widgets.length - 1) return;
-    
-    const newWidgets = [...widgets];
-    const tempOrdem = newWidgets[index].ordem;
-    newWidgets[index].ordem = newWidgets[index + 1].ordem;
-    newWidgets[index + 1].ordem = tempOrdem;
-    
-    setWidgets(newWidgets);
+    salvarWidgets(widgetsOrdenados);
+    toast.success("Layout saved successfully!");
   };
 
-  // Widgets ativos ordenados
-  const widgetsAtivos = [...widgets]
+  const widgetsAtivos = widgets
     .filter(widget => widget.ativo)
     .sort((a, b) => a.ordem - b.ordem);
-  
+
   return {
     widgets,
     widgetsAtivos,
@@ -145,7 +151,6 @@ export const useDashboardWidgets = () => {
     toggleWidget,
     reordenarWidgets,
     moveWidgetUp,
-    moveWidgetDown,
-    saveWidgets
+    moveWidgetDown
   };
 };
