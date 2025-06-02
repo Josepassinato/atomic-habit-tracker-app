@@ -1,4 +1,6 @@
 
+import React from 'react';
+
 // Mock i18n system - everything returns English text directly
 export const useLanguage = () => {
   return {
@@ -76,5 +78,5 @@ export const useLanguage = () => {
 };
 
 export const LanguageProvider = ({ children }: { children: React.ReactNode }) => {
-  return <>{children}</>;
+  return React.createElement(React.Fragment, null, children);
 };
