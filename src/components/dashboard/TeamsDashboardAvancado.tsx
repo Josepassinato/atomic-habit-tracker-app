@@ -57,11 +57,30 @@ const TeamsDashboardAvancado: React.FC = () => {
     return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
   };
 
+  // Translate team names from Portuguese to English
+  const translateTeamName = (nome: string) => {
+    const translations: Record<string, string> = {
+      'Equipe Sem Nome': 'Unnamed Team',
+      'Equipe Alpha': 'Alpha Team',
+      'Equipe Beta': 'Beta Team',
+      'Equipe Gamma': 'Gamma Team',
+      'Equipe Delta': 'Delta Team',
+      'Vendas Norte': 'North Sales',
+      'Vendas Sul': 'South Sales',
+      'Vendas Leste': 'East Sales',
+      'Vendas Oeste': 'West Sales',
+      'Equipe Principal': 'Main Team',
+      'Equipe Secundária': 'Secondary Team'
+    };
+    return translations[nome] || nome;
+  };
+
   // Enriquece as métricas básicas com dados avançados
   useEffect(() => {
     if (teamMetrics.length > 0) {
       const metricasEnriquecidas: MetricaAvancada[] = teamMetrics.map((team, index) => ({
         ...team,
+        nome: translateTeamName(team.nome), // Translate team name
         vendedoresAtivos: Math.max(1, Math.floor(team.vendedores * 0.85)),
         mediaVendasPorVendedor: team.vendedores > 0 ? team.metaAtual / team.vendedores : 0,
         crescimentoSemanal: Math.floor(Math.random() * 30) - 10, // Simula crescimento
