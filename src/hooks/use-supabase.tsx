@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
@@ -334,3 +333,7 @@ export const useSalesReps = (teamId?: string) => {
 
   return { salesReps, loading, error };
 };
+
+// Export aliases for Portuguese naming compatibility
+export const useEquipes = useTeams;
+export const useVendedores = useSalesReps;
