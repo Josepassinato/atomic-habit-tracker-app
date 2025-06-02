@@ -9,10 +9,12 @@ import ConsultoriaIA from "@/components/ConsultoriaIA";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import TeamsDashboardAvancado from "@/components/dashboard/TeamsDashboardAvancado";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
+import { useLanguage } from "@/i18n";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
+  const { t, language } = useLanguage();
   const notificacaoExibida = useRef(false);
   const [carregado, setCarregado] = useState(false);
   
@@ -34,9 +36,12 @@ const Dashboard = () => {
       if (!notificacaoExibida.current) {
         // Pequeno delay para evitar múltiplas notificações
         const timer = setTimeout(() => {
+          const welcomeMessage = language === 'pt' ? "Bem-vindo de volta!" : language === 'es' ? "¡Bienvenido de vuelta!" : "Welcome back!";
+          const habitsMessage = language === 'pt' ? "Você tem 3 hábitos para concluir hoje." : language === 'es' ? "Tienes 3 hábitos para completar hoy." : "You have 3 habits to complete today.";
+          
           adicionarNotificacao({
-            titulo: "Bem-vindo de volta!",
-            mensagem: "Você tem 3 hábitos para concluir hoje.",
+            titulo: welcomeMessage,
+            mensagem: habitsMessage,
             tipo: "info"
           });
           notificacaoExibida.current = true;
@@ -45,7 +50,33 @@ const Dashboard = () => {
         return () => clearTimeout(timer);
       }
     }
-  }, [navigate, adicionarNotificacao, carregado]);
+  }, [navigate, adicionarNotificacao, carregado, language]);
+
+  const getContent = () => {
+    switch(language) {
+      case 'pt':
+        return {
+          salesPerformanceTitle: 'Desempenho de Vendas',
+          atomicHabitsTitle: 'Hábitos Atômicos',
+          aiAssistantTitle: 'Assistente IA'
+        };
+      case 'es':
+        return {
+          salesPerformanceTitle: 'Rendimiento de Ventas',
+          atomicHabitsTitle: 'Hábitos Atómicos',
+          aiAssistantTitle: 'Asistente IA'
+        };
+      case 'en':
+      default:
+        return {
+          salesPerformanceTitle: 'Sales Performance',
+          atomicHabitsTitle: 'Atomic Habits',
+          aiAssistantTitle: 'AI Assistant'
+        };
+    }
+  };
+
+  const content = getContent();
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -57,17 +88,17 @@ const Dashboard = () => {
             <div className="lg:col-span-2">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">Desempenho de Vendas</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{content.salesPerformanceTitle}</h2>
                   <MetasVendas />
                 </div>
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">Hábitos Atômicos</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{content.atomicHabitsTitle}</h2>
                   <HabitosTracker />
                 </div>
               </div>
             </div>
             <div>
-              <h2 className="mb-3 text-xl font-semibold">Assistente IA</h2>
+              <h2 className="mb-3 text-xl font-semibold">{content.aiAssistantTitle}</h2>
               <ConsultoriaIA />
               <div className="mt-6">
                 <IntegracoesCRM />

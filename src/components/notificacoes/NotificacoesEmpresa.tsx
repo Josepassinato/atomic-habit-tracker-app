@@ -7,6 +7,7 @@ import { BellRing } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NotificacaoItem } from "./NotificacaoItem";
 import { useNotificacoesEmpresa } from "./hooks/useNotificacoesEmpresa";
+import { useLanguage } from "@/i18n";
 
 interface NotificacoesEmpresaProps {
   className?: string;
@@ -20,13 +21,41 @@ const NotificacoesEmpresa: React.FC<NotificacoesEmpresaProps> = ({ className }) 
     marcarTodasComoLidas
   } = useNotificacoesEmpresa();
 
+  const { language } = useLanguage();
+
+  const getContent = () => {
+    switch(language) {
+      case 'pt':
+        return {
+          title: 'Notificações da Empresa',
+          markAllAsRead: 'Marcar todas como lidas',
+          noNotifications: 'Nenhuma notificação encontrada'
+        };
+      case 'es':
+        return {
+          title: 'Notificaciones de la Empresa',
+          markAllAsRead: 'Marcar todas como leídas',
+          noNotifications: 'No se encontraron notificaciones'
+        };
+      case 'en':
+      default:
+        return {
+          title: 'Company Notifications',
+          markAllAsRead: 'Mark all as read',
+          noNotifications: 'No notifications found'
+        };
+    }
+  };
+
+  const content = getContent();
+
   return (
     <Card className={className}>
       <CardHeader>
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <BellRing className="h-5 w-5" />
-            Notificações da Empresa
+            {content.title}
             {naoLidas > 0 && (
               <Badge variant="destructive" className="ml-2">
                 {naoLidas}
@@ -35,7 +64,7 @@ const NotificacoesEmpresa: React.FC<NotificacoesEmpresaProps> = ({ className }) 
           </CardTitle>
           {naoLidas > 0 && (
             <Button variant="outline" size="sm" onClick={marcarTodasComoLidas}>
-              Marcar todas como lidas
+              {content.markAllAsRead}
             </Button>
           )}
         </div>
@@ -45,7 +74,7 @@ const NotificacoesEmpresa: React.FC<NotificacoesEmpresaProps> = ({ className }) 
           <div className="space-y-3">
             {notificacoes.length === 0 ? (
               <p className="text-center text-muted-foreground py-4">
-                Nenhuma notificação encontrada
+                {content.noNotifications}
               </p>
             ) : (
               notificacoes.map((notificacao) => (

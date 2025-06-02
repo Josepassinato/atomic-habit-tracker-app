@@ -4,6 +4,7 @@ import { DashboardCustomizeDialog } from "./DashboardCustomizeDialog";
 import { DashboardWidgetGrid } from "./DashboardWidgetGrid";
 import { DashboardLoading } from "./DashboardLoading";
 import { useDashboardWidgets } from "./hooks/useDashboardWidgets";
+import { useLanguage } from "@/i18n";
 
 interface DashboardPersonalizavelProps {
   children?: React.ReactNode;
@@ -11,6 +12,7 @@ interface DashboardPersonalizavelProps {
 
 const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ children }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
+  const { t } = useLanguage();
   const {
     widgets,
     widgetsAtivos,
@@ -28,7 +30,7 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Dashboard</h1>
+        <h1 className="text-3xl font-bold">{t('dashboard')}</h1>
         <DashboardCustomizeDialog 
           widgets={widgets}
           toggleWidget={toggleWidget}
