@@ -29,6 +29,13 @@ export const enTranslations = {
   selectTeam: "Select a team",
   configureTeam: "Configure",
   
+  // Dashboard customization
+  customizeDashboard: "Customize Dashboard",
+  selectWidgets: "Select which widgets you want to display and the order in which they appear.",
+  cancel: "Cancel",
+  saveLayout: "Save Layout",
+  layoutSaved: "Dashboard layout saved successfully!",
+  
   // Landing page
   heroTitle: "Transform your",
   heroTitleHighlight: "sales team",

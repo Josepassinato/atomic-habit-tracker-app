@@ -1,4 +1,3 @@
-
 export type Language = 'en' | 'es' | 'pt';
 
 export interface Translations {
@@ -11,6 +10,7 @@ export interface Translations {
   onboarding: string;
   logout: string;
   back: string;
+  cancel: string;
   
   // Auth & User
   login: string;
@@ -28,7 +28,13 @@ export interface Translations {
   invalidCredentials: string;
   loginError: string;
   checkCredentials: string;
-  loginTitle: string; // Added missing key
+  loginTitle: string;
+  
+  // Dashboard customization
+  customizeDashboard: string;
+  selectWidgets: string;
+  saveLayout: string;
+  layoutSaved: string;
   
   // Password Recovery
   recoverPassword: string;
@@ -132,6 +138,7 @@ export const translations: { [key in Language]: Translations } = {
     onboarding: 'Onboarding',
     logout: 'Logout',
     back: 'Back',
+    cancel: 'Cancel',
 
     // Auth & User
     login: 'Login',
@@ -150,6 +157,12 @@ export const translations: { [key in Language]: Translations } = {
     loginError: 'Error logging in',
     checkCredentials: 'Check your credentials and try again.',
     loginTitle: 'Enter your credentials to access your account',
+    
+    // Dashboard customization
+    customizeDashboard: 'Customize Dashboard',
+    selectWidgets: 'Select which widgets you want to display and the order in which they appear.',
+    saveLayout: 'Save Layout',
+    layoutSaved: 'Dashboard layout saved successfully!',
     
     // Password Recovery
     recoverPassword: 'Recover password',
@@ -249,6 +262,7 @@ export const translations: { [key in Language]: Translations } = {
     onboarding: 'Incorporación',
     logout: 'Cerrar sesión',
     back: 'Regresar',
+    cancel: 'Cancelar',
     
     // Auth & User
     login: 'Iniciar Sesión',
@@ -268,13 +282,19 @@ export const translations: { [key in Language]: Translations } = {
     checkCredentials: 'Verifica tus credenciales e intenta nuevamente.',
     loginTitle: 'Ingresa tus credenciales para acceder a tu cuenta',
     
+    // Dashboard customization
+    customizeDashboard: 'Personalizar Panel',
+    selectWidgets: 'Seleccione qué widgets desea mostrar y el orden en que aparecen.',
+    saveLayout: 'Guardar Diseño',
+    layoutSaved: '¡Diseño del panel guardado exitosamente!',
+    
     // Password Recovery
     recoverPassword: 'Recuperar contraseña',
-    passwordRecoveryEnterEmail: 'Ingresa tu correo electrónico y te enviaremos instrucciones para restablecer tu contraseña',
+    passwordRecoveryEnterEmail: 'Ingresa tu correo electrónico y te enviaremos instrucciones para redefinir tu contraseña',
     passwordRecoveryEmailSent: 'Correo de recuperación enviado',
-    passwordRecoveryCheckEmail: 'Por favor revisa tu correo electrónico para obtener instrucciones sobre cómo restablecer tu contraseña',
+    passwordRecoveryCheckEmail: 'Por favor revisa tu correo electrónico para obtener instrucciones sobre cómo redefinir tu contraseña',
     passwordRecoveryEmailSentDesc: 'Hemos enviado instrucciones de recuperación a tu correo electrónico',
-    passwordRecoveryFollowInstructions: 'Sigue el enlace en el correo electrónico para restablecer tu contraseña. Si no ves el correo, revisa tu carpeta de spam.',
+    passwordRecoveryFollowInstructions: 'Sigue el enlace en el correo electrónico para redefinir tu contraseña. Si no ves el correo, revisa tu carpeta de spam.',
     passwordRecoveryError: 'Error al solicitar recuperación de contraseña',
     passwordRecoveryTryAgain: 'Por favor intenta nuevamente o contacta al soporte si el problema persiste.',
     sendRecoveryEmail: 'Enviar correo de recuperación',
@@ -366,6 +386,7 @@ export const translations: { [key in Language]: Translations } = {
     onboarding: 'Integração',
     logout: 'Sair',
     back: 'Voltar',
+    cancel: 'Cancelar',
     
     // Auth & User
     login: 'Entrar',
@@ -384,6 +405,12 @@ export const translations: { [key in Language]: Translations } = {
     loginError: 'Erro ao fazer login',
     checkCredentials: 'Verifique suas credenciais e tente novamente.',
     loginTitle: 'Digite suas credenciais para acessar sua conta',
+    
+    // Dashboard customization
+    customizeDashboard: 'Personalizar Dashboard',
+    selectWidgets: 'Selecione quais widgets deseja exibir e a ordem em que eles aparecem.',
+    saveLayout: 'Salvar Layout',
+    layoutSaved: 'Layout do dashboard salvo com sucesso!',
     
     // Password Recovery
     recoverPassword: 'Recuperar senha',
@@ -410,7 +437,7 @@ export const translations: { [key in Language]: Translations } = {
     // Features
     featuresTitle: 'Como o Habitus transforma seu time',
     smartGoalsTitle: 'Metas Inteligentes',
-    smartGoalsDesc: 'Defina e monitore metas realistas baseadas nos dados do seu mercado',
+    smartGoalsDesc: 'Defina e monitore metas realistas baseados nos dados do seu mercado',
     atomicHabitsTitle: 'Hábitos Atômicos',
     atomicHabitsDesc: 'Cultive hábitos diários que levam ao sucesso da sua equipe',
     autoRewardsTitle: 'Bonificações Automáticas',
@@ -474,4 +501,3 @@ export const translations: { [key in Language]: Translations } = {
     configureTeam: 'Configurar',
   },
 };
-

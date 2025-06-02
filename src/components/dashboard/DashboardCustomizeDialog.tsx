@@ -14,6 +14,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Widget } from "./types/widget.types";
+import { useLanguage } from "@/i18n";
 
 interface DashboardCustomizeDialogProps {
   widgets: Widget[];
@@ -34,10 +35,12 @@ export const DashboardCustomizeDialog: React.FC<DashboardCustomizeDialogProps> =
   open,
   setOpen
 }) => {
+  const { t } = useLanguage();
+
   const handleSalvarLayout = () => {
     reordenarWidgets();
     setOpen(false);
-    toast.success("Layout do dashboard salvo com sucesso!");
+    toast.success(t('layoutSaved'));
   };
 
   return (
@@ -45,16 +48,16 @@ export const DashboardCustomizeDialog: React.FC<DashboardCustomizeDialogProps> =
       <DialogTrigger asChild>
         <Button variant="outline" size="sm" className="gap-2">
           <Settings className="h-4 w-4" />
-          Personalizar Dashboard
+          {t('customizeDashboard')}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>Personalizar Dashboard</DialogTitle>
+          <DialogTitle>{t('customizeDashboard')}</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div className="text-sm text-muted-foreground mb-4">
-            Selecione quais widgets deseja exibir e a ordem em que eles aparecem.
+            {t('selectWidgets')}
           </div>
           <div className="space-y-2">
             {widgets.map((widget) => (
@@ -94,10 +97,10 @@ export const DashboardCustomizeDialog: React.FC<DashboardCustomizeDialogProps> =
         </div>
         <div className="flex justify-end gap-3">
           <Button variant="outline" onClick={() => setOpen(false)}>
-            Cancelar
+            {t('cancel')}
           </Button>
           <Button onClick={handleSalvarLayout}>
-            Salvar Layout
+            {t('saveLayout')}
           </Button>
         </div>
       </DialogContent>

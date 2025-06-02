@@ -29,6 +29,13 @@ export const esTranslations = {
   selectTeam: "Seleccione un equipo",
   configureTeam: "Configurar",
   
+  // Dashboard customization
+  customizeDashboard: "Personalizar Panel",
+  selectWidgets: "Seleccione qué widgets desea mostrar y el orden en que aparecen.",
+  cancel: "Cancelar",
+  saveLayout: "Guardar Diseño",
+  layoutSaved: "¡Diseño del panel guardado exitosamente!",
+  
   // Landing page
   heroTitle: "Transforma tu",
   heroTitleHighlight: "equipo de ventas",

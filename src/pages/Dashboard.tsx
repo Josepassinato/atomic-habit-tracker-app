@@ -52,6 +52,33 @@ const Dashboard = () => {
     }
   }, [navigate, adicionarNotificacao, carregado, language, t]);
 
+  // Get localized content
+  const getSectionTitles = () => {
+    switch(language) {
+      case 'pt':
+        return {
+          salesPerformance: 'Desempenho de Vendas',
+          atomicHabits: 'Hábitos Atômicos',
+          aiAssistant: 'Assistente IA'
+        };
+      case 'es':
+        return {
+          salesPerformance: 'Rendimiento de Ventas',
+          atomicHabits: 'Hábitos Atómicos',
+          aiAssistant: 'Asistente IA'
+        };
+      case 'en':
+      default:
+        return {
+          salesPerformance: 'Sales Performance',
+          atomicHabits: 'Atomic Habits',
+          aiAssistant: 'AI Assistant'
+        };
+    }
+  };
+
+  const sectionTitles = getSectionTitles();
+
   return (
     <div className="flex min-h-screen flex-col">
       <main className="container flex-1 py-6">
@@ -62,17 +89,17 @@ const Dashboard = () => {
             <div className="lg:col-span-2">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">Sales Performance</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{sectionTitles.salesPerformance}</h2>
                   <MetasVendas />
                 </div>
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">Atomic Habits</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{sectionTitles.atomicHabits}</h2>
                   <HabitosTracker />
                 </div>
               </div>
             </div>
             <div>
-              <h2 className="mb-3 text-xl font-semibold">AI Assistant</h2>
+              <h2 className="mb-3 text-xl font-semibold">{sectionTitles.aiAssistant}</h2>
               <ConsultoriaIA />
               <div className="mt-6">
                 <IntegracoesCRM />
