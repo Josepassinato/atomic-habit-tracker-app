@@ -3,32 +3,19 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, LogOut } from 'lucide-react';
 import { Button } from './ui/button';
-import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
-import { storageService } from '@/services/storage-service';
+import { performLogout } from '@/utils/auth-utils';
 
 const PageNavigation = () => {
   const navigate = useNavigate();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   
   const handleBack = () => {
     navigate(-1);
   };
   
   const handleLogout = () => {
-    // Clear user data from storage service
-    storageService.removeItem('user');
-    
-    // Show toast message in the correct language
-    const logoutMessages = {
-      en: 'Logout successful',
-      es: 'Cierre de sesión exitoso',
-      pt: 'Logout realizado com sucesso'
-    };
-    toast.success(logoutMessages[language]);
-    
-    // Navigate to login page
-    navigate('/login');
+    performLogout('/login');
   };
   
   return (
