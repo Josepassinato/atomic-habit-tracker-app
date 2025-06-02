@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,7 +25,7 @@ const Vendedores = () => {
   const { salesReps: vendedores, loading: loadingVendedores } = useSalesReps();
 
   const vendedoresFiltrados = filtroEquipe
-    ? vendedores.filter((vendedor) => vendedor.equipe_id === filtroEquipe)
+    ? vendedores.filter((vendedor) => vendedor.team_id === filtroEquipe)
     : vendedores;
 
   const [editMode, setEditMode] = useState(false);
@@ -43,8 +44,8 @@ const Vendedores = () => {
         setEditingVendedor({
           nome: vendedor.name,
           email: vendedor.email,
-          equipeId: vendedor.equipe_id,
-          meta: vendedor.meta_atual
+          equipeId: vendedor.team_id,
+          meta: vendedor.current_goal
         });
       }
     }
@@ -251,13 +252,13 @@ const Vendedores = () => {
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500">
                             {
-                              equipes.find((equipe) => equipe.id === vendedor.equipe_id)?.name
+                              equipes.find((equipe) => equipe.id === vendedor.team_id)?.name
                             }
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <div className="text-sm text-gray-500">
-                            ${vendedor.meta_atual.toLocaleString()}
+                            ${vendedor.current_goal.toLocaleString()}
                           </div>
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap">

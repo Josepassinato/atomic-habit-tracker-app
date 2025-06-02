@@ -12,17 +12,17 @@ export const useRelatorioData = () => {
   
   const isLoading = teamsLoading || salesRepsLoading;
   
-  // Calculate metrics
-  const totalSales = salesReps.reduce((sum, rep) => sum + rep.vendas_total, 0);
-  const totalGoals = salesReps.reduce((sum, rep) => sum + rep.meta_atual, 0);
+  // Calculate metrics using correct English property names
+  const totalSales = salesReps.reduce((sum, rep) => sum + rep.total_sales, 0);
+  const totalGoals = salesReps.reduce((sum, rep) => sum + rep.current_goal, 0);
   const goalPercentage = totalGoals > 0 ? Math.round((totalSales / totalGoals) * 100) : 0;
   const averageConversion = salesReps.length > 0 
-    ? salesReps.reduce((sum, rep) => sum + rep.taxa_conversao, 0) / salesReps.length 
+    ? salesReps.reduce((sum, rep) => sum + rep.conversion_rate, 0) / salesReps.length 
     : 0;
 
   // Filter sales reps by team if selected
   const filteredSalesReps = teamId 
-    ? salesReps.filter(rep => rep.equipe_id === teamId)
+    ? salesReps.filter(rep => rep.team_id === teamId)
     : salesReps;
 
   const generateReport = () => {
@@ -33,10 +33,10 @@ export const useRelatorioData = () => {
   const vendedoresFiltrados = filteredSalesReps.map(rep => ({
     id: rep.id,
     nome: rep.name,
-    equipe: teams.find(t => t.id === rep.equipe_id)?.name || 'Unknown',
-    vendas: rep.vendas_total,
-    meta: rep.meta_atual,
-    conversao: rep.taxa_conversao
+    equipe: teams.find(t => t.id === rep.team_id)?.name || 'Unknown',
+    vendas: rep.total_sales,
+    meta: rep.current_goal,
+    conversao: rep.conversion_rate
   }));
 
   const equipes = teams.map(team => ({
