@@ -10,14 +10,13 @@ const Footer = () => {
   // Footer tagline based on language
   const getFooterTagline = () => {
     switch(language) {
-      case 'en':
-        return 'The future of sales automation and performance';
-      case 'es':
-        return 'El futuro de la automatización de ventas y rendimiento';
       case 'pt':
         return 'O futuro da automação de vendas e performance';
+      case 'es':
+        return 'El futuro de la automatización de ventas y rendimiento';
+      case 'en':
       default:
-        return 'O futuro da automação de vendas e performance';
+        return 'The future of sales automation and performance';
     }
   };
   
