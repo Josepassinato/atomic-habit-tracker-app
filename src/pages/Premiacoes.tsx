@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -29,15 +30,15 @@ const Premiacoes = () => {
     // Aqui faremos a integração com Supabase para buscar as premiações
     const fetchPremiacoes = async () => {
       // Simulação de dados vindos do Supabase
-      const samplePremiacoes = [
+      const samplePremiacoes: Premiacao[] = [
         {
           id: "1",
           nome: "Vendedor do Mês",
           descricao: "Premiação para o vendedor com maior volume de vendas no mês.",
           criterio: "Maior volume de vendas",
           valor: 1000,
-          tipo: "individual",
-          status: "ativa",
+          tipo: "individual" as const,
+          status: "ativa" as const,
           vencedores: ["João Silva"]
         },
         {
@@ -46,8 +47,8 @@ const Premiacoes = () => {
           descricao: "Premiação para a equipe que atingir a meta trimestral.",
           criterio: "Atingir meta trimestral",
           valor: 5000,
-          tipo: "equipe",
-          status: "ativa",
+          tipo: "equipe" as const,
+          status: "ativa" as const,
           vencedores: ["Equipe Alpha"]
         }
       ];
