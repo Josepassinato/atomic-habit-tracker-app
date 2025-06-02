@@ -6,6 +6,7 @@ export const dashboardTranslations = {
     customizeDashboard: 'Customize Dashboard',
     selectWidgets: 'Select which widgets you want to display and the order in which they appear.',
     layoutSaved: 'Dashboard layout saved successfully!',
+    saveLayout: 'Save Layout',
     
     // Summary cards
     salesGoal: 'Sales Goal',
@@ -92,6 +93,7 @@ export const dashboardTranslations = {
     customizeDashboard: 'Personalizar Panel',
     selectWidgets: 'Selecciona qué widgets quieres mostrar y el orden en que aparecen.',
     layoutSaved: '¡Diseño del panel guardado exitosamente!',
+    saveLayout: 'Guardar Diseño',
     
     // Summary cards
     salesGoal: 'Meta de Ventas',
@@ -178,6 +180,7 @@ export const dashboardTranslations = {
     customizeDashboard: 'Personalizar Painel',
     selectWidgets: 'Selecione quais widgets você quer exibir e a ordem em que aparecem.',
     layoutSaved: 'Layout do painel salvo com sucesso!',
+    saveLayout: 'Salvar Layout',
     
     // Summary cards
     salesGoal: 'Meta de Vendas',
