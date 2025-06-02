@@ -36,6 +36,25 @@ export const esTranslations = {
   saveLayout: "Guardar Diseño",
   layoutSaved: "¡Diseño del panel guardado exitosamente!",
   
+  // Dashboard Summary
+  salesGoal: "Meta de Ventas",
+  currentMonthProgress: "Progreso del mes actual",
+  atomicHabits: "Hábitos Atómicos", 
+  dailyCompletion: "Finalización diaria",
+  totalBonus: "Bono Total",
+  accumulatedReward: "Recompensa acumulada",
+  monthlyReward: "Recompensa Mensual",
+  currentBonus: "Bono actual",
+  habitsCompletion: "Finalización de Hábitos",
+  total: "Total",
+  loading: "Cargando...",
+  complete: "Completo",
+  onTrack: "En Camino", 
+  inProgress: "En Progreso",
+  excellent: "Excelente",
+  good: "Bueno",
+  needsImprovement: "Necesita Mejora",
+  
   // Landing page
   heroTitle: "Transforma tu",
   heroTitleHighlight: "equipo de ventas",

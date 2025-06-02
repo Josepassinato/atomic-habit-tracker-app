@@ -14,7 +14,7 @@ import { useLanguage } from "@/i18n";
 const Dashboard = () => {
   const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
-  const { t, language } = useLanguage();
+  const { t } = useLanguage();
   const notificacaoExibida = useRef(false);
   const [carregado, setCarregado] = useState(false);
   
@@ -35,9 +35,7 @@ const Dashboard = () => {
         // Small delay to avoid multiple notifications
         const timer = setTimeout(() => {
           const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'user') || "Welcome back!";
-          const habitsMessage = language === 'pt' ? "Você tem 3 hábitos para concluir hoje." : 
-                                language === 'es' ? "Tienes 3 hábitos para completar hoy." : 
-                                "You have 3 habits to complete today.";
+          const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
           
           adicionarNotificacao({
             titulo: welcomeMessage,
@@ -50,34 +48,7 @@ const Dashboard = () => {
         return () => clearTimeout(timer);
       }
     }
-  }, [navigate, adicionarNotificacao, carregado, language, t]);
-
-  // Get localized content
-  const getSectionTitles = () => {
-    switch(language) {
-      case 'pt':
-        return {
-          salesPerformance: 'Desempenho de Vendas',
-          atomicHabits: 'Hábitos Atômicos',
-          aiAssistant: 'Assistente IA'
-        };
-      case 'es':
-        return {
-          salesPerformance: 'Rendimiento de Ventas',
-          atomicHabits: 'Hábitos Atómicos',
-          aiAssistant: 'Asistente IA'
-        };
-      case 'en':
-      default:
-        return {
-          salesPerformance: 'Sales Performance',
-          atomicHabits: 'Atomic Habits',
-          aiAssistant: 'AI Assistant'
-        };
-    }
-  };
-
-  const sectionTitles = getSectionTitles();
+  }, [navigate, adicionarNotificacao, carregado, t]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -89,17 +60,17 @@ const Dashboard = () => {
             <div className="lg:col-span-2">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">{sectionTitles.salesPerformance}</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{t('goals')}</h2>
                   <MetasVendas />
                 </div>
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">{sectionTitles.atomicHabits}</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{t('atomicHabits')}</h2>
                   <HabitosTracker />
                 </div>
               </div>
             </div>
             <div>
-              <h2 className="mb-3 text-xl font-semibold">{sectionTitles.aiAssistant}</h2>
+              <h2 className="mb-3 text-xl font-semibold">{t('settings')}</h2>
               <ConsultoriaIA />
               <div className="mt-6">
                 <IntegracoesCRM />

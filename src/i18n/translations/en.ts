@@ -1,3 +1,4 @@
+
 // English translations
 export const enTranslations = {
   // Header

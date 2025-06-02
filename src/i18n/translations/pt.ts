@@ -29,6 +29,32 @@ export const ptTranslations = {
   selectTeam: "Selecione uma equipe",
   configureTeam: "Configurar",
   
+  // Dashboard customization
+  customizeDashboard: "Personalizar Dashboard",
+  selectWidgets: "Selecione quais widgets deseja exibir e a ordem em que eles aparecem.",
+  cancel: "Cancelar",
+  saveLayout: "Salvar Layout",
+  layoutSaved: "Layout do dashboard salvo com sucesso!",
+  
+  // Dashboard Summary
+  salesGoal: "Meta de Vendas",
+  currentMonthProgress: "Progresso do mês atual",
+  atomicHabits: "Hábitos Atômicos", 
+  dailyCompletion: "Conclusão diária",
+  totalBonus: "Bônus Total",
+  accumulatedReward: "Recompensa acumulada",
+  monthlyReward: "Recompensa Mensal",
+  currentBonus: "Bônus atual",
+  habitsCompletion: "Conclusão de Hábitos",
+  total: "Total",
+  loading: "Carregando...",
+  complete: "Completo",
+  onTrack: "No Caminho Certo", 
+  inProgress: "Em Progresso",
+  excellent: "Excelente",
+  good: "Bom",
+  needsImprovement: "Precisa Melhorar",
+  
   // Landing page
   heroTitle: "Transforme sua",
   heroTitleHighlight: "equipe de vendas",
