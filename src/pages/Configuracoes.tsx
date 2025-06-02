@@ -9,7 +9,7 @@ import { useLanguage } from "@/i18n";
 
 const Configuracoes = () => {
   const [activeTab, setActiveTab] = useState("api");
-  const { language } = useLanguage();
+  const { t, language } = useLanguage();
   
   // Footer tagline based on language
   const getFooterTagline = () => {
@@ -28,22 +28,22 @@ const Configuracoes = () => {
     <>
       <main className="container py-6">
         <div className="flex items-center justify-between mb-6">
-          <h1 className="text-3xl font-bold">Configurações</h1>
+          <h1 className="text-3xl font-bold">{t('settings')}</h1>
         </div>
         
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
           <TabsList className="mb-6">
             <TabsTrigger value="api" className="flex items-center gap-2">
               <KeyRound size={16} />
-              <span>APIs e Integrações</span>
+              <span>{t('apisAndIntegrations')}</span>
             </TabsTrigger>
             <TabsTrigger value="notificacoes" className="flex items-center gap-2">
               <Bell size={16} />
-              <span>Notificações</span>
+              <span>{t('notifications')}</span>
             </TabsTrigger>
             <TabsTrigger value="privacidade" className="flex items-center gap-2">
               <Shield size={16} />
-              <span>Privacidade</span>
+              <span>{t('privacy')}</span>
             </TabsTrigger>
           </TabsList>
           

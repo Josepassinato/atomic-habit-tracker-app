@@ -10,10 +10,12 @@ import HabitosList from "./components/HabitosList";
 import HabitosCalendario from "./components/HabitosCalendario";
 import HabitosDesempenho from "./components/HabitosDesempenho";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
+import { useLanguage } from "@/i18n";
 
 const HabitosPage = () => {
   const [activeTab, setActiveTab] = useState<string>("lista");
   const { adicionarNotificacao } = useNotificacoes();
+  const { t } = useLanguage();
   const { 
     habitos, 
     conquistasRecentes,
@@ -29,10 +31,10 @@ const HabitosPage = () => {
   return (
     <div className="container py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">Hábitos Atômicos</h1>
+        <h1 className="text-3xl font-bold">{t('atomicHabits')}</h1>
         <Button className="gap-2" onClick={handleAddNewHabito}>
           <PlusCircle size={16} />
-          Novo Hábito
+          {t('newHabit')}
         </Button>
       </div>
       
@@ -40,15 +42,15 @@ const HabitosPage = () => {
         <TabsList className="mb-4">
           <TabsTrigger value="lista" className="flex items-center gap-2">
             <List size={16} />
-            Lista
+            {t('list')}
           </TabsTrigger>
           <TabsTrigger value="calendario" className="flex items-center gap-2">
             <Calendar size={16} />
-            Calendário
+            {t('calendar')}
           </TabsTrigger>
           <TabsTrigger value="desempenho" className="flex items-center gap-2">
             <Trophy size={16} />
-            Desempenho
+            {t('performance')}
           </TabsTrigger>
         </TabsList>
         

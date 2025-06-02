@@ -35,7 +35,7 @@ const HabitosList: React.FC<HabitosListProps> = ({
       
       {habitos.length === 0 && (
         <div className="py-6 text-center text-muted-foreground">
-          <p>Você ainda não possui hábitos cadastrados.</p>
+          <p>{t('noHabitsYet')}</p>
         </div>
       )}
       
