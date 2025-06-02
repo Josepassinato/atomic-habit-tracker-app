@@ -337,3 +337,22 @@ export const useSalesReps = (teamId?: string) => {
 // Export aliases for Portuguese naming compatibility
 export const useEquipes = useTeams;
 export const useVendedores = useSalesReps;
+
+// Add Portuguese return value compatibility
+export const useVendedoresCompat = (teamId?: string) => {
+  const result = useSalesReps(teamId);
+  return {
+    ...result,
+    vendedores: result.salesReps,
+    equipes: [] // This will be handled by the calling component
+  };
+};
+
+export const useEquipesCompat = () => {
+  const result = useTeams();
+  return {
+    ...result,
+    equipes: result.teams,
+    vendedores: [] // This will be handled by the calling component
+  };
+};

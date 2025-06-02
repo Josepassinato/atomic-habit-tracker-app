@@ -57,6 +57,32 @@ const Relatorios = () => {
     );
   };
 
+  // Convert between English and Portuguese period types
+  const convertPeriodToPortuguese = (period: "week" | "month" | "quarter" | "year"): "semana" | "mes" | "trimestre" | "ano" => {
+    const mapping = {
+      "week": "semana",
+      "month": "mes", 
+      "quarter": "trimestre",
+      "year": "ano"
+    } as const;
+    return mapping[period];
+  };
+
+  const convertPeriodToEnglish = (period: "semana" | "mes" | "trimestre" | "ano"): "week" | "month" | "quarter" | "year" => {
+    const mapping = {
+      "semana": "week",
+      "mes": "month",
+      "trimestre": "quarter", 
+      "ano": "year"
+    } as const;
+    return mapping[period];
+  };
+
+  const handleSetPeriodo = (periodo: "semana" | "mes" | "trimestre" | "ano") => {
+    const englishPeriod = convertPeriodToEnglish(periodo);
+    setPeriodoSelecionado(englishPeriod);
+  };
+
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
@@ -75,8 +101,8 @@ const Relatorios = () => {
             percentualMeta={percentualMeta}
             mediaConversao={mediaConversao}
             isLoading={isLoading}
-            periodoSelecionado={periodoSelecionado}
-            setPeriodoSelecionado={setPeriodoSelecionado}
+            periodoSelecionado={convertPeriodToPortuguese(periodoSelecionado)}
+            setPeriodoSelecionado={handleSetPeriodo}
             equipeId={equipeId}
             setEquipeId={setEquipeId}
             date={date}
@@ -105,7 +131,7 @@ const Relatorios = () => {
       <RelatoriosEmailDialog
         open={emailDialogOpen}
         onOpenChange={setEmailDialogOpen}
-        periodoSelecionado={periodoSelecionado}
+        periodoSelecionado={convertPeriodToPortuguese(periodoSelecionado)}
         equipeId={equipeId}
         date={date}
         totalVendas={totalVendas}

@@ -22,7 +22,17 @@ export class TeamMetricsCalculator {
     
     return {
       id: equipe.id,
-      nome: equipe.nome,
+      name: equipe.name,
+      salesRepsCount: vendedores.length,
+      totalSales: metaAtual,
+      goalTarget: metaTotal,
+      goalPercentage: progressoMeta,
+      averageConversion: 0,
+      completedHabits: habitosConcluidos,
+      totalHabits: habitos.length,
+      habitsPercentage: progressoHabitos,
+      // Portuguese compatibility
+      nome: equipe.name,
       vendedores: vendedores.length,
       metaTotal,
       metaAtual,
@@ -71,7 +81,17 @@ export class TeamMetricsCalculator {
       
     return {
       id: equipe.id,
-      nome: equipe.nome || "Equipe Sem Nome",
+      name: equipe.name || "Equipe Sem Nome",
+      salesRepsCount: numVendedores,
+      totalSales: metaAtual,
+      goalTarget: metaTotal,
+      goalPercentage: progressoMeta,
+      averageConversion: 0,
+      completedHabits: habitosConcluidos,
+      totalHabits: habitosEquipe.length || 0,
+      habitsPercentage: progressoHabitos,
+      // Portuguese compatibility
+      nome: equipe.name || "Equipe Sem Nome",
       vendedores: numVendedores,
       metaTotal,
       metaAtual,

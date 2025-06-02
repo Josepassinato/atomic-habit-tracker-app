@@ -18,6 +18,15 @@ export interface TeamMetrics {
   completedHabits: number;
   totalHabits: number;
   habitsPercentage: number;
+  // Portuguese compatibility properties
+  nome: string;
+  vendedores: number;
+  metaTotal: number;
+  metaAtual: number;
+  progressoMeta: number;
+  habitosConcluidos: number;
+  habitosTotal: number;
+  progressoHabitos: number;
 }
 
 export interface SalesRepData {
@@ -28,6 +37,24 @@ export interface SalesRepData {
   vendas_total: number;
   meta_atual: number;
   taxa_conversao: number;
+}
+
+// Add missing type exports for backward compatibility
+export interface VendedorData {
+  id: string;
+  nome: string;
+  email: string;
+  equipe_id: string;
+  vendas_total: number;
+  meta_atual: number;
+  taxa_conversao: number;
+}
+
+export interface HabitoData {
+  id: string;
+  title: string;
+  concluido: boolean;
+  equipe_id: string;
 }
 
 export interface HabitData {

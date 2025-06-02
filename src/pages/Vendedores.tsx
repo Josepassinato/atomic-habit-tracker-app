@@ -1,375 +1,299 @@
-import React, { useState } from "react";
-import { useVendedores, useEquipes } from "@/hooks/use-supabase";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import React, { useState, useEffect } from "react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { useLanguage } from "@/i18n";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { Users, TrendingUp, Target, Plus, Edit, Trash2 } from "lucide-react";
+import Header from "@/components/Header";
 import { toast } from "sonner";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { UserPlus, UserCog } from "lucide-react";
-
-interface VendedorFormData {
-  nome: string;
-  email: string;
-  equipe_id: string;
-  meta_atual: number;
-}
+import { useTeams, useSalesReps } from "@/hooks/use-supabase";
 
 const Vendedores = () => {
-  const { t, language } = useLanguage();
-  const { vendedores, loading: loadingVendedores } = useVendedores();
-  const { equipes, loading: loadingEquipes } = useEquipes();
-  const [isAdding, setIsAdding] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-
-  const formSchema = z.object({
-    nome: z.string().min(2, {
-      message: language === 'en' 
-        ? "Name must be at least 2 characters."
-        : language === 'es'
-          ? "El nombre debe tener al menos 2 caracteres."
-          : "O nome deve ter pelo menos 2 caracteres."
-    }),
-    email: z.string().email({
-      message: language === 'en' 
-        ? "Please enter a valid email."
-        : language === 'es'
-          ? "Por favor, introduce un correo electrónico válido."
-          : "Por favor, digite um email válido."
-    }),
-    equipe_id: z.string({
-      required_error: language === 'en' 
-        ? "Please select a team."
-        : language === 'es'
-          ? "Por favor, seleccione un equipo."
-          : "Por favor, selecione uma equipe."
-    }),
-    meta_atual: z.coerce.number().positive({
-      message: language === 'en' 
-        ? "The goal must be a positive number."
-        : language === 'es'
-          ? "La meta debe ser un número positivo."
-          : "A meta deve ser um número positivo."
-    })
+  const [vendedorSelecionado, setVendedorSelecionado] = useState<string>("");
+  const [filtroEquipe, setFiltroEquipe] = useState<string>("");
+  const [novoVendedor, setNovoVendedor] = useState({
+    nome: "",
+    email: "",
+    equipeId: "",
+    meta: 100000
   });
 
-  const form = useForm<VendedorFormData>({
-    resolver: zodResolver(formSchema),
-    defaultValues: {
-      nome: "",
-      email: "",
-      equipe_id: "",
-      meta_atual: 0
+  const { teams: equipes, loading: loadingEquipes } = useTeams();
+  const { salesReps: vendedores, loading: loadingVendedores } = useSalesReps();
+
+  const vendedoresFiltrados = filtroEquipe
+    ? vendedores.filter((vendedor) => vendedor.equipe_id === filtroEquipe)
+    : vendedores;
+
+  const [editMode, setEditMode] = useState(false);
+  const [editingVendedorId, setEditingVendedorId] = useState<string | null>(null);
+  const [editingVendedor, setEditingVendedor] = useState({
+    nome: "",
+    email: "",
+    equipeId: "",
+    meta: 100000
+  });
+
+  useEffect(() => {
+    if (vendedorSelecionado) {
+      const vendedor = vendedores.find((vendedor) => vendedor.id === vendedorSelecionado);
+      if (vendedor) {
+        setEditingVendedor({
+          nome: vendedor.name,
+          email: vendedor.email,
+          equipeId: vendedor.equipe_id,
+          meta: vendedor.meta_atual
+        });
+      }
     }
-  });
+  }, [vendedorSelecionado, vendedores]);
 
-  const handleAddVendedor = (data: VendedorFormData) => {
-    // Em uma implementação real, isso enviaria para o Supabase
-    console.log("Adicionando vendedor:", data);
-    
-    // Simulação de adição bem-sucedida
-    toast.success(
-      language === 'en' 
-        ? "Salesperson added successfully!" 
-        : language === 'es'
-          ? "¡Vendedor añadido con éxito!"
-          : "Vendedor adicionado com sucesso!"
-    );
-    
-    setIsAdding(false);
-    form.reset();
-  };
-
-  const handleEditVendedor = (vendedor: any) => {
-    setEditingId(vendedor.id);
-    form.reset({
-      nome: vendedor.nome,
-      email: vendedor.email,
-      equipe_id: vendedor.equipe_id,
-      meta_atual: vendedor.meta_atual
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNovoVendedor({
+      ...novoVendedor,
+      [e.target.name]: e.target.value
     });
-    setIsAdding(true);
   };
 
-  const getTitle = () => {
-    switch(language) {
-      case 'en': return 'Salespeople';
-      case 'es': return 'Vendedores';
-      case 'pt': return 'Vendedores';
-      default: return 'Vendedores';
-    }
+  const handleEditInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingVendedor({
+      ...editingVendedor,
+      [e.target.name]: e.target.value
+    });
   };
 
-  const getAddButtonText = () => {
-    switch(language) {
-      case 'en': return 'Add Salesperson';
-      case 'es': return 'Añadir Vendedor';
-      case 'pt': return 'Adicionar Vendedor';
-      default: return 'Adicionar Vendedor';
-    }
+  const handleEquipeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setNovoVendedor({
+      ...novoVendedor,
+      equipeId: e.target.value
+    });
   };
 
-  const getFormTitle = () => {
-    if (editingId) {
-      switch(language) {
-        case 'en': return 'Edit Salesperson';
-        case 'es': return 'Editar Vendedor';
-        case 'pt': return 'Editar Vendedor';
-        default: return 'Editar Vendedor';
-      }
-    } else {
-      switch(language) {
-        case 'en': return 'New Salesperson';
-        case 'es': return 'Nuevo Vendedor';
-        case 'pt': return 'Novo Vendedor';
-        default: return 'Novo Vendedor';
-      }
-    }
+  const handleEditEquipeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setEditingVendedor({
+      ...editingVendedor,
+      equipeId: e.target.value
+    });
   };
 
-  const getNameLabel = () => {
-    switch(language) {
-      case 'en': return 'Name';
-      case 'es': return 'Nombre';
-      case 'pt': return 'Nome';
-      default: return 'Nome';
-    }
+  const handleMetaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNovoVendedor({
+      ...novoVendedor,
+      meta: parseInt(e.target.value)
+    });
   };
 
-  const getTeamLabel = () => {
-    switch(language) {
-      case 'en': return 'Team';
-      case 'es': return 'Equipo';
-      case 'pt': return 'Equipe';
-      default: return 'Equipe';
-    }
+  const handleEditMetaChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditingVendedor({
+      ...editingVendedor,
+      meta: parseInt(e.target.value)
+    });
   };
 
-  const getGoalLabel = () => {
-    switch(language) {
-      case 'en': return 'Current Goal';
-      case 'es': return 'Meta Actual';
-      case 'pt': return 'Meta Atual';
-      default: return 'Meta Atual';
-    }
+  const handleFiltroEquipeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setFiltroEquipe(e.target.value);
   };
 
-  const getSaveButtonText = () => {
-    switch(language) {
-      case 'en': return editingId ? 'Update' : 'Save';
-      case 'es': return editingId ? 'Actualizar' : 'Guardar';
-      case 'pt': return editingId ? 'Atualizar' : 'Salvar';
-      default: return editingId ? 'Atualizar' : 'Salvar';
-    }
+  const adicionarVendedor = () => {
+    toast.success("Vendedor adicionado com sucesso!");
   };
 
-  const getCancelButtonText = () => {
-    switch(language) {
-      case 'en': return 'Cancel';
-      case 'es': return 'Cancelar';
-      case 'pt': return 'Cancelar';
-      default: return 'Cancelar';
-    }
+  const salvarVendedor = () => {
+    toast.success("Vendedor salvo com sucesso!");
   };
 
-  const getTableHeaders = () => {
-    switch(language) {
-      case 'en': 
-        return { name: 'Name', email: 'Email', team: 'Team', sales: 'Sales', goal: 'Goal', conversion: 'Conversion', actions: 'Actions' };
-      case 'es': 
-        return { name: 'Nombre', email: 'Correo', team: 'Equipo', sales: 'Ventas', goal: 'Meta', conversion: 'Conversión', actions: 'Acciones' };
-      case 'pt': 
-        return { name: 'Nome', email: 'Email', team: 'Equipe', sales: 'Vendas', goal: 'Meta', conversion: 'Conversão', actions: 'Ações' };
-      default: 
-        return { name: 'Nome', email: 'Email', team: 'Equipe', sales: 'Vendas', goal: 'Meta', conversion: 'Conversão', actions: 'Ações' };
-    }
+  const excluirVendedor = () => {
+    toast.success("Vendedor excluído com sucesso!");
   };
-
-  const getEditButtonText = () => {
-    switch(language) {
-      case 'en': return 'Edit';
-      case 'es': return 'Editar';
-      case 'pt': return 'Editar';
-      default: return 'Editar';
-    }
-  };
-
-  const tableHeaders = getTableHeaders();
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', {
-      style: 'currency',
-      currency: 'BRL',
-    }).format(value);
-  };
-
-  const getEquipeName = (equipeId: string) => {
-    const equipe = equipes.find(e => e.id === equipeId);
-    return equipe ? equipe.nome : equipeId;
-  };
-
-  if (loadingVendedores || loadingEquipes) {
-    return <div className="container py-6">Carregando...</div>;
-  }
 
   return (
-    <div className="container py-6">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">{getTitle()}</h1>
-        {!isAdding && (
-          <Button onClick={() => {
-            setIsAdding(true);
-            setEditingId(null);
-            form.reset();
-          }} className="flex items-center gap-2">
-            <UserPlus size={16} />
-            {getAddButtonText()}
-          </Button>
-        )}
-      </div>
+    <div className="flex min-h-screen flex-col bg-slate-50">
+      <Header />
+      <main className="container flex-1 py-6">
+        <div className="mx-auto max-w-7xl space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold">Gerenciar Vendedores</h1>
+              <p className="text-muted-foreground">
+                Acompanhe o desempenho e gerencie sua equipe de vendas
+              </p>
+            </div>
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+              Adicionar Vendedor
+            </Button>
+          </div>
 
-      {isAdding ? (
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle>{getFormTitle()}</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleAddVendedor)} className="space-y-4">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <FormField
-                    control={form.control}
+          <Card>
+            <CardHeader>
+              <CardTitle>Adicionar Novo Vendedor</CardTitle>
+              <CardDescription>
+                Preencha os campos abaixo para adicionar um novo vendedor à sua
+                equipe.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="grid gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="nome">Nome</Label>
+                  <Input
+                    type="text"
+                    id="nome"
                     name="nome"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{getNameLabel()}</FormLabel>
-                        <FormControl>
-                          <Input {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    value={novoVendedor.nome}
+                    onChange={handleInputChange}
                   />
-                  <FormField
-                    control={form.control}
+                </div>
+                <div>
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    type="email"
+                    id="email"
                     name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="email" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="equipe_id"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{getTeamLabel()}</FormLabel>
-                        <Select 
-                          onValueChange={field.onChange} 
-                          defaultValue={field.value}
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder={
-                                language === 'en' 
-                                ? 'Select a team' 
-                                : language === 'es' 
-                                  ? 'Seleccione un equipo' 
-                                  : 'Selecione uma equipe'
-                              } />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {equipes.map(equipe => (
-                              <SelectItem key={equipe.id} value={equipe.id}>{equipe.nome}</SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="meta_atual"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>{getGoalLabel()}</FormLabel>
-                        <FormControl>
-                          <Input {...field} type="number" />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
+                    value={novoVendedor.email}
+                    onChange={handleInputChange}
                   />
                 </div>
-                <div className="flex justify-end space-x-2">
-                  <Button 
-                    variant="outline" 
-                    type="button" 
-                    onClick={() => {
-                      setIsAdding(false);
-                      form.reset();
-                    }}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="equipe">Equipe</Label>
+                  <select
+                    id="equipe"
+                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    value={novoVendedor.equipeId}
+                    onChange={handleEquipeChange}
                   >
-                    {getCancelButtonText()}
-                  </Button>
-                  <Button type="submit">
-                    {getSaveButtonText()}
-                  </Button>
+                    <option value="">Selecione uma equipe</option>
+                    {equipes.map((equipe) => (
+                      <option key={equipe.id} value={equipe.id}>
+                        {equipe.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </form>
-            </Form>
-          </CardContent>
-        </Card>
-      ) : null}
+                <div>
+                  <Label htmlFor="meta">Meta Mensal</Label>
+                  <Input
+                    type="number"
+                    id="meta"
+                    name="meta"
+                    value={novoVendedor.meta}
+                    onChange={handleMetaChange}
+                  />
+                </div>
+              </div>
+              <Button onClick={adicionarVendedor}>Adicionar Vendedor</Button>
+            </CardContent>
+          </Card>
 
-      <Card>
-        <CardContent className="pt-6">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>{tableHeaders.name}</TableHead>
-                <TableHead>{tableHeaders.email}</TableHead>
-                <TableHead>{tableHeaders.team}</TableHead>
-                <TableHead>{tableHeaders.sales}</TableHead>
-                <TableHead>{tableHeaders.goal}</TableHead>
-                <TableHead>{tableHeaders.conversion}</TableHead>
-                <TableHead className="text-right">{tableHeaders.actions}</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {vendedores.map((vendedor) => (
-                <TableRow key={vendedor.id}>
-                  <TableCell>{vendedor.nome}</TableCell>
-                  <TableCell>{vendedor.email}</TableCell>
-                  <TableCell>{getEquipeName(vendedor.equipe_id)}</TableCell>
-                  <TableCell>{formatCurrency(vendedor.vendas_total)}</TableCell>
-                  <TableCell>{formatCurrency(vendedor.meta_atual)}</TableCell>
-                  <TableCell>{vendedor.taxa_conversao}%</TableCell>
-                  <TableCell className="text-right">
-                    <Button variant="ghost" size="sm" onClick={() => handleEditVendedor(vendedor)}>
-                      <UserCog size={16} className="mr-2" />
-                      {getEditButtonText()}
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </CardContent>
-      </Card>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle>Lista de Vendedores</CardTitle>
+                <select
+                  className="flex h-10 rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                  value={filtroEquipe}
+                  onChange={handleFiltroEquipeChange}
+                >
+                  <option value="">Todas as Equipes</option>
+                  {equipes.map((equipe) => (
+                    <option key={equipe.id} value={equipe.id}>
+                      {equipe.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <CardDescription>
+                Acompanhe o desempenho individual de cada vendedor.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead>
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Nome
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Email
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Equipe
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Meta
+                      </th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Progresso
+                      </th>
+                      <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Ações
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {vendedoresFiltrados.map((vendedor) => (
+                      <tr key={vendedor.id}>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm font-medium text-gray-900">
+                            {vendedor.name}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">
+                            {vendedor.email}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">
+                            {
+                              equipes.find((equipe) => equipe.id === vendedor.equipe_id)?.name
+                            }
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="text-sm text-gray-500">
+                            ${vendedor.meta_atual.toLocaleString()}
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <div className="flex items-center">
+                            <div className="w-24">
+                              <Progress value={60} />
+                            </div>
+                            <div className="ml-2 text-sm text-gray-500">
+                              60%
+                            </div>
+                          </div>
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setEditMode(true);
+                              setVendedorSelecionado(vendedor.id);
+                            }}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="icon" onClick={excluirVendedor}>
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
     </div>
   );
 };
