@@ -2,12 +2,14 @@
 import { supabaseConfigService } from "./supabase-config";
 import { supabaseConnectionService } from "./supabase-connection";
 import { supabaseSettingsService } from "./supabase-settings";
-import { supabaseDataSyncService } from "./supabase-data-sync";
+import { DataSyncOrchestratorService } from "./sync/data-sync-orchestrator";
 
 /**
  * Main Supabase service that combines all supabase related functionality
  */
 class SupabaseService {
+  private dataSyncOrchestrator = new DataSyncOrchestratorService();
+
   // Config methods
   setApiKey(apiKey: string) {
     supabaseConfigService.setApiKey(apiKey);
@@ -49,25 +51,25 @@ class SupabaseService {
     return supabaseSettingsService.loadConfigFromDatabase();
   }
 
-  // Data sync methods
+  // Data sync methods (delegated to orchestrator)
   syncTeamsToSupabase(teams: any[]) {
-    return supabaseDataSyncService.syncTeamsToSupabase(teams);
+    return this.dataSyncOrchestrator.syncTeamsToSupabase(teams);
   }
 
   syncVendedoresToSupabase(vendedores: any[]) {
-    return supabaseDataSyncService.syncVendedoresToSupabase(vendedores);
+    return this.dataSyncOrchestrator.syncVendedoresToSupabase(vendedores);
   }
   
   syncHabitosToSupabase(habitos: any[]) {
-    return supabaseDataSyncService.syncHabitosToSupabase(habitos);
+    return this.dataSyncOrchestrator.syncHabitosToSupabase(habitos);
   }
   
   syncMetasToSupabase(metas: any[]) {
-    return supabaseDataSyncService.syncMetasToSupabase(metas);
+    return this.dataSyncOrchestrator.syncMetasToSupabase(metas);
   }
   
   syncAllDataToSupabase() {
-    return supabaseDataSyncService.syncAllDataToSupabase();
+    return this.dataSyncOrchestrator.syncAllDataToSupabase();
   }
 }
 
