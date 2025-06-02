@@ -1,163 +1,159 @@
-import { Habito, ModeloNegocio } from "./types";
-import { HabitoEvidenciaType } from "./HabitoEvidencia";
-import { toast } from "sonner";
-import { openAIService } from "@/services/openai-service";
 
-export const habitosIniciais = [
+import { Habito, ModeloNegocio } from "./types";
+
+export const habitosIniciais: Habito[] = [
   {
     id: 1,
-    titulo: "Check-in Matinal",
-    descricao: "Definir metas diárias para vendas",
-    cumprido: true,
-    horario: "08:30",
-    verificacaoNecessaria: true
+    titulo: "Verify if contacts were registered in CRM",
+    descricao: "Check registration and data quality",
+    cumprido: false,
+    verificado: false,
+    verificacaoNecessaria: true,
+    horario: "09:00",
+    recorrencia: "daily"
   },
   {
     id: 2,
-    titulo: "Follow-up Sistemático",
-    descricao: "Verificar se contatos foram registrados no CRM",
-    cumprido: true,
-    horario: "12:00",
-    verificacaoNecessaria: true
+    titulo: "Micro Dose Training",
+    descricao: "Read content and validate learning",
+    cumprido: false,
+    verificado: false,
+    verificacaoNecessaria: true,
+    horario: "15:00",
+    recorrencia: "daily"
   },
   {
     id: 3,
-    titulo: "Treinamento em Micro Doses",
-    descricao: "Ler conteúdo e validar aprendizado",
+    titulo: "CRM Insights Registration",
+    descricao: "Document important interactions",
     cumprido: false,
-    horario: "15:00",
-    verificacaoNecessaria: true
+    verificado: false,
+    verificacaoNecessaria: true,
+    horario: "16:30",
+    recorrencia: "daily"
   },
   {
     id: 4,
-    titulo: "Registro de Insights no CRM",
-    descricao: "Documentar interações importantes",
+    titulo: "End of Day",
+    descricao: "Reflection on achievements and improvements",
     cumprido: false,
-    horario: "16:30",
-    verificacaoNecessaria: true
-  },
-  {
-    id: 5,
-    titulo: "Encerramento do Dia",
-    descricao: "Reflexão sobre conquistas e melhorias",
-    cumprido: false,
+    verificado: false,
+    verificacaoNecessaria: false,
     horario: "18:00",
-    verificacaoNecessaria: false
-  },
+    recorrencia: "daily"
+  }
 ];
 
-// Obter feedback da IA com base nos hábitos concluídos
 export const getFeedbackIA = async (habitos: Habito[]): Promise<string> => {
-  try {
-    if (!openAIService.getApiKey()) {
-      return "Configure sua chave da API da OpenAI nas configurações para receber feedback personalizado.";
-    }
-    
-    const habitosCumpridos = habitos.filter(h => h.cumprido).length;
-    const percentualConcluido = (habitosCumpridos / habitos.length) * 100;
-    
-    // Criar o prompt para a API da OpenAI
-    const prompt = `
-      Analise o desempenho do usuário nos hábitos atômicos de vendas hoje:
-      - Total de hábitos: ${habitos.length}
-      - Hábitos concluídos: ${habitosCumpridos}
-      - Percentual concluído: ${percentualConcluido.toFixed(2)}%
+  const habitosCumpridos = habitos.filter(h => h.cumprido).length;
+  const totalHabitos = habitos.length;
+  const percentualCumprimento = (habitosCumpridos / totalHabitos) * 100;
 
-      Lista de hábitos:
-      ${habitos.map(h => `- ${h.titulo}: ${h.cumprido ? 'Concluído' : 'Não concluído'}`).join('\n')}
+  await new Promise(resolve => setTimeout(resolve, 2000));
 
-      Forneça um feedback construtivo e motivador sobre o desempenho, incluindo:
-      1. Avaliação geral do desempenho
-      2. Sugestão específica para melhorar no(s) hábito(s) não concluído(s)
-      3. Como isso pode impactar nos resultados de vendas
-      
-      Limite sua resposta a 3 ou 4 frases objetivas.
-    `;
-
-    // Usar o serviço da OpenAI para gerar o feedback
-    return await openAIService.generateText(prompt);
-    
-  } catch (error) {
-    console.error("Erro ao obter feedback da IA:", error);
-    toast.error("Não foi possível obter o feedback da IA. Tente novamente mais tarde.");
-    return "";
+  if (percentualCumprimento === 100) {
+    return "Excellent! You completed all your habits today. This consistency will drive exceptional results in your sales performance.";
+  } else if (percentualCumprimento >= 75) {
+    return "Great progress! You're on the right track. Try to maintain this consistency to maximize your sales results.";
+  } else if (percentualCumprimento >= 50) {
+    return "Good start! To boost your sales performance, focus on completing more daily habits. Small consistent actions generate big results.";
+  } else {
+    return "There's room for improvement. Start with one habit at a time and build momentum gradually. Consistency is key to sales success.";
   }
 };
 
-// Gerar sugestões de hábitos baseados no modelo de negócio
-export const gerarHabitosSugeridos = async (modeloNegocio: ModeloNegocio): Promise<Habito[]> => {
-  try {
-    if (!openAIService.getApiKey()) {
-      toast.error("Configure sua chave da API da OpenAI nas configurações");
-      
-      // Retorna hábitos padrão se não houver API key
-      return [
-        {
-          id: Date.now(),
-          titulo: "Hábito Padrão 1",
-          descricao: "Configure sua API key para hábitos personalizados",
-          cumprido: false,
-          horario: "09:00"
-        },
-        {
-          id: Date.now() + 1,
-          titulo: "Hábito Padrão 2",
-          descricao: "Configure sua API key para hábitos personalizados",
-          cumprido: false,
-          horario: "11:00"
-        }
-      ];
-    }
-    
-    const prompt = `
-      Com base no modelo de negócio descrito abaixo, sugira 3 hábitos atômicos de vendas que teriam maior impacto na performance:
+export const gerarHabitosSugeridos = async (modelo: ModeloNegocio): Promise<Habito[]> => {
+  await new Promise(resolve => setTimeout(resolve, 3000));
 
-      Segmento/Indústria: ${modeloNegocio.segmento}
-      Ciclo de Vendas: ${modeloNegocio.cicloVenda}
-      Tamanho da Equipe de Vendas: ${modeloNegocio.tamEquipe}
-      Objetivo Principal: ${modeloNegocio.objetivoPrincipal}
-
-      Para cada hábito, forneça:
-      - Um título conciso (máximo 5 palavras)
-      - Uma descrição clara da ação (máximo 15 palavras)
-      - Um horário recomendado para realizá-lo
-
-      Retorne os dados APENAS no seguinte formato JSON (sem explicações adicionais):
-      [
-        {
-          "titulo": "Título do Hábito 1",
-          "descricao": "Descrição da ação específica",
-          "horario": "09:00"
-        },
-        ...
-      ]
-    `;
-
-    const systemPrompt = "Você é um consultor especializado em vendas B2B e hábitos atômicos para equipes comerciais. Seu objetivo é gerar hábitos altamente impactantes e específicos para o contexto do cliente. Responda APENAS no formato JSON solicitado.";
-
-    // Usar o serviço da OpenAI para gerar as sugestões
-    const openaiResponse = await openAIService.generateText(prompt, systemPrompt);
-    
-    try {
-      const habitosGerados = JSON.parse(openaiResponse);
-      
-      // Adicionar IDs aos hábitos gerados
-      return habitosGerados.map((habito: any, index: number) => ({
-        id: Date.now() + index,
-        titulo: habito.titulo,
-        descricao: habito.descricao,
+  const habitosPorSegmento: Record<string, Habito[]> = {
+    "SaaS": [
+      {
+        id: Date.now() + 1,
+        titulo: "Daily Product Demo",
+        descricao: "Conduct live product demonstrations",
         cumprido: false,
-        horario: habito.horario
-      }));
-    } catch (error) {
-      console.error("Erro ao processar resposta da OpenAI:", error);
-      toast.error("Erro ao processar a resposta da IA");
-      return [];
+        verificado: false,
+        verificacaoNecessaria: true,
+        horario: "10:00",
+        recorrencia: "daily"
+      },
+      {
+        id: Date.now() + 2,
+        titulo: "Customer Success Follow-up",
+        descricao: "Contact existing customers about satisfaction",
+        cumprido: false,
+        verificado: false,
+        verificacaoNecessaria: false,
+        horario: "14:00",
+        recorrencia: "daily"
+      }
+    ],
+    "E-commerce": [
+      {
+        id: Date.now() + 3,
+        titulo: "Marketplace Updates",
+        descricao: "Update product listings and promotions",
+        cumprido: false,
+        verificado: false,
+        verificacaoNecessaria: true,
+        horario: "08:00",
+        recorrencia: "daily"
+      },
+      {
+        id: Date.now() + 4,
+        titulo: "Conversion Analysis",
+        descricao: "Analyze conversion metrics and optimize",
+        cumprido: false,
+        verificado: false,
+        verificacaoNecessaria: false,
+        horario: "17:00",
+        recorrencia: "daily"
+      }
+    ],
+    "Consulting": [
+      {
+        id: Date.now() + 5,
+        titulo: "Expertise Content",
+        descricao: "Create content demonstrating expertise",
+        cumprido: false,
+        verificado: false,
+        verificacaoNecessaria: true,
+        horario: "11:00",
+        recorrencia: "daily"
+      },
+      {
+        id: Date.now() + 6,
+        titulo: "Network Building",
+        descricao: "Connect with potential partners and clients",
+        cumprido: false,
+        verificado: false,
+        verificacaoNecessaria: false,
+        horario: "16:00",
+        recorrencia: "daily"
+      }
+    ]
+  };
+
+  return habitosPorSegmento[modelo.segmento] || [
+    {
+      id: Date.now() + 7,
+      titulo: "Daily Prospecting",
+      descricao: "Research and contact new prospects",
+      cumprido: false,
+      verificado: false,
+      verificacaoNecessaria: true,
+      horario: "09:00",
+      recorrencia: "daily"
+    },
+    {
+      id: Date.now() + 8,
+      titulo: "Skills Development",
+      descricao: "Study sales techniques and market trends",
+      cumprido: false,
+      verificado: false,
+      verificacaoNecessaria: false,
+      horario: "13:00",
+      recorrencia: "daily"
     }
-    
-  } catch (error) {
-    console.error("Erro ao obter sugestões da IA:", error);
-    toast.error("Não foi possível gerar hábitos personalizados. Tente novamente mais tarde.");
-    return [];
-  }
+  ];
 };

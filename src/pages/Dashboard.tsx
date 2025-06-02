@@ -22,8 +22,19 @@ const Dashboard = () => {
     // Simple authentication check
     const user = localStorage.getItem("user");
     if (!user) {
-      // For development purposes, create a temporary user
-      localStorage.setItem("user", JSON.stringify({ id: 1, nome: "Test User" }));
+      // For development purposes, create a temporary user with English role
+      localStorage.setItem("user", JSON.stringify({ 
+        id: 1, 
+        nome: "Test User",
+        role: "salesperson" // Changed from "vendedor" to "salesperson"
+      }));
+    } else {
+      // Update existing user data to use English role
+      const userData = JSON.parse(user);
+      if (userData.role === "vendedor") {
+        userData.role = "salesperson";
+        localStorage.setItem("user", JSON.stringify(userData));
+      }
     }
     
     // Control if page has been loaded to show notification only once
@@ -34,7 +45,7 @@ const Dashboard = () => {
       if (!notificacaoExibida.current) {
         // Small delay to avoid multiple notifications
         const timer = setTimeout(() => {
-          const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'user') || "Welcome back!";
+          const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
           const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
           
           adicionarNotificacao({

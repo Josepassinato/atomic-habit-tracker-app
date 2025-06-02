@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
@@ -5,7 +6,7 @@ import { SupabaseClient, createClient } from '@supabase/supabase-js';
 export type Team = {
   id: string;
   name: string;
-  empresa_id: string;
+  company_id: string;
   created_at: string;
 };
 
@@ -13,10 +14,10 @@ export type SalesRep = {
   id: string;
   name: string;
   email: string;
-  equipe_id: string;
-  vendas_total: number;
-  meta_atual: number;
-  taxa_conversao: number;
+  team_id: string;
+  total_sales: number;
+  current_goal: number;
+  conversion_rate: number;
   created_at: string;
 };
 
@@ -123,13 +124,13 @@ export const useTeams = () => {
           {
             id: '1',
             name: 'Sales Team',
-            empresa_id: '1',
+            company_id: '1',
             created_at: new Date().toISOString(),
           },
           {
             id: '2',
             name: 'Customer Success Team',
-            empresa_id: '1',
+            company_id: '1',
             created_at: new Date().toISOString(),
           }
         ];
@@ -144,19 +145,10 @@ export const useTeams = () => {
           }
           
           if (data && data.length > 0) {
-            // Map the new column names to the expected format
-            const mappedTeams = data.map((team: any) => ({
-              ...team,
-              empresa_id: team.company_id // Map new column name to old interface
-            }));
-            setTeams(mappedTeams);
+            setTeams(data);
           } else {
-            // If no data, initialize with default data (using new column names)
-            const defaultTeamsForDB = defaultTeams.map(team => ({
-              ...team,
-              company_id: team.empresa_id
-            }));
-            await supabase.from('teams').upsert(defaultTeamsForDB);
+            // If no data, initialize with default data
+            await supabase.from('teams').upsert(defaultTeams);
             setTeams(defaultTeams);
           }
         } else {
@@ -178,13 +170,13 @@ export const useTeams = () => {
           {
             id: '1',
             name: 'Sales Team',
-            empresa_id: '1',
+            company_id: '1',
             created_at: new Date().toISOString(),
           },
           {
             id: '2',
             name: 'Customer Success Team',
-            empresa_id: '1',
+            company_id: '1',
             created_at: new Date().toISOString(),
           }
         ]);
@@ -217,30 +209,30 @@ export const useSalesReps = (teamId?: string) => {
             id: '1',
             name: 'John Silva',
             email: 'john@example.com',
-            equipe_id: '1',
-            vendas_total: 120000,
-            meta_atual: 150000,
-            taxa_conversao: 0.35,
+            team_id: '1',
+            total_sales: 120000,
+            current_goal: 150000,
+            conversion_rate: 0.35,
             created_at: new Date().toISOString(),
           },
           {
             id: '2',
             name: 'Maria Souza',
             email: 'maria@example.com',
-            equipe_id: '1',
-            vendas_total: 180000,
-            meta_atual: 150000,
-            taxa_conversao: 0.42,
+            team_id: '1',
+            total_sales: 180000,
+            current_goal: 150000,
+            conversion_rate: 0.42,
             created_at: new Date().toISOString(),
           },
           {
             id: '3',
             name: 'Carlos Pereira',
             email: 'carlos@example.com',
-            equipe_id: '2',
-            vendas_total: 90000,
-            meta_atual: 120000,
-            taxa_conversao: 0.28,
+            team_id: '2',
+            total_sales: 90000,
+            current_goal: 120000,
+            conversion_rate: 0.28,
             created_at: new Date().toISOString(),
           }
         ];
@@ -259,28 +251,13 @@ export const useSalesReps = (teamId?: string) => {
           }
           
           if (data && data.length > 0) {
-            // Map the new column names to the expected format
-            const mappedSalesReps = data.map((rep: any) => ({
-              ...rep,
-              equipe_id: rep.team_id,
-              vendas_total: rep.total_sales,
-              meta_atual: rep.current_goal,
-              taxa_conversao: rep.conversion_rate
-            }));
-            setSalesReps(mappedSalesReps);
+            setSalesReps(data);
           } else {
-            // If no data, initialize with default data (using new column names)
-            const defaultRepsForDB = defaultSalesReps.map(rep => ({
-              ...rep,
-              team_id: rep.equipe_id,
-              total_sales: rep.vendas_total,
-              current_goal: rep.meta_atual,
-              conversion_rate: rep.taxa_conversao
-            }));
-            await supabase.from('sales_reps').upsert(defaultRepsForDB);
+            // If no data, initialize with default data
+            await supabase.from('sales_reps').upsert(defaultSalesReps);
             
             if (teamId) {
-              setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));
+              setSalesReps(defaultSalesReps.filter(rep => rep.team_id === teamId));
             } else {
               setSalesReps(defaultSalesReps);
             }
@@ -291,14 +268,14 @@ export const useSalesReps = (teamId?: string) => {
           if (savedSalesReps) {
             const allSalesReps = JSON.parse(savedSalesReps);
             if (teamId) {
-              setSalesReps(allSalesReps.filter((v: SalesRep) => v.equipe_id === teamId));
+              setSalesReps(allSalesReps.filter((rep: SalesRep) => rep.team_id === teamId));
             } else {
               setSalesReps(allSalesReps);
             }
           } else {
             localStorage.setItem('sales_reps', JSON.stringify(defaultSalesReps));
             if (teamId) {
-              setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));
+              setSalesReps(defaultSalesReps.filter(rep => rep.team_id === teamId));
             } else {
               setSalesReps(defaultSalesReps);
             }
@@ -314,36 +291,36 @@ export const useSalesReps = (teamId?: string) => {
             id: '1',
             name: 'John Silva',
             email: 'john@example.com',
-            equipe_id: '1',
-            vendas_total: 120000,
-            meta_atual: 150000,
-            taxa_conversao: 0.35,
+            team_id: '1',
+            total_sales: 120000,
+            current_goal: 150000,
+            conversion_rate: 0.35,
             created_at: new Date().toISOString(),
           },
           {
             id: '2',
             name: 'Maria Souza',
             email: 'maria@example.com',
-            equipe_id: '1',
-            vendas_total: 180000,
-            meta_atual: 150000,
-            taxa_conversao: 0.42,
+            team_id: '1',
+            total_sales: 180000,
+            current_goal: 150000,
+            conversion_rate: 0.42,
             created_at: new Date().toISOString(),
           },
           {
             id: '3',
             name: 'Carlos Pereira',
             email: 'carlos@example.com',
-            equipe_id: '2',
-            vendas_total: 90000,
-            meta_atual: 120000,
-            taxa_conversao: 0.28,
+            team_id: '2',
+            total_sales: 90000,
+            current_goal: 120000,
+            conversion_rate: 0.28,
             created_at: new Date().toISOString(),
           }
         ];
         
         if (teamId) {
-          setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));
+          setSalesReps(defaultSalesReps.filter(rep => rep.team_id === teamId));
         } else {
           setSalesReps(defaultSalesReps);
         }
@@ -358,25 +335,6 @@ export const useSalesReps = (teamId?: string) => {
   return { salesReps, loading, error };
 };
 
-// Export aliases for Portuguese naming compatibility
+// Export aliases for backward compatibility
 export const useEquipes = useTeams;
 export const useVendedores = useSalesReps;
-
-// Add Portuguese return value compatibility
-export const useVendedoresCompat = (teamId?: string) => {
-  const result = useSalesReps(teamId);
-  return {
-    ...result,
-    vendedores: result.salesReps,
-    equipes: [] // This will be handled by the calling component
-  };
-};
-
-export const useEquipesCompat = () => {
-  const result = useTeams();
-  return {
-    ...result,
-    equipes: result.teams,
-    vendedores: [] // This will be handled by the calling component
-  };
-};

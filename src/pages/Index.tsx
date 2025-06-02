@@ -19,7 +19,7 @@ const Index = () => {
     // Demo notification system - in a real app, this would be based on events
     // Only add notification if not already shown
     if (!notificacaoExibida.current) {
-      const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'user') || "Welcome back!";
+      const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
       const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
       
       adicionarNotificacao({
