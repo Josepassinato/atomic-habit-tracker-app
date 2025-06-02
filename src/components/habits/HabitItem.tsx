@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Clock, Check, Loader } from "lucide-react";
 import { Habit } from "./types";
 import HabitEvidence, { HabitEvidenceType } from "./HabitEvidence";
+import { useLanguage } from "@/i18n";
 
 interface HabitItemProps {
   habit: Habit;
@@ -17,6 +18,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
   onMarkCompleted,
 }) => {
   const [isCompleting, setIsCompleting] = useState(false);
+  const { t } = useLanguage();
 
   const handleMarkCompleted = async () => {
     setIsCompleting(true);
@@ -62,7 +64,7 @@ const HabitItem: React.FC<HabitItemProps> = ({
           <div className="flex items-center mt-1">
             {habit.evidencia ? (
               <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200">
-                Evidence submitted
+                {t('evidenceSubmittedLabel')}
               </span>
             ) : (
               <HabitEvidence 
@@ -84,10 +86,10 @@ const HabitItem: React.FC<HabitItemProps> = ({
             {isCompleting ? (
               <>
                 <Loader className="h-4 w-4 mr-2 animate-spin" />
-                Completing...
+                {t('completingHabit')}
               </>
             ) : (
-              <>Mark as completed</>
+              <>{t('markAsCompleted')}</>
             )}
           </Button>
         )}
@@ -95,14 +97,14 @@ const HabitItem: React.FC<HabitItemProps> = ({
         {habit.cumprido && habit.evidencia && !habit.verificado && (
           <p className="text-xs text-amber-600 mt-1 flex items-center">
             <Loader className="h-3 w-3 mr-1 animate-spin" />
-            Awaiting manager verification
+            {t('awaitingVerification')}
           </p>
         )}
         
         {habit.verificado && (
           <p className="text-xs text-green-600 mt-1 flex items-center animate-fade-in">
             <Check className="h-3 w-3 mr-1" />
-            Verified by manager
+            {t('verifiedByManager')}
           </p>
         )}
       </div>

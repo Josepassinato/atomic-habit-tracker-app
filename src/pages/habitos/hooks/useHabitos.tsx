@@ -7,6 +7,7 @@ import { toast } from "sonner";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 import { initialHabits } from "@/components/habitos/HabitosService";
 import { TrendingUp, Zap, Award } from "lucide-react";
+import { useLanguage } from "@/i18n";
 
 type RecentAchievement = {
   id: number;
@@ -19,6 +20,7 @@ type RecentAchievement = {
 
 export const useHabitos = () => {
   const { adicionarNotificacao } = useNotificacoes();
+  const { t } = useLanguage();
   
   // State for achievements and points from gamification system
   const [points, setPoints] = useState(150);
@@ -106,15 +108,15 @@ export const useHabitos = () => {
     
     // Add notification
     adicionarNotificacao({
-      titulo: "Habit completed!",
-      mensagem: "You earned 10 points for completing a habit.",
+      titulo: t('habitCompleted'),
+      mensagem: t('habitCompletedMessage'),
       tipo: "sucesso"
     });
     
-    toast.success("Habit marked as completed!", {
-      description: "You're building consistency and improving your results!"
+    toast.success(t('habitCompleted'), {
+      description: t('buildingConsistency')
     });
-  }, [adicionarNotificacao]);
+  }, [adicionarNotificacao, t]);
 
   // Function to register habit evidence
   const handleEvidenceSubmitted = useCallback((habitId: number, evidence: HabitoEvidenciaType) => {
@@ -126,11 +128,11 @@ export const useHabitos = () => {
     setPoints(prev => prev + 5);
     
     adicionarNotificacao({
-      titulo: "Evidence submitted",
-      mensagem: "Your evidence has been sent for verification. +5 points!",
+      titulo: t('evidenceSubmitted'),
+      mensagem: t('evidenceSubmittedMessage'),
       tipo: "info"
     });
-  }, [adicionarNotificacao]);
+  }, [adicionarNotificacao, t]);
 
   // Function to select day in calendar
   const handleCalendarDaySelect = useCallback((date: Date) => {
@@ -153,15 +155,15 @@ export const useHabitos = () => {
     setHabits(prev => [...prev, newHabit]);
     
     adicionarNotificacao({
-      titulo: "New habit added",
-      mensagem: "You added a new habit to your routine.",
+      titulo: t('newHabitAdded'),
+      mensagem: t('newHabitAddedMessage'),
       tipo: "info"
     });
     
-    toast.success("New habit added!", {
-      description: "Configure the title and description by editing the habit."
+    toast.success(t('newHabitAdded'), {
+      description: t('configureTitle')
     });
-  }, [habits, adicionarNotificacao]);
+  }, [habits, adicionarNotificacao, t]);
 
   return {
     habitos: habits, // Keep Portuguese property name for backward compatibility

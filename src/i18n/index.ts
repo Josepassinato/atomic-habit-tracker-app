@@ -49,10 +49,27 @@ export const useLanguage = () => {
         'total': 'Total',
         'weeklyProgress': 'Weekly Progress',
         
-        // Notifications
+        // Notifications and warnings
         'notifications': 'Notifications',
         'welcomeMessage': 'Welcome back, {{role}}!',
         'dailyCompletion': 'You have 3 habits to complete today.',
+        'configurationRequired': 'Configuration Required',
+        'adminNeedsToConfigureApi': 'The system administrator needs to configure the OpenAI API to enable this functionality.',
+        'configureOpenAiApi': 'Configure OpenAI API in Admin Panel',
+        'aiFeedback': 'AI Feedback',
+        'habitCompleted': 'Habit completed!',
+        'evidenceSubmitted': 'Evidence submitted',
+        'evidenceSubmittedMessage': 'Your evidence has been sent for verification. +5 points!',
+        'newHabitAdded': 'New habit added',
+        'newHabitAddedMessage': 'You added a new habit to your routine.',
+        'habitCompletedMessage': 'You earned 10 points for completing a habit.',
+        'buildingConsistency': "You're building consistency and improving your results!",
+        'configureTitle': 'Configure the title and description by editing the habit.',
+        'completingHabit': 'Completing...',
+        'awaitingVerification': 'Awaiting manager verification',
+        'verifiedByManager': 'Verified by manager',
+        'evidenceSubmittedLabel': 'Evidence submitted',
+        'markAsCompleted': 'Mark as completed',
         
         // Dashboard customization
         'customizeDashboard': 'Customize Dashboard',
@@ -64,6 +81,10 @@ export const useLanguage = () => {
         'salesGoals': 'Sales Goals',
         'aiConsulting': 'AI Consulting',
         'crmIntegrations': 'CRM Integrations',
+        'myPerformance': 'My Performance',
+        'recentAchievements': 'Recent Achievements',
+        'level': 'Level',
+        'points': 'pts',
         
         // Settings
         'notificationPreferences': 'Notification Preferences',

@@ -5,6 +5,7 @@ import { openAIService } from "@/services/openai-service";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { getCurrentUser } from "@/utils/permissions";
+import { useLanguage } from "@/i18n";
 
 interface FeedbackIAProps {
   feedback: string;
@@ -14,6 +15,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
   const navigate = useNavigate();
   const user = getCurrentUser();
   const isAdmin = user?.role === "admin";
+  const { t } = useLanguage();
   
   if (!feedback) return null;
   
@@ -27,7 +29,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
     <div className={`mt-6 p-4 rounded-md border ${apiKeyMissing ? 'bg-amber-50' : 'bg-slate-50'}`}>
       <div className={`flex items-center gap-2 mb-2 ${apiKeyMissing ? 'text-amber-600' : 'text-primary'}`}>
         {apiKeyMissing ? <AlertCircle size={18} /> : <Brain size={18} />}
-        <h4 className="font-medium">{apiKeyMissing ? 'Configuração Necessária' : 'Feedback da IA'}</h4>
+        <h4 className="font-medium">{apiKeyMissing ? t('configurationRequired') : t('aiFeedback')}</h4>
       </div>
       <p className="text-sm">{feedback}</p>
       
@@ -39,7 +41,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
             onClick={irParaAdmin}
             className="text-amber-600 border-amber-200 hover:bg-amber-100"
           >
-            Configurar API da OpenAI no Painel Admin
+            {t('configureOpenAiApi')}
           </Button>
         </div>
       )}
@@ -47,7 +49,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
       {apiKeyMissing && !isAdmin && (
         <div className="mt-3">
           <p className="text-xs text-amber-600">
-            O administrador do sistema precisa configurar a API da OpenAI para habilitar esta funcionalidade.
+            {t('adminNeedsToConfigureApi')}
           </p>
         </div>
       )}
