@@ -1,167 +1,138 @@
 
-import React from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useTranslation } from "@/i18n/useTranslation";
-import { useOnboarding } from "./onboarding/useOnboarding";
+import { ArrowLeft, ArrowRight } from "lucide-react";
+import { toast } from "sonner";
 import TeamsTab from "./onboarding/TeamsTab";
-import GoalsTab from "./onboarding/GoalsTab";
 import HabitsTab from "./onboarding/HabitsTab";
-import RewardsTab from "./onboarding/RewardsTab";
+import GoalsTab from "./onboarding/GoalsTab";
 import IntegrationsTab from "./onboarding/IntegrationsTab";
+import RewardsTab from "./onboarding/RewardsTab";
+import { useOnboarding } from "./onboarding/useOnboarding";
 
 const Onboarding = () => {
-  const { t } = useTranslation();
-  const {
-    activeStep,
-    setActiveStep,
-    loading,
-    teams,
-    currentTeam,
-    teamDialogOpen,
-    setTeamDialogOpen,
-    editingTeamId,
-    setEditingTeamId,
-    metaMensal,
-    setMetaMensal,
-    metaDiaria,
-    setMetaDiaria,
+  const navigate = useNavigate();
+  const [currentTab, setCurrentTab] = useState("teams");
+  const { 
+    teams, 
+    currentTeam, 
     habitosSelecionados,
-    recompensaTipo,
-    setRecompensaTipo,
-    recompensaDescricao,
-    setRecompensaDescricao,
-    recompensasMetas,
-    comissaoBase,
-    setComissaoBase,
-    comissaoHabitos,
-    setComissaoHabitos,
-    isComissaoAberta,
-    setIsComissaoAberta,
-    form,
+    metaMensal,
+    metaDiaria,
+    setCurrentTeam,
     handleHabitoToggle,
-    adicionarRecompensa,
-    removerRecompensa,
-    onTeamSubmit,
-    deleteTeam,
-    editTeam,
-    selectTeam,
-    handleNext,
-    handlePrevious,
-    navigate
+    setMetaMensal,
+    setMetaDiaria,
+    handleFinish
   } = useOnboarding();
 
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const tabs = [
+    { id: "teams", label: "Teams", component: TeamsTab },
+    { id: "habits", label: "Habits", component: HabitsTab },
+    { id: "goals", label: "Goals", component: GoalsTab },
+    { id: "integrations", label: "Integrations", component: IntegrationsTab },
+    { id: "rewards", label: "Rewards", component: RewardsTab }
+  ];
+
+  const currentTabIndex = tabs.findIndex(tab => tab.id === currentTab);
+  const isLastTab = currentTabIndex === tabs.length - 1;
+  const isFirstTab = currentTabIndex === 0;
+
+  const handleNext = () => {
+    if (isLastTab) {
+      handleFinish();
+    } else {
+      const nextTab = tabs[currentTabIndex + 1];
+      setCurrentTab(nextTab.id);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (!isFirstTab) {
+      const prevTab = tabs[currentTabIndex - 1];
+      setCurrentTab(prevTab.id);
+    }
+  };
+
+  const getCurrentTabComponent = () => {
+    const currentTabData = tabs.find(tab => tab.id === currentTab);
+    if (!currentTabData) return null;
+
+    const Component = currentTabData.component;
+    const commonProps = {
+      currentTeam,
+      teams,
+      setCurrentTeam,
+      habitosSelecionados,
+      handleHabitoToggle,
+      metaMensal,
+      setMetaMensal,
+      metaDiaria,
+      setMetaDiaria
+    };
+
+    return <Component {...commonProps} />;
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-50 px-4 py-12">
-      <Card className="w-full max-w-4xl">
-        <CardHeader className="text-center">
-          <CardTitle className="text-3xl font-bold text-primary">
-            {t('onboarding')}
-          </CardTitle>
-          <CardDescription>
-            Configure teams and define personalized goals, habits and rewards
-          </CardDescription>
-        </CardHeader>
-        
-        <CardContent>
-          <Tabs value={activeStep} onValueChange={setActiveStep} className="w-full">
-            <TabsList className="grid w-full grid-cols-5">
-              <TabsTrigger value="teams">Teams</TabsTrigger>
-              <TabsTrigger value="goals" disabled={!currentTeam}>Goals</TabsTrigger>
-              <TabsTrigger value="habits" disabled={!currentTeam}>Habits</TabsTrigger>
-              <TabsTrigger value="rewards" disabled={!currentTeam}>Rewards</TabsTrigger>
-              <TabsTrigger value="integrations" disabled={!currentTeam}>Integrations</TabsTrigger>
-            </TabsList>
-            
-            <TabsContent value="teams">
-              <TeamsTab
-                teams={teams}
-                currentTeam={currentTeam}
-                teamDialogOpen={teamDialogOpen}
-                setTeamDialogOpen={setTeamDialogOpen}
-                editingTeamId={editingTeamId}
-                setEditingTeamId={setEditingTeamId}
-                form={form}
-                onTeamSubmit={onTeamSubmit}
-                deleteTeam={deleteTeam}
-                editTeam={editTeam}
-                selectTeam={selectTeam}
-              />
-            </TabsContent>
-            
-            <TabsContent value="goals">
-              <GoalsTab
-                currentTeam={currentTeam}
-                metaMensal={metaMensal}
-                setMetaMensal={setMetaMensal}
-                metaDiaria={metaDiaria}
-                setMetaDiaria={setMetaDiaria}
-              />
-            </TabsContent>
-            
-            <TabsContent value="habits">
-              <HabitsTab
-                currentTeam={currentTeam}
-                habitosSelecionados={habitosSelecionados}
-                handleHabitoToggle={handleHabitoToggle}
-              />
-            </TabsContent>
-            
-            <TabsContent value="rewards">
-              <RewardsTab
-                currentTeam={currentTeam}
-                recompensaTipo={recompensaTipo}
-                setRecompensaTipo={setRecompensaTipo}
-                recompensaDescricao={recompensaDescricao}
-                setRecompensaDescricao={setRecompensaDescricao}
-                recompensasMetas={recompensasMetas}
-                adicionarRecompensa={adicionarRecompensa}
-                removerRecompensa={removerRecompensa}
-                comissaoBase={comissaoBase}
-                setComissaoBase={setComissaoBase}
-                comissaoHabitos={comissaoHabitos}
-                setComissaoHabitos={setComissaoHabitos}
-                isComissaoAberta={isComissaoAberta}
-                setIsComissaoAberta={setIsComissaoAberta}
-              />
-            </TabsContent>
-            
-            <TabsContent value="integrations">
-              <IntegrationsTab currentTeam={currentTeam} />
-            </TabsContent>
-          </Tabs>
-        </CardContent>
-        
-        <CardFooter>
-          <div className="w-full flex justify-between">
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/dashboard")}
-            >
-              Skip for now
-            </Button>
-            
-            <div className="flex space-x-2">
-              {activeStep !== "teams" && (
-                <Button 
-                  variant="outline" 
-                  onClick={handlePrevious}
-                >
-                  Previous
-                </Button>
-              )}
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="p-4">
+        <Button variant="ghost" size="sm" onClick={handleBack} className="flex items-center gap-2">
+          <ArrowLeft size={16} />
+          Voltar
+        </Button>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
+        <Card className="max-w-4xl mx-auto">
+          <CardHeader className="text-center">
+            <CardTitle className="text-3xl">Welcome to Habitus</CardTitle>
+            <p className="text-muted-foreground">
+              Let's set up your sales performance system
+            </p>
+          </CardHeader>
+          <CardContent>
+            <Tabs value={currentTab} onValueChange={setCurrentTab}>
+              <TabsList className="grid w-full grid-cols-5">
+                {tabs.map((tab) => (
+                  <TabsTrigger key={tab.id} value={tab.id}>
+                    {tab.label}
+                  </TabsTrigger>
+                ))}
+              </TabsList>
+
+              {tabs.map((tab) => (
+                <TabsContent key={tab.id} value={tab.id} className="mt-6">
+                  {getCurrentTabComponent()}
+                </TabsContent>
+              ))}
+            </Tabs>
+
+            <div className="flex justify-between mt-8">
+              <Button 
+                variant="outline" 
+                onClick={handlePrevious}
+                disabled={isFirstTab}
+              >
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Previous
+              </Button>
               
-              <Button onClick={handleNext} disabled={loading}>
-                {activeStep === "integrations" 
-                  ? loading ? "Finishing..." : "Finish" 
-                  : "Next"
-                }
+              <Button onClick={handleNext}>
+                {isLastTab ? "Finish Setup" : "Next"}
+                {!isLastTab && <ArrowRight className="ml-2 h-4 w-4" />}
               </Button>
             </div>
-          </div>
-        </CardFooter>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

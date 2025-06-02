@@ -1,420 +1,132 @@
 
 import React, { useState } from "react";
-import Header from "@/components/Header";
-import { 
-  Accordion, 
-  AccordionContent, 
-  AccordionItem, 
-  AccordionTrigger 
-} from "@/components/ui/accordion";
-import { 
-  Card, 
-  CardContent, 
-  CardDescription, 
-  CardHeader, 
-  CardTitle 
-} from "@/components/ui/card";
+import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { 
-  Collapsible, 
-  CollapsibleContent, 
-  CollapsibleTrigger 
-} from "@/components/ui/collapsible";
-import { 
-  Alert,
-  AlertDescription,
-  AlertTitle,
-} from "@/components/ui/alert";
-import { 
-  Checkbox
-} from "@/components/ui/checkbox";
-import { Link } from "react-router-dom";
-import { BookOpen, ChevronRight, Download, Info, Mail } from "lucide-react";
-
-interface TutorialStepProps {
-  title: string;
-  description: string;
-  children: React.ReactNode;
-  index: number;
-}
-
-const TutorialStep = ({ title, description, children, index }: TutorialStepProps) => {
-  const [isCompleted, setIsCompleted] = useState(false);
-
-  return (
-    <Card className="mb-6 border-l-4 border-l-primary/70">
-      <CardHeader className="flex flex-row items-start gap-4 space-y-0">
-        <div className="rounded-full bg-primary/10 p-2">
-          <span className="flex h-6 w-6 items-center justify-center rounded-full bg-primary text-white">
-            {index}
-          </span>
-        </div>
-        <div className="flex-1">
-          <CardTitle className="text-xl">{title}</CardTitle>
-          <CardDescription className="mt-1.5">{description}</CardDescription>
-        </div>
-        <div className="flex items-center gap-2">
-          <Checkbox 
-            id={`step-${index}`} 
-            checked={isCompleted} 
-            onCheckedChange={() => setIsCompleted(!isCompleted)}
-          />
-          <label htmlFor={`step-${index}`} className="text-sm font-medium">
-            Concluído
-          </label>
-        </div>
-      </CardHeader>
-      <CardContent className={isCompleted ? "opacity-60" : ""}>
-        {children}
-      </CardContent>
-    </Card>
-  );
-};
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ArrowLeft, ArrowRight, CheckCircle, Play } from "lucide-react";
 
 const Tutorial = () => {
+  const navigate = useNavigate();
+  const [currentStep, setCurrentStep] = useState(0);
+
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const tutorialSteps = [
+    {
+      title: "Bem-vindo ao Habitus",
+      description: "Aprenda como usar nossa plataforma para melhorar sua performance de vendas",
+      content: "O Habitus é uma plataforma que combina hábitos atômicos com metas de vendas para maximizar seus resultados."
+    },
+    {
+      title: "Dashboard Principal",
+      description: "Visão geral de todas suas métricas importantes",
+      content: "No dashboard você encontra um resumo de suas metas, hábitos e performance geral."
+    },
+    {
+      title: "Hábitos Atômicos",
+      description: "Como criar e gerenciar seus hábitos diários",
+      content: "Crie hábitos pequenos e consistentes que levarão a grandes resultados ao longo do tempo."
+    },
+    {
+      title: "Metas de Vendas",
+      description: "Configure e acompanhe suas metas",
+      content: "Defina metas realistas e acompanhe seu progresso em tempo real."
+    },
+    {
+      title: "Integração com CRM",
+      description: "Conecte com suas ferramentas favoritas",
+      content: "Integre com HubSpot, Pipedrive e outras ferramentas para automatizar seu fluxo de trabalho."
+    }
+  ];
+
+  const isLastStep = currentStep === tutorialSteps.length - 1;
+  const isFirstStep = currentStep === 0;
+
+  const handleNext = () => {
+    if (isLastStep) {
+      navigate("/dashboard");
+    } else {
+      setCurrentStep(currentStep + 1);
+    }
+  };
+
+  const handlePrevious = () => {
+    if (!isFirstStep) {
+      setCurrentStep(currentStep - 1);
+    }
+  };
+
   return (
-    <div className="flex min-h-screen flex-col bg-slate-50">
-      <Header />
-      <main className="container flex-1 py-8">
-        <div className="flex items-center gap-2 mb-2">
-          <Link to="/dashboard" className="text-sm text-muted-foreground hover:text-foreground">
-            Dashboard
-          </Link>
-          <ChevronRight className="h-4 w-4 text-muted-foreground" />
-          <span className="text-sm font-medium">Tutorial</span>
-        </div>
-        
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-            <BookOpen className="h-6 w-6" />
-            Tutorial do Habitus
-          </h1>
-          <p className="text-muted-foreground max-w-3xl">
-            Bem-vindo ao tutorial passo a passo do Habitus! Este guia vai te ajudar a configurar
-            e começar a usar nossa plataforma para melhorar a performance da sua equipe de vendas.
-          </p>
-          
-          <Alert className="mt-4 max-w-3xl">
-            <Info className="h-4 w-4" />
-            <AlertTitle>Dica importante</AlertTitle>
-            <AlertDescription>
-              Para obter melhores resultados, recomendamos seguir cada passo na ordem. 
-              Você pode marcar os passos como concluídos à medida que avança.
-            </AlertDescription>
-          </Alert>
-        </div>
-        
-        <div className="max-w-3xl">
-          <TutorialStep 
-            title="Configuração inicial" 
-            description="Configure seus primeiros objetivos e metas" 
-            index={1}
-          >
-            <ol className="list-decimal pl-6 space-y-4">
-              <li>
-                <p className="font-medium">Acesse a página de Onboarding</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+      <div className="p-4">
+        <Button variant="ghost" size="sm" onClick={handleBack} className="flex items-center gap-2">
+          <ArrowLeft size={16} />
+          Voltar
+        </Button>
+      </div>
+
+      <div className="container mx-auto px-4 py-8">
+        <div className="max-w-2xl mx-auto">
+          <Card>
+            <CardHeader className="text-center">
+              <CardTitle className="text-2xl">
+                {tutorialSteps[currentStep].title}
+              </CardTitle>
+              <CardDescription>
+                {tutorialSteps[currentStep].description}
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="text-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Play className="w-8 h-8 text-primary" />
+                </div>
                 <p className="text-muted-foreground">
-                  Navegue até a <Link to="/onboarding" className="text-primary hover:underline">
-                    página de onboarding
-                  </Link> para configurar suas metas iniciais.
+                  {tutorialSteps[currentStep].content}
                 </p>
-              </li>
-              <li>
-                <p className="font-medium">Defina suas metas de vendas</p>
-                <p className="text-muted-foreground">
-                  Estabeleça metas mensais e diárias para sua equipe. Estas metas 
-                  serão utilizadas para medir o desempenho e calcular recomendações.
-                </p>
-              </li>
-              <li>
-                <p className="font-medium">Selecione hábitos atômicos</p>
-                <p className="text-muted-foreground">
-                  Escolha os hábitos que considera mais importantes para sua equipe. 
-                  Você pode selecionar os recomendados ou criar seus próprios hábitos.
-                </p>
+              </div>
+
+              <div className="flex justify-center space-x-2">
+                {tutorialSteps.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-2 h-2 rounded-full ${
+                      index === currentStep ? "bg-primary" : "bg-muted"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="flex justify-between">
+                <Button 
+                  variant="outline" 
+                  onClick={handlePrevious}
+                  disabled={isFirstStep}
+                >
+                  <ArrowLeft className="mr-2 h-4 w-4" />
+                  Anterior
+                </Button>
                 
-                <Collapsible className="mt-2 border rounded-md p-2">
-                  <CollapsibleTrigger className="flex w-full items-center justify-between text-sm font-medium">
-                    <span>Ver exemplos de hábitos efetivos</span>
-                    <ChevronRight className="h-4 w-4" />
-                  </CollapsibleTrigger>
-                  <CollapsibleContent className="pt-2">
-                    <ul className="list-disc pl-6 text-sm">
-                      <li>Fazer 10 ligações para prospects por dia</li>
-                      <li>Registrar todos os contatos no CRM em até 1 hora</li>
-                      <li>Enviar follow-up em até 24 horas após reunião</li>
-                      <li>Estudar sobre o produto por 15 minutos diariamente</li>
-                      <li>Realizar reunião de planejamento semanal com a equipe</li>
-                    </ul>
-                  </CollapsibleContent>
-                </Collapsible>
-              </li>
-            </ol>
-            
-            <div className="mt-6">
-              <Button asChild>
-                <Link to="/onboarding">Ir para a configuração</Link>
-              </Button>
-            </div>
-          </TutorialStep>
-          
-          <TutorialStep 
-            title="Monitorando hábitos e metas" 
-            description="Aprenda a usar o dashboard para acompanhar seu progresso" 
-            index={2}
-          >
-            <p className="mb-4">
-              Após configurar suas metas e hábitos, você poderá monitorá-los diariamente
-              no dashboard principal. Aqui está como usar os principais recursos:
-            </p>
-            
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="item-1">
-                <AccordionTrigger>Dashboard Principal</AccordionTrigger>
-                <AccordionContent>
-                  <p className="mb-2">
-                    O dashboard principal exibe um resumo geral do seu desempenho, 
-                    incluindo:
-                  </p>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Progresso atual em relação às metas mensais</li>
-                    <li>Total de vendas realizadas no mês</li>
-                    <li>Consistência nos hábitos atômicos</li>
-                    <li>Previsão de resultados baseada no desempenho atual</li>
-                    <li>Visualização de calendário para planejamento de hábitos</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="item-2">
-                <AccordionTrigger>Rastreador de Hábitos</AccordionTrigger>
-                <AccordionContent>
-                  <p className="mb-2">
-                    O rastreador de hábitos permite:
-                  </p>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Marcar hábitos como concluídos diariamente</li>
-                    <li>Visualizar sua consistência ao longo do tempo</li>
-                    <li>Receber feedback da IA sobre seu desempenho</li>
-                    <li>Adicionar ou remover hábitos conforme necessário</li>
-                    <li>Visualizar seus hábitos em formato de calendário</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-              
-              <AccordionItem value="item-3">
-                <AccordionTrigger>Desempenho de Vendas</AccordionTrigger>
-                <AccordionContent>
-                  <p className="mb-2">
-                    No painel de desempenho de vendas, você pode:
-                  </p>
-                  <ul className="list-disc pl-6 space-y-2">
-                    <li>Registrar novas vendas ou oportunidades</li>
-                    <li>Comparar resultados com períodos anteriores</li>
-                    <li>Visualizar gráficos de progresso</li>
-                    <li>Identificar tendências e padrões</li>
-                    <li>Baixar relatórios de desempenho</li>
-                    <li>Enviar relatórios por email para a equipe</li>
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-            
-            <div className="mt-6">
-              <Button asChild>
-                <Link to="/dashboard">Ir para o Dashboard</Link>
-              </Button>
-            </div>
-          </TutorialStep>
-          
-          <TutorialStep 
-            title="Utilizando a IA do Habitus" 
-            description="Aproveite o poder da nossa IA para melhorar sua performance" 
-            index={3}
-          >
-            <p className="mb-4">
-              A IA do Habitus é uma ferramenta poderosa que pode ajudar você a otimizar 
-              seus resultados de várias formas:
-            </p>
-            
-            <div className="grid md:grid-cols-2 gap-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Análise de Hábitos</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    A IA analisa seus hábitos e identifica quais têm maior 
-                    impacto nos seus resultados de vendas.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Sugestões Personalizadas</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    Receba sugestões de novos hábitos baseados no seu modelo 
-                    de negócio e metas específicas.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Feedback Diário</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    Obtenha análises diárias sobre seu progresso e dicas 
-                    para melhorar seu desempenho.
-                  </p>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="text-base">Previsões de Resultados</CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground">
-                    Veja projeções de resultados baseadas no seu ritmo atual 
-                    e receba sugestões para atingir suas metas.
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <p className="mt-6 text-sm bg-muted p-3 rounded-md">
-              <strong className="font-medium">Dica avançada:</strong> Para obter os melhores 
-              resultados da IA, certifique-se de registrar seus hábitos diariamente e 
-              fornecer informações detalhadas sobre seu modelo de negócio nas configurações.
-            </p>
-          </TutorialStep>
-          
-          <TutorialStep 
-            title="Relatórios e Exportação" 
-            description="Exporte, baixe e compartilhe seus relatórios de desempenho" 
-            index={4}
-          >
-            <p className="mb-4">
-              O Habitus permite que você gere, baixe e compartilhe relatórios detalhados 
-              de desempenho para análise e apresentações:
-            </p>
-            
-            <div className="space-y-4">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Download className="h-4 w-4" />
-                    Download de Relatórios
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Baixe relatórios completos em diferentes formatos para análise offline:
-                  </p>
-                  <ul className="list-disc pl-6 space-y-1 text-sm">
-                    <li>Acesse a página de Relatórios</li>
-                    <li>Aplique os filtros desejados (período, equipe, data)</li>
-                    <li>Clique no botão "Baixar Relatório"</li>
-                    <li>O arquivo será baixado automaticamente para seu dispositivo</li>
-                  </ul>
-                </CardContent>
-              </Card>
-              
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2 text-base">
-                    <Mail className="h-4 w-4" />
-                    Envio por Email
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="pt-0">
-                  <p className="text-sm text-muted-foreground mb-2">
-                    Compartilhe relatórios diretamente por email com sua equipe ou stakeholders:
-                  </p>
-                  <ul className="list-disc pl-6 space-y-1 text-sm">
-                    <li>Configure os filtros do relatório conforme necessário</li>
-                    <li>Clique no botão "Enviar por Email"</li>
-                    <li>Insira o endereço de email do destinatário</li>
-                    <li>O sistema enviará o relatório automaticamente com todos os dados e gráficos</li>
-                  </ul>
-                </CardContent>
-              </Card>
-            </div>
-            
-            <div className="mt-6">
-              <Button asChild>
-                <Link to="/relatorios">Ir para Relatórios</Link>
-              </Button>
-            </div>
-          </TutorialStep>
-          
-          <TutorialStep 
-            title="Integrações e Ajustes Avançados" 
-            description="Configure integrações com outros sistemas e personalize sua experiência" 
-            index={5}
-          >
-            <p className="mb-4">
-              O Habitus pode ser integrado com várias ferramentas de CRM e vendas 
-              para centralizar seus dados e otimizar seu fluxo de trabalho:
-            </p>
-            
-            <div className="space-y-4">
-              <div className="flex items-center p-3 border rounded-md">
-                <div className="flex-1">
-                  <h4 className="font-medium">HubSpot</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Sincronize contatos, negócios e atividades automaticamente
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Conectar</Button>
+                <Button onClick={handleNext}>
+                  {isLastStep ? (
+                    <>
+                      <CheckCircle className="mr-2 h-4 w-4" />
+                      Começar
+                    </>
+                  ) : (
+                    <>
+                      Próximo
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
+                </Button>
               </div>
-              
-              <div className="flex items-center p-3 border rounded-md">
-                <div className="flex-1">
-                  <h4 className="font-medium">Pipedrive</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Importe oportunidades e exporte atividades do Habitus
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Conectar</Button>
-              </div>
-              
-              <div className="flex items-center p-3 border rounded-md">
-                <div className="flex-1">
-                  <h4 className="font-medium">WhatsApp Business</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Receba notificações e lembretes diretamente no WhatsApp
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Conectar</Button>
-              </div>
-            </div>
-            
-            <Alert className="mt-6 bg-primary/5">
-              <AlertTitle>Próximos passos</AlertTitle>
-              <AlertDescription>
-                Agora que você completou o tutorial básico, recomendamos explorar 
-                a documentação completa para recursos avançados e personalizações 
-                adicionais.
-              </AlertDescription>
-            </Alert>
-            
-            <div className="mt-6">
-              <Button>Ver documentação completa</Button>
-            </div>
-          </TutorialStep>
+            </CardContent>
+          </Card>
         </div>
-      </main>
-      <footer className="border-t bg-white py-4">
-        <div className="container text-center text-sm text-muted-foreground">
-          Habitus © 2025 - O futuro da automação de vendas e performance
-        </div>
-      </footer>
+      </div>
     </div>
   );
 };
