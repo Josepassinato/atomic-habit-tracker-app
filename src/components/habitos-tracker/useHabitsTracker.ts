@@ -15,7 +15,8 @@ const convertToEnglishHabits = (habitos: any[]): Habit[] => {
     horario: habito.horario,
     evidencia: habito.evidencia ? {
       type: habito.evidencia.tipo || 'text',
-      content: habito.evidencia.conteudo || habito.evidencia.content || ''
+      content: habito.evidencia.conteudo || habito.evidencia.content || '',
+      timestamp: habito.evidencia.timestamp || new Date().toISOString()
     } : undefined,
     verificacaoNecessaria: habito.verificacaoNecessaria,
     verificado: habito.verificado,
@@ -102,7 +103,8 @@ export const useHabitsTracker = () => {
         horario: habit.horario,
         evidencia: habit.evidencia ? {
           tipo: habit.evidencia.type,
-          conteudo: habit.evidencia.content
+          conteudo: habit.evidencia.content,
+          timestamp: habit.evidencia.timestamp
         } : undefined,
         verificacaoNecessaria: habit.verificacaoNecessaria,
         verificado: habit.verificado,
