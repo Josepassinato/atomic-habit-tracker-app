@@ -1,3 +1,4 @@
+
 export type Language = 'en' | 'es' | 'pt';
 
 export interface Translations {
@@ -35,6 +36,25 @@ export interface Translations {
   selectWidgets: string;
   saveLayout: string;
   layoutSaved: string;
+  
+  // Dashboard Summary - Added missing keys
+  salesGoal: string;
+  currentMonthProgress: string;
+  atomicHabits: string;
+  dailyCompletion: string;
+  totalBonus: string;
+  accumulatedReward: string;
+  monthlyReward: string;
+  currentBonus: string;
+  habitsCompletion: string;
+  total: string;
+  loading: string;
+  complete: string;
+  onTrack: string;
+  inProgress: string;
+  excellent: string;
+  good: string;
+  needsImprovement: string;
   
   // Password Recovery
   recoverPassword: string;
@@ -164,6 +184,25 @@ export const translations: { [key in Language]: Translations } = {
     saveLayout: 'Save Layout',
     layoutSaved: 'Dashboard layout saved successfully!',
     
+    // Dashboard Summary - Added missing translations
+    salesGoal: 'Sales Goal',
+    currentMonthProgress: 'Current month progress',
+    atomicHabits: 'Atomic Habits',
+    dailyCompletion: 'Daily completion',
+    totalBonus: 'Total Bonus',
+    accumulatedReward: 'Accumulated reward',
+    monthlyReward: 'Monthly Reward',
+    currentBonus: 'Current bonus',
+    habitsCompletion: 'Habits Completion',
+    total: 'Total',
+    loading: 'Loading...',
+    complete: 'Complete',
+    onTrack: 'On Track',
+    inProgress: 'In Progress',
+    excellent: 'Excellent',
+    good: 'Good',
+    needsImprovement: 'Needs Improvement',
+    
     // Password Recovery
     recoverPassword: 'Recover password',
     passwordRecoveryEnterEmail: 'Enter your email and we\'ll send you instructions to reset your password',
@@ -288,6 +327,25 @@ export const translations: { [key in Language]: Translations } = {
     saveLayout: 'Guardar Diseño',
     layoutSaved: '¡Diseño del panel guardado exitosamente!',
     
+    // Dashboard Summary - Added missing translations
+    salesGoal: 'Meta de Ventas',
+    currentMonthProgress: 'Progreso del mes actual',
+    atomicHabits: 'Hábitos Atómicos',
+    dailyCompletion: 'Finalización diaria',
+    totalBonus: 'Bono Total',
+    accumulatedReward: 'Recompensa acumulada',
+    monthlyReward: 'Recompensa Mensual',
+    currentBonus: 'Bono actual',
+    habitsCompletion: 'Finalización de Hábitos',
+    total: 'Total',
+    loading: 'Cargando...',
+    complete: 'Completo',
+    onTrack: 'En Camino',
+    inProgress: 'En Progreso',
+    excellent: 'Excelente',
+    good: 'Bueno',
+    needsImprovement: 'Necesita Mejora',
+    
     // Password Recovery
     recoverPassword: 'Recuperar contraseña',
     passwordRecoveryEnterEmail: 'Ingresa tu correo electrónico y te enviaremos instrucciones para redefinir tu contraseña',
@@ -411,6 +469,25 @@ export const translations: { [key in Language]: Translations } = {
     selectWidgets: 'Selecione quais widgets deseja exibir e a ordem em que eles aparecem.',
     saveLayout: 'Salvar Layout',
     layoutSaved: 'Layout do dashboard salvo com sucesso!',
+    
+    // Dashboard Summary - Added missing translations
+    salesGoal: 'Meta de Vendas',
+    currentMonthProgress: 'Progresso do mês atual',
+    atomicHabits: 'Hábitos Atômicos',
+    dailyCompletion: 'Conclusão diária',
+    totalBonus: 'Bônus Total',
+    accumulatedReward: 'Recompensa acumulada',
+    monthlyReward: 'Recompensa Mensal',
+    currentBonus: 'Bônus atual',
+    habitsCompletion: 'Conclusão de Hábitos',
+    total: 'Total',
+    loading: 'Carregando...',
+    complete: 'Completo',
+    onTrack: 'No Caminho Certo',
+    inProgress: 'Em Progresso',
+    excellent: 'Excelente',
+    good: 'Bom',
+    needsImprovement: 'Precisa Melhorar',
     
     // Password Recovery
     recoverPassword: 'Recuperar senha',
