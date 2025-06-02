@@ -4,7 +4,7 @@ import React from 'react';
 // Enhanced i18n system with comprehensive English translations
 export const useLanguage = () => {
   return {
-    t: (key: string) => {
+    t: (key: string, options?: { name?: string }) => {
       // Comprehensive key-to-text mapping for English translations
       const translations: Record<string, string> = {
         // Navigation and general
@@ -15,6 +15,8 @@ export const useLanguage = () => {
         'settings': 'Settings',
         'onboarding': 'Onboarding',
         'logout': 'Logout',
+        'signOut': 'Sign Out',
+        'signIn': 'Sign In',
         'back': 'Back',
         'cancel': 'Cancel',
         'save': 'Save',
@@ -131,9 +133,42 @@ export const useLanguage = () => {
         'autoRewardsTitle': 'Automatic Rewards',
         'autoRewardsDesc': 'Transparent rewards based on real performance',
         'apisAndIntegrations': 'APIs and Integrations',
-        'privacy': 'Privacy'
+        'privacy': 'Privacy',
+        
+        // Hero section translations
+        'welcomeBack': 'Welcome back!',
+        'helloUser': 'Hello, {{name}}. Continue where you left off.',
+        'goToDashboard': 'Go to Dashboard',
+        'notYou': 'Not you?',
+        'accessAccount': 'Access your account',
+        'signInToTrack': 'Sign in to track your habits and goals',
+        'createFreeAccount': 'Create free account',
+        'forgotPassword': 'Forgot your password?',
+        
+        // Testimonials
+        'testimonialsTitle': 'What our customers say',
+        'testimonialsDesc': 'See how Habitus is transforming sales teams',
+        
+        // Pricing
+        'pricingTitle': 'Choose the perfect plan for your team',
+        'startupPlan': 'Startup',
+        'businessPlan': 'Business',
+        'enterprisePlan': 'Enterprise',
+        'startupDesc': 'Perfect for small teams starting their journey',
+        'businessDesc': 'Ideal for growing teams that need advanced features',
+        'enterpriseDesc': 'Complete solution for large organizations',
+        'month': '/month',
+        'popular': 'Most Popular'
       };
-      return translations[key] || key;
+      
+      let translation = translations[key] || key;
+      
+      // Handle dynamic replacements like {{name}}
+      if (options?.name) {
+        translation = translation.replace('{{name}}', options.name);
+      }
+      
+      return translation;
     },
     language: 'en' as 'en' | 'pt' | 'es'
   };

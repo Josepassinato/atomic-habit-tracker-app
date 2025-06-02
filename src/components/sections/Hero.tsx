@@ -38,9 +38,9 @@ const Hero = () => {
             {user ? (
               <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">Bem-vindo de volta!</CardTitle>
+                  <CardTitle className="text-2xl">{t('welcomeBack')}</CardTitle>
                   <CardDescription>
-                    Olá, {user.nome}. Continue de onde parou.
+                    {t('helloUser', { name: user.nome })}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -49,11 +49,11 @@ const Hero = () => {
                     size="lg"
                     onClick={() => navigate("/dashboard")}
                   >
-                    Ir para Dashboard
+                    {t('goToDashboard')}
                   </Button>
                   <div className="text-center">
                     <span className="text-sm text-muted-foreground">
-                      Não é você?{" "}
+                      {t('notYou')}{" "}
                       <button 
                         onClick={() => {
                           localStorage.removeItem("habitus-user");
@@ -61,7 +61,7 @@ const Hero = () => {
                         }}
                         className="text-primary hover:underline"
                       >
-                        Fazer logout
+                        {t('logout')}
                       </button>
                     </span>
                   </div>
@@ -70,9 +70,9 @@ const Hero = () => {
             ) : (
               <Card className="w-full max-w-md">
                 <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">Acesse sua conta</CardTitle>
+                  <CardTitle className="text-2xl">{t('accessAccount')}</CardTitle>
                   <CardDescription>
-                    Entre para acompanhar seus hábitos e metas
+                    {t('signInToTrack')}
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
@@ -81,7 +81,7 @@ const Hero = () => {
                     size="lg"
                     onClick={() => navigate("/login")}
                   >
-                    Entrar
+                    {t('signIn')}
                   </Button>
                   <Button 
                     variant="outline" 
@@ -89,14 +89,14 @@ const Hero = () => {
                     size="lg"
                     onClick={() => navigate("/registro")}
                   >
-                    Criar conta gratuita
+                    {t('createFreeAccount')}
                   </Button>
                   <div className="text-center">
                     <button 
                       onClick={() => navigate("/recuperar-senha")}
                       className="text-sm text-primary hover:underline"
                     >
-                      Esqueceu sua senha?
+                      {t('forgotPassword')}
                     </button>
                   </div>
                 </CardContent>

@@ -72,7 +72,7 @@ const Header: React.FC = () => {
                 className="text-destructive hover:bg-destructive/10 hover:text-destructive"
               >
                 <LogOut size={16} className="mr-1" />
-                Sair
+                {t('signOut')}
               </Button>
             </div>
           ) : (
@@ -81,7 +81,7 @@ const Header: React.FC = () => {
               className="hidden md:block"
               onClick={() => navigate("/login")}
             >
-              Entrar
+              {t('signIn')}
             </Button>
           )}
         </div>
