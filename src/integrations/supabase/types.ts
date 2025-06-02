@@ -37,43 +37,43 @@ export type Database = {
         Row: {
           created_at: string
           current_value: number | null
-          equipe_id: string | null
           id: string
           name: string
           percentage: number | null
           target_value: number
+          team_id: string | null
           type: string | null
           updated_at: string
-          usuario_id: string | null
+          user_id: string | null
         }
         Insert: {
           created_at?: string
           current_value?: number | null
-          equipe_id?: string | null
           id?: string
           name: string
           percentage?: number | null
           target_value: number
+          team_id?: string | null
           type?: string | null
           updated_at?: string
-          usuario_id?: string | null
+          user_id?: string | null
         }
         Update: {
           created_at?: string
           current_value?: number | null
-          equipe_id?: string | null
           id?: string
           name?: string
           percentage?: number | null
           target_value?: number
+          team_id?: string | null
           type?: string | null
           updated_at?: string
-          usuario_id?: string | null
+          user_id?: string | null
         }
         Relationships: [
           {
             foreignKeyName: "metas_equipe_id_fkey"
-            columns: ["equipe_id"]
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -86,13 +86,13 @@ export type Database = {
           completed_at: string | null
           created_at: string
           description: string | null
-          equipe_id: string | null
           evidence: Json | null
           id: string
           recurrence: string | null
           schedule: string | null
+          team_id: string | null
           title: string
-          usuario_id: string | null
+          user_id: string | null
           verification_required: boolean | null
           verified: boolean | null
         }
@@ -101,13 +101,13 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
-          equipe_id?: string | null
           evidence?: Json | null
           id?: string
           recurrence?: string | null
           schedule?: string | null
+          team_id?: string | null
           title: string
-          usuario_id?: string | null
+          user_id?: string | null
           verification_required?: boolean | null
           verified?: boolean | null
         }
@@ -116,20 +116,20 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
-          equipe_id?: string | null
           evidence?: Json | null
           id?: string
           recurrence?: string | null
           schedule?: string | null
+          team_id?: string | null
           title?: string
-          usuario_id?: string | null
+          user_id?: string | null
           verification_required?: boolean | null
           verified?: boolean | null
         }
         Relationships: [
           {
             foreignKeyName: "habitos_equipe_id_fkey"
-            columns: ["equipe_id"]
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -138,49 +138,49 @@ export type Database = {
       }
       sales_reps: {
         Row: {
+          company_id: string | null
+          conversion_rate: number | null
           created_at: string
+          current_goal: number | null
           email: string
-          empresa_id: string | null
-          equipe_id: string | null
           id: string
-          meta_atual: number | null
           name: string
-          taxa_conversao: number | null
-          vendas_total: number | null
+          team_id: string | null
+          total_sales: number | null
         }
         Insert: {
+          company_id?: string | null
+          conversion_rate?: number | null
           created_at?: string
+          current_goal?: number | null
           email: string
-          empresa_id?: string | null
-          equipe_id?: string | null
           id?: string
-          meta_atual?: number | null
           name: string
-          taxa_conversao?: number | null
-          vendas_total?: number | null
+          team_id?: string | null
+          total_sales?: number | null
         }
         Update: {
+          company_id?: string | null
+          conversion_rate?: number | null
           created_at?: string
+          current_goal?: number | null
           email?: string
-          empresa_id?: string | null
-          equipe_id?: string | null
           id?: string
-          meta_atual?: number | null
           name?: string
-          taxa_conversao?: number | null
-          vendas_total?: number | null
+          team_id?: string | null
+          total_sales?: number | null
         }
         Relationships: [
           {
             foreignKeyName: "vendedores_empresa_id_fkey"
-            columns: ["empresa_id"]
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "vendedores_equipe_id_fkey"
-            columns: ["equipe_id"]
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -220,9 +220,9 @@ export type Database = {
           completed_at: string | null
           created_at: string
           description: string | null
-          equipe_id: string
           id: string
           recurrence: string | null
+          team_id: string
           title: string
         }
         Insert: {
@@ -230,9 +230,9 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
-          equipe_id: string
           id?: string
           recurrence?: string | null
+          team_id: string
           title: string
         }
         Update: {
@@ -240,15 +240,15 @@ export type Database = {
           completed_at?: string | null
           created_at?: string
           description?: string | null
-          equipe_id?: string
           id?: string
           recurrence?: string | null
+          team_id?: string
           title?: string
         }
         Relationships: [
           {
             foreignKeyName: "habitos_equipe_equipe_id_fkey"
-            columns: ["equipe_id"]
+            columns: ["team_id"]
             isOneToOne: false
             referencedRelation: "teams"
             referencedColumns: ["id"]
@@ -257,30 +257,30 @@ export type Database = {
       }
       teams: {
         Row: {
+          company_id: string | null
           created_at: string
-          empresa_id: string | null
           id: string
-          meta_total: number | null
           name: string
+          total_goal: number | null
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
-          empresa_id?: string | null
           id?: string
-          meta_total?: number | null
           name: string
+          total_goal?: number | null
         }
         Update: {
+          company_id?: string | null
           created_at?: string
-          empresa_id?: string | null
           id?: string
-          meta_total?: number | null
           name?: string
+          total_goal?: number | null
         }
         Relationships: [
           {
             foreignKeyName: "equipes_empresa_id_fkey"
-            columns: ["empresa_id"]
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]
@@ -313,9 +313,9 @@ export type Database = {
       }
       user_profiles: {
         Row: {
+          company_id: string | null
           created_at: string
           email: string | null
-          empresa_id: string | null
           id: string
           name: string | null
           role: string | null
@@ -324,9 +324,9 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          company_id?: string | null
           created_at?: string
           email?: string | null
-          empresa_id?: string | null
           id?: string
           name?: string | null
           role?: string | null
@@ -335,9 +335,9 @@ export type Database = {
           user_id: string
         }
         Update: {
+          company_id?: string | null
           created_at?: string
           email?: string | null
-          empresa_id?: string | null
           id?: string
           name?: string | null
           role?: string | null
@@ -348,7 +348,7 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "user_profiles_empresa_id_fkey"
-            columns: ["empresa_id"]
+            columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
             referencedColumns: ["id"]

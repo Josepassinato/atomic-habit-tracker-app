@@ -38,7 +38,7 @@ export class SupabaseTeamService {
             .insert({
               id: team.id,
               name: team.name || team.nome, // Compatibility with different formats
-              empresa_id: user.empresa_id || '1',
+              company_id: user.company_id || user.empresa_id || '1',
               created_at: new Date().toISOString()
             });
             
@@ -61,8 +61,8 @@ export class SupabaseTeamService {
     let query = this.supabase.from('teams').select('*');
     
     // If user is not admin, filter only for their company
-    if (user.role !== 'admin' && user.empresa_id) {
-      query = query.eq('empresa_id', user.empresa_id);
+    if (user.role !== 'admin' && (user.company_id || user.empresa_id)) {
+      query = query.eq('company_id', user.company_id || user.empresa_id);
     }
     
     const { data: teams, error: teamError } = await query;
@@ -110,7 +110,7 @@ export class SupabaseTeamService {
       const { data: salesRepsData, error: salesRepsError } = await this.supabase
         .from('sales_reps')
         .select('*')
-        .eq('equipe_id', team.id);
+        .eq('team_id', team.id);
         
       if (salesRepsError) throw salesRepsError;
       
@@ -121,14 +121,32 @@ export class SupabaseTeamService {
       const { data: habitsData, error: habitsError } = await this.supabase
         .from('team_habits')
         .select('*')
-        .eq('equipe_id', team.id);
+        .eq('team_id', team.id);
         
       if (habitsError) throw habitsError;
       
       const habits = habitsData || [];
       
+      // Convert to legacy format for compatibility with existing calculator
+      const legacySalesReps = salesReps.map((rep: any) => ({
+        id: rep.id,
+        nome: rep.name,
+        email: rep.email,
+        equipe_id: rep.team_id,
+        vendas_total: rep.total_sales || 0,
+        meta_atual: rep.current_goal || 0,
+        taxa_conversao: rep.conversion_rate || 0
+      }));
+      
+      const legacyHabits = habits.map((habit: any) => ({
+        id: habit.id,
+        title: habit.title,
+        concluido: habit.completed || false,
+        equipe_id: habit.team_id
+      }));
+      
       // Calculate team metrics
-      const teamMetrics = TeamMetricsCalculator.calculateTeamMetrics(team, salesReps, habits);
+      const teamMetrics = TeamMetricsCalculator.calculateTeamMetrics(team, legacySalesReps, legacyHabits);
       metrics.push(teamMetrics);
     }
     

@@ -66,7 +66,7 @@ export class TeamMetricsCalculator {
         metaTotal = Number(teamConfig.metas.mensal) || 100000;
         metaAtual = Math.floor(Math.random() * metaTotal * 0.8); // Valor aleatório para exemplo
       } else {
-        metaTotal = 100000;
+        metaTotal = equipe.total_goal || 100000;
         metaAtual = 75000;
       }
     }

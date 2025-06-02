@@ -144,10 +144,19 @@ export const useTeams = () => {
           }
           
           if (data && data.length > 0) {
-            setTeams(data);
+            // Map the new column names to the expected format
+            const mappedTeams = data.map((team: any) => ({
+              ...team,
+              empresa_id: team.company_id // Map new column name to old interface
+            }));
+            setTeams(mappedTeams);
           } else {
-            // If no data, initialize with default data
-            await supabase.from('teams').upsert(defaultTeams);
+            // If no data, initialize with default data (using new column names)
+            const defaultTeamsForDB = defaultTeams.map(team => ({
+              ...team,
+              company_id: team.empresa_id
+            }));
+            await supabase.from('teams').upsert(defaultTeamsForDB);
             setTeams(defaultTeams);
           }
         } else {
@@ -240,7 +249,7 @@ export const useSalesReps = (teamId?: string) => {
           let query = supabase.from('sales_reps').select('*');
           
           if (teamId) {
-            query = query.eq('equipe_id', teamId);
+            query = query.eq('team_id', teamId);
           }
           
           const { data, error } = await query;
@@ -250,10 +259,25 @@ export const useSalesReps = (teamId?: string) => {
           }
           
           if (data && data.length > 0) {
-            setSalesReps(data);
+            // Map the new column names to the expected format
+            const mappedSalesReps = data.map((rep: any) => ({
+              ...rep,
+              equipe_id: rep.team_id,
+              vendas_total: rep.total_sales,
+              meta_atual: rep.current_goal,
+              taxa_conversao: rep.conversion_rate
+            }));
+            setSalesReps(mappedSalesReps);
           } else {
-            // If no data, initialize with default data
-            await supabase.from('sales_reps').upsert(defaultSalesReps);
+            // If no data, initialize with default data (using new column names)
+            const defaultRepsForDB = defaultSalesReps.map(rep => ({
+              ...rep,
+              team_id: rep.equipe_id,
+              total_sales: rep.vendas_total,
+              current_goal: rep.meta_atual,
+              conversion_rate: rep.taxa_conversao
+            }));
+            await supabase.from('sales_reps').upsert(defaultRepsForDB);
             
             if (teamId) {
               setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));

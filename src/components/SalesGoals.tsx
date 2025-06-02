@@ -54,7 +54,7 @@ const SalesGoals = () => {
     
     try {
       if (supabase) {
-        // Fetch goals from Supabase
+        // Fetch goals from Supabase using new column names
         const { data, error } = await supabase
           .from('goals')
           .select('*')
@@ -66,12 +66,26 @@ const SalesGoals = () => {
         }
         
         if (data && data.length > 0) {
-          setGoals(data);
+          // Map new column names to expected format
+          const mappedGoals = data.map((goal: any) => ({
+            id: goal.id,
+            name: goal.name,
+            target: goal.target_value,
+            current: goal.current_value,
+            percentage: goal.percentage
+          }));
+          setGoals(mappedGoals);
         } else {
-          // If no data, initialize with default data
+          // If no data, initialize with default data (using new column names)
+          const goalsForDB = initialGoals.map(goal => ({
+            ...goal,
+            target_value: goal.target,
+            current_value: goal.current
+          }));
+          
           const { error: insertError } = await supabase
             .from('goals')
-            .upsert(initialGoals);
+            .upsert(goalsForDB);
           
           if (insertError) {
             console.error("Error inserting goals:", insertError);
