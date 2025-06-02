@@ -1,214 +1,163 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
-import { HabitEvidenceType } from "../habits/HabitEvidence";
-import { habitosIniciais, getFeedbackIA, gerarHabitosSugeridos } from "../habitos/HabitosService";
-import { Habit, BusinessModel } from "../habits/types";
+import { HabitoEvidenciaType } from "../habitos/HabitoEvidencia";
+import { initialHabits, getAIFeedback, generateSuggestedHabits } from "../habitos/HabitosService";
+import { Habito, BusinessModel } from "../habitos/types";
 
-// Convert Portuguese habits to English format
-const convertToEnglishHabits = (habitos: any[]): Habit[] => {
-  return habitos.map(habito => ({
-    id: habito.id,
-    titulo: habito.titulo || habito.title,
-    descricao: habito.descricao || habito.description,
-    cumprido: habito.cumprido !== undefined ? habito.cumprido : habito.completed,
-    horario: habito.horario || habito.schedule,
-    evidencia: habito.evidencia ? {
-      type: habito.evidencia.tipo === 'texto' ? 'text' : 
-            habito.evidencia.tipo === 'screenshot' ? 'screenshot' : 
-            habito.evidencia.tipo === 'arquivo' ? 'file' : 'text',
-      content: habito.evidencia.conteudo || habito.evidencia.content || '',
-      timestamp: habito.evidencia.timestamp || new Date().toISOString()
-    } : undefined,
-    verificacaoNecessaria: habito.verificacaoNecessaria !== undefined ? habito.verificacaoNecessaria : habito.verificationRequired,
-    verificado: habito.verificado !== undefined ? habito.verificado : habito.verified,
-    dataCriacao: habito.dataCriacao || habito.createdAt
-  }));
-};
-
-// Convert English habits to Portuguese format for service calls
-const convertToPortugueseHabits = (habits: Habit[]) => {
-  return habits.map(habit => ({
-    id: habit.id,
-    titulo: habit.titulo,
-    descricao: habit.descricao,
-    cumprido: habit.cumprido,
-    horario: habit.horario,
-    evidencia: habit.evidencia ? {
-      tipo: habit.evidencia.type === 'text' ? 'texto' : 
-            habit.evidencia.type === 'screenshot' ? 'screenshot' : 
-            habit.evidencia.type === 'file' ? 'arquivo' : 'texto',
-      conteudo: habit.evidencia.content,
-      timestamp: habit.evidencia.timestamp
-    } : undefined,
-    verificacaoNecessaria: habit.verificacaoNecessaria,
-    verificado: habit.verificado,
-    dataCriacao: habit.dataCriacao
-  }));
-};
-
-export const useHabitsTracker = () => {
-  const [habits, setHabits] = useState<Habit[]>(() => {
-    const saved = localStorage.getItem("habits");
-    if (saved) {
-      return convertToEnglishHabits(JSON.parse(saved));
-    }
-    return convertToEnglishHabits(habitosIniciais);
+export const useHabitosTracker = () => {
+  const [habitos, setHabitos] = useState<Habito[]>(() => {
+    // Tenta recuperar do localStorage, senão usa os hábitos iniciais
+    const salvos = localStorage.getItem("habitos");
+    return salvos ? JSON.parse(salvos) : initialHabits;
   });
   
   const [feedback, setFeedback] = useState<string>("");
-  const [loadingFeedback, setLoadingFeedback] = useState(false);
+  const [carregandoFeedback, setCarregandoFeedback] = useState(false);
   const [animateProgress, setAnimateProgress] = useState(false);
   
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [businessModel, setBusinessModel] = useState<BusinessModel>({
-    segmento: "",
-    cicloVenda: "",
-    tamEquipe: "",
-    objetivoPrincipal: ""
+  // Estados para o diálogo de sugestão de hábitos
+  const [dialogAberto, setDialogAberto] = useState(false);
+  const [modeloNegocio, setModeloNegocio] = useState<BusinessModel>({
+    segment: "",
+    salesCycle: "",
+    teamSize: "",
+    mainObjective: ""
   });
-  const [loadingSuggestions, setLoadingSuggestions] = useState(false);
-  const [suggestedHabits, setSuggestedHabits] = useState<Habit[]>([]);
+  const [carregandoSugestoes, setCarregandoSugestoes] = useState(false);
+  const [habitosSugeridos, setHabitosSugeridos] = useState<Habito[]>([]);
   
-  const completedHabits = habits.filter((habit) => habit.cumprido).length;
-  const verifiedHabits = habits.filter((habit) => habit.verificado).length;
-  const progress = habits.length > 0 ? (completedHabits / habits.length) * 100 : 0;
+  const habitosCumpridos = habitos.filter((habito) => habito.completed).length;
+  const habitosVerificados = habitos.filter((habito) => habito.verified).length;
+  const progresso = habitos.length > 0 ? (habitosCumpridos / habitos.length) * 100 : 0;
   
+  // Salvar hábitos no localStorage quando mudarem
   useEffect(() => {
-    localStorage.setItem("habits", JSON.stringify(habits));
+    localStorage.setItem("habitos", JSON.stringify(habitos));
     
-    if (completedHabits > 0) {
+    // Animar a barra de progresso quando os hábitos cumpridos mudarem
+    if (habitosCumpridos > 0) {
       setAnimateProgress(true);
       const timer = setTimeout(() => setAnimateProgress(false), 1000);
       return () => clearTimeout(timer);
     }
-  }, [habits, completedHabits]);
+  }, [habitos, habitosCumpridos]);
 
-  const markAsCompleted = useCallback((id: number) => {
-    const habit = habits.find(h => h.id === id);
+  const marcarComoConcluido = useCallback((id: number) => {
+    const habito = habitos.find(h => h.id === id);
     
-    if (habit && habit.verificacaoNecessaria && !habit.evidencia) {
-      toast.warning("Please add evidence before completing this habit", {
-        description: "This habit requires verification to be completed.",
+    if (habito && habito.verificationRequired && !habito.evidence) {
+      toast.warning("Por favor, adicione uma evidência antes de concluir este hábito", {
+        description: "Este hábito requer verificação para ser concluído.",
         duration: 4000
       });
       return;
     }
     
-    setHabits(prev => prev.map((habit) => 
-      habit.id === id ? { ...habit, cumprido: true } : habit
+    setHabitos(prev => prev.map((habito) => 
+      habito.id === id ? { ...habito, completed: true } : habito
     ));
 
-    toast.success("Habit marked as completed!", {
-      description: `You progressed to ${completedHabits + 1} of ${habits.length} habits for today.`,
+    // Mostrar toast com mais detalhes
+    toast.success("Hábito marcado como concluído!", {
+      description: `Você progrediu para ${habitosCumpridos + 1} de ${habitos.length} hábitos para hoje.`,
       duration: 4000
     });
-  }, [habits, completedHabits]);
+  }, [habitos, habitosCumpridos]);
   
-  const restartHabits = useCallback(() => {
-    const resetHabits = convertToEnglishHabits(habitosIniciais).map(h => ({...h, cumprido: false, evidencia: undefined}));
-    setHabits(resetHabits);
+  const reiniciarHabitos = useCallback(() => {
+    setHabitos(initialHabits.map(h => ({...h, completed: false, evidence: undefined})));
     setFeedback("");
-    toast.info("Habits restarted for the next day.", {
-      description: "All habits have been unmarked and are ready to be completed again."
+    toast.info("Hábitos reiniciados para o próximo dia.", {
+      description: "Todos os hábitos foram desmarcados e estão prontos para serem concluídos novamente."
     });
   }, []);
 
-  const requestAIFeedback = useCallback(async () => {
-    setLoadingFeedback(true);
+  const solicitarFeedbackIA = useCallback(async () => {
+    setCarregandoFeedback(true);
     try {
-      // Convert to Portuguese format for the service call
-      const habitosForService = convertToPortugueseHabits(habits);
-      
-      const feedbackMessage = await getFeedbackIA(habitosForService);
-      setFeedback(feedbackMessage);
-      toast.success("AI feedback generated successfully!", {
-        description: "The assistant analyzed your habits and provided recommendations."
+      // Use the habitos directly as they already conform to the Habito interface
+      const mensagemFeedback = await getAIFeedback(habitos);
+      setFeedback(mensagemFeedback);
+      toast.success("Feedback da IA gerado com sucesso!", {
+        description: "O assistente analisou seus hábitos e forneceu recomendações."
       });
     } catch (error) {
-      toast.error("Error generating feedback", {
-        description: "Please try again in a few moments."
+      toast.error("Erro ao gerar feedback", {
+        description: "Tente novamente em alguns instantes."
       });
     } finally {
-      setLoadingFeedback(false);
+      setCarregandoFeedback(false);
     }
-  }, [habits]);
+  }, [habitos]);
   
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
-    setBusinessModel(prev => ({
+    setModeloNegocio(prev => ({
       ...prev,
       [name]: value
     }));
   }, []);
   
-  const suggestPersonalizedHabits = useCallback(async () => {
-    setLoadingSuggestions(true);
+  const sugerirHabitosPersonalizados = useCallback(async () => {
+    setCarregandoSugestoes(true);
     try {
-      // Create proper Portuguese business model object for service call
-      const modeloNegocio = {
-        segment: businessModel.segmento,
-        salesCycle: businessModel.cicloVenda,
-        teamSize: businessModel.tamEquipe,
-        mainObjective: businessModel.objetivoPrincipal
-      };
-      
-      const personalizedHabits = await gerarHabitosSugeridos(modeloNegocio);
-      const convertedHabits = convertToEnglishHabits(personalizedHabits);
-      setSuggestedHabits(convertedHabits);
-      toast.info("Habit suggestions generated", {
-        description: `${convertedHabits.length} new habits were suggested for your profile.`
+      const habitosPersonalizados = await generateSuggestedHabits(modeloNegocio);
+      setHabitosSugeridos(habitosPersonalizados);
+      toast.info("Sugestões de hábitos geradas", {
+        description: `${habitosPersonalizados.length} novos hábitos foram sugeridos para seu perfil.`
       });
     } catch (error) {
-      toast.error("Error generating suggestions", {
-        description: "Please try again in a few moments."
+      toast.error("Erro ao gerar sugestões", {
+        description: "Tente novamente em alguns instantes."
       });
     } finally {
-      setLoadingSuggestions(false);
+      setCarregandoSugestoes(false);
     }
-  }, [businessModel]);
+  }, [modeloNegocio]);
   
-  const addSuggestedHabits = useCallback(() => {
-    if (suggestedHabits.length === 0) {
-      toast.warning("No habits to add", {
-        description: "Generate suggestions first before adding them."
+  const adicionarHabitosSugeridos = useCallback(() => {
+    if (habitosSugeridos.length === 0) {
+      toast.warning("Não há hábitos para adicionar", {
+        description: "Gere sugestões primeiro antes de adicioná-las."
       });
       return;
     }
     
-    setHabits(prev => [...prev, ...suggestedHabits]);
-    setSuggestedHabits([]);
-    setDialogOpen(false);
-    toast.success("Personalized habits added successfully!", {
-      description: `${suggestedHabits.length} new habits were added to your list.`
+    // Adicionar hábitos sugeridos à lista atual
+    setHabitos(prev => [...prev, ...habitosSugeridos]);
+    setHabitosSugeridos([]);
+    setDialogAberto(false);
+    toast.success("Hábitos personalizados adicionados com sucesso!", {
+      description: `${habitosSugeridos.length} novos hábitos foram adicionados à sua lista.`
     });
-  }, [suggestedHabits]);
+  }, [habitosSugeridos]);
 
-  const handleEvidenceSubmitted = useCallback((habitId: number, evidence: HabitEvidenceType) => {
-    setHabits(prev => prev.map((habit) => 
-      habit.id === habitId ? { ...habit, evidencia: evidence } : habit
+  const handleEvidenciaSubmitted = useCallback((habitoId: number, evidencia: HabitoEvidenciaType) => {
+    setHabitos(prev => prev.map((habito) => 
+      habito.id === habitoId ? { ...habito, evidence: evidencia } : habito
     ));
   }, []);
 
   return {
-    habits,
+    habitos,
     feedback,
-    loadingFeedback,
+    carregandoFeedback,
     animateProgress,
-    dialogOpen,
-    setDialogOpen,
-    businessModel,
-    loadingSuggestions,
-    suggestedHabits,
-    completedHabits,
-    verifiedHabits,
-    progress,
-    markAsCompleted,
-    restartHabits,
-    requestAIFeedback,
+    dialogAberto,
+    setDialogAberto,
+    modeloNegocio,
+    carregandoSugestoes,
+    habitosSugeridos,
+    habitosCumpridos,
+    habitosVerificados,
+    progresso,
+    marcarComoConcluido,
+    reiniciarHabitos,
+    solicitarFeedbackIA,
     handleInputChange,
-    suggestPersonalizedHabits,
-    addSuggestedHabits,
-    handleEvidenceSubmitted
+    sugerirHabitosPersonalizados,
+    adicionarHabitosSugeridos,
+    handleEvidenciaSubmitted
   };
 };
