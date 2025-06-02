@@ -7,17 +7,15 @@ import { LanguageContextType, LanguageProviderProps } from './types';
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Get language from localStorage or use browser language or default to English
+  // Default to English as the official language
   const [language, setLanguage] = useState<Language>(() => {
     const savedLanguage = localStorage.getItem('language') as Language;
     if (savedLanguage && ['en', 'es', 'pt'].includes(savedLanguage)) {
       return savedLanguage;
     }
     
-    const browserLang = navigator.language.split('-')[0];
-    if (browserLang === 'pt') return 'pt';
-    if (browserLang === 'es') return 'es';
-    return 'en'; // Default to English
+    // Always default to English as the official language
+    return 'en';
   });
   
   // Save language preference to localStorage when it changes
