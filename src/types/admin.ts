@@ -1,14 +1,15 @@
+
 export type PlanType = 'Starter' | 'Professional' | 'Enterprise' | 'Free' | 'Trial';
-export type StatusType = 'ativo' | 'inativo' | 'trial';
+export type StatusType = 'active' | 'inactive' | 'trial';
 
 export interface Company {
   id: string;
-  nome: string;
-  segmento: string;
-  plano: PlanType;
-  data_cadastro: string;
+  name: string;
+  segment: string;
+  plan: PlanType;
+  registration_date: string;
   status: StatusType;
-  email_contato: string;
+  contact_email: string;
 }
 
 export interface TokenUsage {

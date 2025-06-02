@@ -1,5 +1,5 @@
 
-import { Habito, BusinessModel } from "./types";
+import { Habito, BusinessModel, ModeloNegocio } from "./types";
 
 export const initialHabits: Habito[] = [
   {
@@ -44,6 +44,9 @@ export const initialHabits: Habito[] = [
   }
 ];
 
+// Portuguese alias
+export const habitosIniciais = initialHabits;
+
 export const getAIFeedback = async (habits: Habito[]): Promise<string> => {
   const completedHabits = habits.filter(h => h.completed).length;
   const totalHabits = habits.length;
@@ -61,6 +64,9 @@ export const getAIFeedback = async (habits: Habito[]): Promise<string> => {
     return "There's room for improvement. Start with one habit at a time and build momentum gradually. Consistency is key to sales success.";
   }
 };
+
+// Portuguese alias
+export const getFeedbackIA = getAIFeedback;
 
 export const generateSuggestedHabits = async (model: BusinessModel): Promise<Habito[]> => {
   await new Promise(resolve => setTimeout(resolve, 3000));
@@ -157,3 +163,6 @@ export const generateSuggestedHabits = async (model: BusinessModel): Promise<Hab
     }
   ];
 };
+
+// Portuguese alias
+export const gerarHabitosSugeridos = generateSuggestedHabits;

@@ -2,14 +2,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { HabitoEvidenciaType } from "../habitos/HabitoEvidencia";
-import { habitosIniciais, getFeedbackIA, gerarHabitosSugeridos } from "../habitos/HabitosService";
-import { Habito, ModeloNegocio } from "../habitos/types";
+import { initialHabits, getAIFeedback, generateSuggestedHabits } from "../habitos/HabitosService";
+import { Habito, BusinessModel } from "../habitos/types";
 
 export const useHabitosTracker = () => {
   const [habitos, setHabitos] = useState<Habito[]>(() => {
     // Tenta recuperar do localStorage, senão usa os hábitos iniciais
     const salvos = localStorage.getItem("habitos");
-    return salvos ? JSON.parse(salvos) : habitosIniciais;
+    return salvos ? JSON.parse(salvos) : initialHabits;
   });
   
   const [feedback, setFeedback] = useState<string>("");
@@ -18,17 +18,17 @@ export const useHabitosTracker = () => {
   
   // Estados para o diálogo de sugestão de hábitos
   const [dialogAberto, setDialogAberto] = useState(false);
-  const [modeloNegocio, setModeloNegocio] = useState<ModeloNegocio>({
-    segmento: "",
-    cicloVenda: "",
-    tamEquipe: "",
-    objetivoPrincipal: ""
+  const [modeloNegocio, setModeloNegocio] = useState<BusinessModel>({
+    segment: "",
+    salesCycle: "",
+    teamSize: "",
+    mainObjective: ""
   });
   const [carregandoSugestoes, setCarregandoSugestoes] = useState(false);
   const [habitosSugeridos, setHabitosSugeridos] = useState<Habito[]>([]);
   
-  const habitosCumpridos = habitos.filter((habito) => habito.cumprido).length;
-  const habitosVerificados = habitos.filter((habito) => habito.verificado).length;
+  const habitosCumpridos = habitos.filter((habito) => habito.completed).length;
+  const habitosVerificados = habitos.filter((habito) => habito.verified).length;
   const progresso = habitos.length > 0 ? (habitosCumpridos / habitos.length) * 100 : 0;
   
   // Salvar hábitos no localStorage quando mudarem
@@ -46,7 +46,7 @@ export const useHabitosTracker = () => {
   const marcarComoConcluido = useCallback((id: number) => {
     const habito = habitos.find(h => h.id === id);
     
-    if (habito && habito.verificacaoNecessaria && !habito.evidencia) {
+    if (habito && habito.verificationRequired && !habito.evidence) {
       toast.warning("Por favor, adicione uma evidência antes de concluir este hábito", {
         description: "Este hábito requer verificação para ser concluído.",
         duration: 4000
@@ -55,7 +55,7 @@ export const useHabitosTracker = () => {
     }
     
     setHabitos(prev => prev.map((habito) => 
-      habito.id === id ? { ...habito, cumprido: true } : habito
+      habito.id === id ? { ...habito, completed: true } : habito
     ));
 
     // Mostrar toast com mais detalhes
@@ -66,7 +66,7 @@ export const useHabitosTracker = () => {
   }, [habitos, habitosCumpridos]);
   
   const reiniciarHabitos = useCallback(() => {
-    setHabitos(habitosIniciais.map(h => ({...h, cumprido: false, evidencia: undefined})));
+    setHabitos(initialHabits.map(h => ({...h, completed: false, evidence: undefined})));
     setFeedback("");
     toast.info("Hábitos reiniciados para o próximo dia.", {
       description: "Todos os hábitos foram desmarcados e estão prontos para serem concluídos novamente."
@@ -76,7 +76,7 @@ export const useHabitosTracker = () => {
   const solicitarFeedbackIA = useCallback(async () => {
     setCarregandoFeedback(true);
     try {
-      const mensagemFeedback = await getFeedbackIA(habitos);
+      const mensagemFeedback = await getAIFeedback(habitos);
       setFeedback(mensagemFeedback);
       toast.success("Feedback da IA gerado com sucesso!", {
         description: "O assistente analisou seus hábitos e forneceu recomendações."
@@ -101,7 +101,7 @@ export const useHabitosTracker = () => {
   const sugerirHabitosPersonalizados = useCallback(async () => {
     setCarregandoSugestoes(true);
     try {
-      const habitosPersonalizados = await gerarHabitosSugeridos(modeloNegocio);
+      const habitosPersonalizados = await generateSuggestedHabits(modeloNegocio);
       setHabitosSugeridos(habitosPersonalizados);
       toast.info("Sugestões de hábitos geradas", {
         description: `${habitosPersonalizados.length} novos hábitos foram sugeridos para seu perfil.`
@@ -134,7 +134,7 @@ export const useHabitosTracker = () => {
 
   const handleEvidenciaSubmitted = useCallback((habitoId: number, evidencia: HabitoEvidenciaType) => {
     setHabitos(prev => prev.map((habito) => 
-      habito.id === habitoId ? { ...habito, evidencia } : habito
+      habito.id === habitoId ? { ...habito, evidence: evidencia } : habito
     ));
   }, []);
 

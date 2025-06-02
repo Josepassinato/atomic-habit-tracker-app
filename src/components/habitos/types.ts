@@ -12,6 +12,15 @@ export interface Habito {
   verified?: boolean;
   createdAt?: string;
   recurrence?: string;
+  // Portuguese aliases for backward compatibility
+  titulo?: string;
+  descricao?: string;
+  cumprido?: boolean;
+  horario?: string;
+  evidencia?: HabitoEvidenciaType;
+  verificacaoNecessaria?: boolean;
+  verificado?: boolean;
+  dataCriacao?: string;
 }
 
 export interface BusinessModel {
@@ -19,4 +28,11 @@ export interface BusinessModel {
   salesCycle: string;
   teamSize: string;
   mainObjective: string;
+}
+
+export interface ModeloNegocio {
+  segmento: string;
+  cicloVenda: string;
+  tamEquipe: string;
+  objetivoPrincipal: string;
 }

@@ -56,13 +56,13 @@ export const useHabitos = () => {
   });
   
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-  const [habitsByDay, setHabitsByDay] = useState<Record<string, { total: number; completed: number }>>({});
+  const [habitsByDay, setHabitsByDay] = useState<Record<string, { total: number; completos: number }>>({});
 
   // Generate data for calendar
   useEffect(() => {
     // Generate mock data for calendar for last 30 days
     const today = new Date();
-    const dataByDay: Record<string, { total: number; completed: number }> = {};
+    const dataByDay: Record<string, { total: number; completos: number }> = {};
     
     // Fill with mock data
     for (let i = 0; i < 30; i++) {
@@ -76,13 +76,13 @@ export const useHabitos = () => {
         const completedHabits = Math.floor(Math.random() * (totalHabits + 1));
         dataByDay[formattedDate] = {
           total: totalHabits,
-          completed: completedHabits
+          completos: completedHabits
         };
       } else {
         // For today, use real data
         dataByDay[formattedDate] = {
           total: habits.length,
-          completed: habits.filter(h => h.completed).length
+          completos: habits.filter(h => h.completed).length
         };
       }
     }
