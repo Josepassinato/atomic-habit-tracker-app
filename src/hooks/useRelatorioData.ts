@@ -3,142 +3,142 @@ import { useState, useEffect } from "react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
 
-interface Vendedor {
+interface SalesRep {
   id: string;
-  nome: string;
-  equipe: string;
-  vendas: number;
-  meta: number;
-  conversao: number;
+  name: string;
+  team: string;
+  sales: number;
+  goal: number;
+  conversion: number;
 }
 
-interface Equipe {
+interface Team {
   id: string;
-  nome: string;
+  name: string;
 }
 
 export const useRelatorioData = () => {
   const { supabase } = useSupabase();
   
-  // Estados para armazenar dados
-  const [equipes, setEquipes] = useState<Equipe[]>([]);
-  const [vendedores, setVendedores] = useState<Vendedor[]>([]);
+  // States to store data
+  const [teams, setTeams] = useState<Team[]>([]);
+  const [salesReps, setSalesReps] = useState<SalesRep[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Estado para filtros
-  const [periodoSelecionado, setPeriodoSelecionado] = useState<"semana" | "mes" | "trimestre" | "ano">("mes");
-  const [equipeId, setEquipeId] = useState<string>("todas");
+  // State for filters
+  const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month" | "quarter" | "year">("month");
+  const [teamId, setTeamId] = useState<string>("all");
   const [date, setDate] = useState<Date | undefined>(undefined);
 
-  // Buscar dados do Supabase
+  // Fetch data from Supabase
   useEffect(() => {
     const fetchData = async () => {
       setIsLoading(true);
       
       try {
-        // Dados fictícios para fallback
-        const equipesDefault: Equipe[] = [
-          { id: "1", nome: "Equipe Alfa" },
-          { id: "2", nome: "Equipe Beta" },
-          { id: "3", nome: "Equipe Delta" }
+        // Default data for fallback
+        const defaultTeams: Team[] = [
+          { id: "1", name: "Alpha Team" },
+          { id: "2", name: "Beta Team" },
+          { id: "3", name: "Delta Team" }
         ];
         
-        const vendedoresDefault: Vendedor[] = [
-          { id: "1", nome: "João Silva", equipe: "1", vendas: 120000, meta: 150000, conversao: 28 },
-          { id: "2", nome: "Maria Santos", equipe: "1", vendas: 180000, meta: 150000, conversao: 35 },
-          { id: "3", nome: "Pedro Costa", equipe: "2", vendas: 90000, meta: 100000, conversao: 22 },
-          { id: "4", nome: "Ana Oliveira", equipe: "2", vendas: 110000, meta: 100000, conversao: 29 },
-          { id: "5", nome: "Carlos Mendes", equipe: "3", vendas: 130000, meta: 120000, conversao: 31 }
+        const defaultSalesReps: SalesRep[] = [
+          { id: "1", name: "John Silva", team: "1", sales: 120000, goal: 150000, conversion: 28 },
+          { id: "2", name: "Maria Santos", team: "1", sales: 180000, goal: 150000, conversion: 35 },
+          { id: "3", name: "Pedro Costa", team: "2", sales: 90000, goal: 100000, conversion: 22 },
+          { id: "4", name: "Ana Oliveira", team: "2", sales: 110000, goal: 100000, conversion: 29 },
+          { id: "5", name: "Carlos Mendes", team: "3", sales: 130000, goal: 120000, conversion: 31 }
         ];
         
         if (supabase) {
-          // Buscar equipes do Supabase
-          const { data: equipesData, error: equipesError } = await supabase
-            .from('equipes')
+          // Fetch teams from Supabase
+          const { data: teamsData, error: teamsError } = await supabase
+            .from('teams')
             .select('*');
           
-          if (equipesError) {
-            console.error("Erro ao buscar equipes:", equipesError);
-            throw equipesError;
+          if (teamsError) {
+            console.error("Error fetching teams:", teamsError);
+            throw teamsError;
           }
           
-          if (equipesData && equipesData.length > 0) {
-            setEquipes(equipesData);
+          if (teamsData && teamsData.length > 0) {
+            setTeams(teamsData);
           } else {
-            // Se não houver dados, inicializa com dados padrão
-            setEquipes(equipesDefault);
+            // If no data, initialize with default data
+            setTeams(defaultTeams);
             
-            // Opcional: inserir dados padrão no Supabase
+            // Optional: insert default data into Supabase
             const { error: insertError } = await supabase
-              .from('equipes')
-              .upsert(equipesDefault);
+              .from('teams')
+              .upsert(defaultTeams);
             
             if (insertError) {
-              console.error("Erro ao inserir equipes:", insertError);
+              console.error("Error inserting teams:", insertError);
             }
           }
           
-          // Buscar vendedores do Supabase
-          const { data: vendedoresData, error: vendedoresError } = await supabase
-            .from('vendedores')
+          // Fetch sales reps from Supabase
+          const { data: salesRepsData, error: salesRepsError } = await supabase
+            .from('sales_reps')
             .select('*');
           
-          if (vendedoresError) {
-            console.error("Erro ao buscar vendedores:", vendedoresError);
-            throw vendedoresError;
+          if (salesRepsError) {
+            console.error("Error fetching sales reps:", salesRepsError);
+            throw salesRepsError;
           }
           
-          if (vendedoresData && vendedoresData.length > 0) {
-            setVendedores(vendedoresData);
+          if (salesRepsData && salesRepsData.length > 0) {
+            setSalesReps(salesRepsData);
           } else {
-            // Se não houver dados, inicializa com dados padrão
-            setVendedores(vendedoresDefault);
+            // If no data, initialize with default data
+            setSalesReps(defaultSalesReps);
             
-            // Opcional: inserir dados padrão no Supabase
+            // Optional: insert default data into Supabase
             const { error: insertError } = await supabase
-              .from('vendedores')
-              .upsert(vendedoresDefault);
+              .from('sales_reps')
+              .upsert(defaultSalesReps);
             
             if (insertError) {
-              console.error("Erro ao inserir vendedores:", insertError);
+              console.error("Error inserting sales reps:", insertError);
             }
           }
         } else {
-          // Fallback para dados locais quando não há conexão com Supabase
-          const savedEquipes = localStorage.getItem('equipes');
-          const savedVendedores = localStorage.getItem('vendedores');
+          // Fallback to local data when no Supabase connection
+          const savedTeams = localStorage.getItem('teams');
+          const savedSalesReps = localStorage.getItem('sales_reps');
           
-          if (savedEquipes) {
-            setEquipes(JSON.parse(savedEquipes));
+          if (savedTeams) {
+            setTeams(JSON.parse(savedTeams));
           } else {
-            setEquipes(equipesDefault);
-            localStorage.setItem('equipes', JSON.stringify(equipesDefault));
+            setTeams(defaultTeams);
+            localStorage.setItem('teams', JSON.stringify(defaultTeams));
           }
           
-          if (savedVendedores) {
-            setVendedores(JSON.parse(savedVendedores));
+          if (savedSalesReps) {
+            setSalesReps(JSON.parse(savedSalesReps));
           } else {
-            setVendedores(vendedoresDefault);
-            localStorage.setItem('vendedores', JSON.stringify(vendedoresDefault));
+            setSalesReps(defaultSalesReps);
+            localStorage.setItem('sales_reps', JSON.stringify(defaultSalesReps));
           }
         }
       } catch (error) {
-        console.error("Erro ao carregar dados:", error);
-        toast.error("Não foi possível carregar os dados do relatório");
+        console.error("Error loading data:", error);
+        toast.error("Unable to load report data");
         
-        // Fallback para dados default em caso de erro
-        setEquipes([
-          { id: "1", nome: "Equipe Alfa" },
-          { id: "2", nome: "Equipe Beta" },
-          { id: "3", nome: "Equipe Delta" }
+        // Fallback to default data in case of error
+        setTeams([
+          { id: "1", name: "Alpha Team" },
+          { id: "2", name: "Beta Team" },
+          { id: "3", name: "Delta Team" }
         ]);
         
-        setVendedores([
-          { id: "1", nome: "João Silva", equipe: "1", vendas: 120000, meta: 150000, conversao: 28 },
-          { id: "2", nome: "Maria Santos", equipe: "1", vendas: 180000, meta: 150000, conversao: 35 },
-          { id: "3", nome: "Pedro Costa", equipe: "2", vendas: 90000, meta: 100000, conversao: 22 },
-          { id: "4", nome: "Ana Oliveira", equipe: "2", vendas: 110000, meta: 100000, conversao: 29 },
-          { id: "5", nome: "Carlos Mendes", equipe: "3", vendas: 130000, meta: 120000, conversao: 31 }
+        setSalesReps([
+          { id: "1", name: "John Silva", team: "1", sales: 120000, goal: 150000, conversion: 28 },
+          { id: "2", name: "Maria Santos", team: "1", sales: 180000, goal: 150000, conversion: 35 },
+          { id: "3", name: "Pedro Costa", team: "2", sales: 90000, goal: 100000, conversion: 22 },
+          { id: "4", name: "Ana Oliveira", team: "2", sales: 110000, goal: 100000, conversion: 29 },
+          { id: "5", name: "Carlos Mendes", team: "3", sales: 130000, goal: 120000, conversion: 31 }
         ]);
       } finally {
         setIsLoading(false);
@@ -148,35 +148,35 @@ export const useRelatorioData = () => {
     fetchData();
   }, [supabase]);
 
-  // Filtragem de vendedores por equipe
-  const vendedoresFiltrados = equipeId === "todas" 
-    ? vendedores 
-    : vendedores.filter(vendedor => vendedor.equipe === equipeId);
+  // Filter sales reps by team
+  const filteredSalesReps = teamId === "all" 
+    ? salesReps 
+    : salesReps.filter(salesRep => salesRep.team === teamId);
 
-  // Totais para dashboard
-  const totalVendas = vendedores.reduce((acc, v) => acc + v.vendas, 0);
-  const totalMetas = vendedores.reduce((acc, v) => acc + v.meta, 0);
-  const percentualMeta = Math.round((totalVendas / totalMetas) * 100);
-  const mediaConversao = Math.round(vendedores.reduce((acc, v) => acc + v.conversao, 0) / vendedores.length);
+  // Totals for dashboard
+  const totalSales = salesReps.reduce((acc, v) => acc + v.sales, 0);
+  const totalGoals = salesReps.reduce((acc, v) => acc + v.goal, 0);
+  const goalPercentage = Math.round((totalSales / totalGoals) * 100);
+  const averageConversion = Math.round(salesReps.reduce((acc, v) => acc + v.conversion, 0) / salesReps.length);
 
-  // Função para gerar relatório com dados do Supabase
+  // Function to generate report with Supabase data
   const generateReport = async () => {
-    console.log('Gerando relatório com os seguintes filtros:', {
-      periodo: periodoSelecionado,
-      equipe: equipeId,
-      data: date
+    console.log('Generating report with the following filters:', {
+      period: selectedPeriod,
+      team: teamId,
+      date: date
     });
     
     try {
       setIsLoading(true);
       
       if (supabase) {
-        // Implementação real com Supabase
-        let query = supabase.from('vendedores').select('*');
+        // Real implementation with Supabase
+        let query = supabase.from('sales_reps').select('*');
         
-        // Aplicar filtros
-        if (equipeId !== 'todas') {
-          query = query.eq('equipe', equipeId);
+        // Apply filters
+        if (teamId !== 'all') {
+          query = query.eq('team', teamId);
         }
         
         const { data, error } = await query;
@@ -186,35 +186,35 @@ export const useRelatorioData = () => {
         }
         
         if (data) {
-          setVendedores(data);
-          toast.success("Relatório gerado com sucesso!");
+          setSalesReps(data);
+          toast.success("Report generated successfully!");
         }
       } else {
-        // Simulação para modo local
-        toast.success("Relatório gerado com sucesso!");
+        // Simulation for local mode
+        toast.success("Report generated successfully!");
       }
     } catch (error) {
-      console.error("Erro ao gerar relatório:", error);
-      toast.error("Não foi possível gerar o relatório");
+      console.error("Error generating report:", error);
+      toast.error("Unable to generate report");
     } finally {
       setIsLoading(false);
     }
   };
 
   return {
-    equipes,
-    vendedores,
-    vendedoresFiltrados,
-    periodoSelecionado,
-    setPeriodoSelecionado,
-    equipeId,
-    setEquipeId,
+    teams,
+    salesReps,
+    filteredSalesReps,
+    selectedPeriod,
+    setSelectedPeriod,
+    teamId,
+    setTeamId,
     date,
     setDate,
-    totalVendas,
-    totalMetas,
-    percentualMeta,
-    mediaConversao,
+    totalSales,
+    totalGoals,
+    goalPercentage,
+    averageConversion,
     generateReport,
     isLoading
   };

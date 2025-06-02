@@ -10,9 +10,9 @@ import { useLanguage } from "@/i18n";
 const DashboardSummary = () => {
   const { supabase, isConfigured } = useSupabase();
   const { t } = useLanguage();
-  const [metaVendas, setMetaVendas] = useState<number>(85);
-  const [habitosCumpridos, setHabitosCumpridos] = useState<number>(72);
-  const [bonusTotal, setBonusTotal] = useState<number>(2.5);
+  const [salesGoal, setSalesGoal] = useState<number>(85);
+  const [habitsCompleted, setHabitsCompleted] = useState<number>(72);
+  const [totalBonus, setTotalBonus] = useState<number>(2.5);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -21,7 +21,7 @@ const DashboardSummary = () => {
         setLoading(true);
         
         if (supabase && isConfigured) {
-          // Buscar dados de vendas do usuário atual
+          // Fetch sales data for current user
           const userId = localStorage.getItem("user") 
             ? JSON.parse(localStorage.getItem("user")!).id 
             : null;
@@ -31,47 +31,47 @@ const DashboardSummary = () => {
             return;
           }
           
-          // Buscar metas de vendas
-          const { data: metasData, error: metasError } = await supabase
-            .from('vendedores')
+          // Fetch sales goals
+          const { data: goalsData, error: goalsError } = await supabase
+            .from('sales_reps')
             .select('meta_atual, vendas_total')
             .eq('id', userId)
             .single();
             
-          if (metasError) {
+          if (goalsError) {
             console.log("No sales data found, using defaults");
             return;
           }
           
-          if (metasData) {
-            const meta = metasData.meta_atual || 0;
-            const vendas = metasData.vendas_total || 0;
-            const percentual = meta > 0 ? Math.min(Math.round((vendas / meta) * 100), 100) : 85;
-            setMetaVendas(percentual);
+          if (goalsData) {
+            const goal = goalsData.meta_atual || 0;
+            const sales = goalsData.vendas_total || 0;
+            const percentage = goal > 0 ? Math.min(Math.round((sales / goal) * 100), 100) : 85;
+            setSalesGoal(percentage);
           }
           
-          // Buscar hábitos
-          const { data: habitosData, error: habitosError } = await supabase
-            .from('habitos')
+          // Fetch habits
+          const { data: habitsData, error: habitsError } = await supabase
+            .from('habits')
             .select('*')
             .eq('usuario_id', userId);
             
-          if (habitosError) {
+          if (habitsError) {
             console.log("No habits data found, using defaults");
             return;
           }
           
-          if (habitosData && habitosData.length > 0) {
-            const totalHabitos = habitosData.length;
-            const concluidos = habitosData.filter(h => h.concluido).length;
-            const percentualHabitos = Math.round((concluidos / totalHabitos) * 100);
-            setHabitosCumpridos(percentualHabitos);
+          if (habitsData && habitsData.length > 0) {
+            const totalHabits = habitsData.length;
+            const completed = habitsData.filter(h => h.completed).length;
+            const habitsPercentage = Math.round((completed / totalHabits) * 100);
+            setHabitsCompleted(habitsPercentage);
           }
           
-          // Calcular bônus
-          const bonusMetas = metaVendas >= 100 ? 3 : metaVendas >= 80 ? 1.5 : 0;
-          const bonusHabitos = habitosCumpridos >= 90 ? 2 : habitosCumpridos >= 70 ? 1 : 0;
-          setBonusTotal(bonusMetas + bonusHabitos);
+          // Calculate bonus
+          const goalBonus = salesGoal >= 100 ? 3 : salesGoal >= 80 ? 1.5 : 0;
+          const habitsBonus = habitsCompleted >= 90 ? 2 : habitsCompleted >= 70 ? 1 : 0;
+          setTotalBonus(goalBonus + habitsBonus);
         }
       } catch (error) {
         console.error("Error loading dashboard data:", error);
@@ -82,17 +82,17 @@ const DashboardSummary = () => {
     };
     
     fetchDashboardData();
-  }, [supabase, isConfigured, metaVendas, habitosCumpridos]);
+  }, [supabase, isConfigured, salesGoal, habitsCompleted]);
 
   const getSalesGoalText = () => {
-    if (metaVendas >= 100) return "Complete";
-    if (metaVendas >= 80) return "On Track";
+    if (salesGoal >= 100) return "Complete";
+    if (salesGoal >= 80) return "On Track";
     return "In Progress";
   };
 
   const getHabitsText = () => {
-    if (habitosCumpridos >= 90) return "Excellent";
-    if (habitosCumpridos >= 70) return "Good";
+    if (habitsCompleted >= 90) return "Excellent";
+    if (habitsCompleted >= 70) return "Good";
     return "Needs Improvement";
   };
 
@@ -112,14 +112,14 @@ const DashboardSummary = () => {
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">{metaVendas}%</div>
-                <Badge variant={metaVendas >= 100 ? "default" : metaVendas >= 80 ? "secondary" : "outline"}>
+                <div className="text-3xl font-bold">{salesGoal}%</div>
+                <Badge variant={salesGoal >= 100 ? "default" : salesGoal >= 80 ? "secondary" : "outline"}>
                   {getSalesGoalText()}
                 </Badge>
               </div>
-              <Progress className="mt-2" value={metaVendas} />
+              <Progress className="mt-2" value={salesGoal} />
               <p className="mt-2 text-sm text-muted-foreground">
-                Current bonus: {metaVendas >= 100 ? "3%" : metaVendas >= 80 ? "1.5%" : "0%"}
+                Current bonus: {salesGoal >= 100 ? "3%" : salesGoal >= 80 ? "1.5%" : "0%"}
               </p>
             </>
           )}
@@ -140,14 +140,14 @@ const DashboardSummary = () => {
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">{habitosCumpridos}%</div>
-                <Badge variant={habitosCumpridos >= 90 ? "default" : habitosCumpridos >= 70 ? "secondary" : "outline"}>
+                <div className="text-3xl font-bold">{habitsCompleted}%</div>
+                <Badge variant={habitsCompleted >= 90 ? "default" : habitsCompleted >= 70 ? "secondary" : "outline"}>
                   {getHabitsText()}
                 </Badge>
               </div>
-              <Progress className="mt-2" value={habitosCumpridos} />
+              <Progress className="mt-2" value={habitsCompleted} />
               <p className="mt-2 text-sm text-muted-foreground">
-                Current bonus: {habitosCumpridos >= 90 ? "2%" : habitosCumpridos >= 70 ? "1%" : "0%"}
+                Current bonus: {habitsCompleted >= 90 ? "2%" : habitsCompleted >= 70 ? "1%" : "0%"}
               </p>
             </>
           )}
@@ -168,21 +168,21 @@ const DashboardSummary = () => {
           ) : (
             <>
               <div className="flex items-center justify-between">
-                <div className="text-3xl font-bold">{bonusTotal}%</div>
+                <div className="text-3xl font-bold">{totalBonus}%</div>
                 <Badge>Monthly Reward</Badge>
               </div>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
                   <span>Sales Goal</span>
-                  <span className="font-medium">{metaVendas >= 100 ? "3.0%" : metaVendas >= 80 ? "1.5%" : "0.0%"}</span>
+                  <span className="font-medium">{salesGoal >= 100 ? "3.0%" : salesGoal >= 80 ? "1.5%" : "0.0%"}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <span>Habits Completion</span>
-                  <span className="font-medium">{habitosCumpridos >= 90 ? "2.0%" : habitosCumpridos >= 70 ? "1.0%" : "0.0%"}</span>
+                  <span className="font-medium">{habitsCompleted >= 90 ? "2.0%" : habitsCompleted >= 70 ? "1.0%" : "0.0%"}</span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-2 font-medium">
                   <span>Total</span>
-                  <span>{bonusTotal}%</span>
+                  <span>{totalBonus}%</span>
                 </div>
               </div>
             </>

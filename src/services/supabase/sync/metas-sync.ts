@@ -2,28 +2,28 @@
 import { supabaseConfigService } from "../supabase-config";
 
 /**
- * Service for syncing metas data with Supabase
+ * Service for syncing goals data with Supabase
  */
-export class MetasSyncService {
+export class GoalsSyncService {
   /**
-   * Sincroniza metas do localStorage para o Supabase
+   * Syncs goals from localStorage to Supabase
    */
-  async syncToSupabase(metas: any[]): Promise<boolean> {
+  async syncToSupabase(goals: any[]): Promise<boolean> {
     const url = supabaseConfigService.getUrl();
     const key = supabaseConfigService.getApiKey();
     
-    if (!url || !key || !metas || metas.length === 0) {
-      console.log("Dados incompletos, não é possível sincronizar metas");
+    if (!url || !key || !goals || goals.length === 0) {
+      console.log("Incomplete data, cannot sync goals");
       return false;
     }
     
     try {
-      console.log("Sincronizando metas com o Supabase...");
+      console.log("Syncing goals with Supabase...");
       
-      // Para cada meta no array
-      for (const meta of metas) {
-        // Verificar se a meta já existe no Supabase
-        const checkResponse = await fetch(`${url}/rest/v1/metas?id=eq.${meta.id}`, {
+      // For each goal in the array
+      for (const goal of goals) {
+        // Check if goal already exists in Supabase
+        const checkResponse = await fetch(`${url}/rest/v1/goals?id=eq.${goal.id}`, {
           method: "GET",
           headers: {
             "apikey": key,
@@ -31,11 +31,11 @@ export class MetasSyncService {
           }
         });
         
-        const existingMeta = await checkResponse.json();
+        const existingGoal = await checkResponse.json();
           
-        // Se a meta não existir, inserir
-        if (!existingMeta || existingMeta.length === 0) {
-          const insertResponse = await fetch(`${url}/rest/v1/metas`, {
+        // If goal doesn't exist, insert it
+        if (!existingGoal || existingGoal.length === 0) {
+          const insertResponse = await fetch(`${url}/rest/v1/goals`, {
             method: "POST",
             headers: {
               "apikey": key,
@@ -44,31 +44,31 @@ export class MetasSyncService {
               "Prefer": "return=minimal"
             },
             body: JSON.stringify({
-              id: meta.id,
-              nome: meta.nome,
-              valor: meta.valor,
-              atual: meta.atual,
-              percentual: meta.percentual,
-              tipo: meta.tipo || 'vendas',
-              usuario_id: meta.usuario_id || '1',
-              equipe_id: meta.equipe_id || null,
-              criado_em: new Date().toISOString(),
-              atualizado_em: new Date().toISOString()
+              id: goal.id,
+              name: goal.name || goal.nome,
+              target_value: goal.target_value || goal.valor,
+              current_value: goal.current_value || goal.atual,
+              percentage: goal.percentage || goal.percentual,
+              type: goal.type || goal.tipo || 'sales',
+              usuario_id: goal.usuario_id || '1',
+              equipe_id: goal.equipe_id || null,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString()
             })
           });
             
           if (!insertResponse.ok) {
-            console.error("Erro ao inserir meta no Supabase:", await insertResponse.text());
+            console.error("Error inserting goal into Supabase:", await insertResponse.text());
           } else {
-            console.log(`Meta ${meta.nome} sincronizada com Supabase`);
+            console.log(`Goal ${goal.name || goal.nome} synced with Supabase`);
           }
         }
       }
       
-      console.log("Sincronização de metas com Supabase concluída");
+      console.log("Goals sync with Supabase completed");
       return true;
     } catch (error) {
-      console.error("Erro ao sincronizar metas com Supabase:", error);
+      console.error("Error syncing goals with Supabase:", error);
       return false;
     }
   }

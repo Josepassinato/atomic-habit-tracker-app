@@ -2,30 +2,30 @@
 import { supabaseConfigService } from "../supabase-config";
 
 /**
- * Service for syncing habitos data with Supabase
+ * Service for syncing habits data with Supabase
  */
-export class HabitosSyncService {
+export class HabitsSyncService {
   /**
-   * Sincroniza hábitos do localStorage para o Supabase
+   * Syncs habits from localStorage to Supabase
    */
-  async syncToSupabase(habitos: any[]): Promise<boolean> {
+  async syncToSupabase(habits: any[]): Promise<boolean> {
     const url = supabaseConfigService.getUrl();
     const key = supabaseConfigService.getApiKey();
     
-    if (!url || !key || !habitos || habitos.length === 0) {
-      console.log("Dados incompletos, não é possível sincronizar hábitos");
+    if (!url || !key || !habits || habits.length === 0) {
+      console.log("Incomplete data, cannot sync habits");
       return false;
     }
     
     try {
-      console.log("Sincronizando hábitos com o Supabase...");
+      console.log("Syncing habits with Supabase...");
       
-      // Para cada hábito no array
-      for (const habito of habitos) {
-        const tableName = habito.equipe_id ? 'habitos_equipe' : 'habitos';
+      // For each habit in the array
+      for (const habit of habits) {
+        const tableName = habit.equipe_id ? 'team_habits' : 'habits';
         
-        // Verificar se o hábito já existe no Supabase
-        const checkResponse = await fetch(`${url}/rest/v1/${tableName}?id=eq.${habito.id}`, {
+        // Check if habit already exists in Supabase
+        const checkResponse = await fetch(`${url}/rest/v1/${tableName}?id=eq.${habit.id}`, {
           method: "GET",
           headers: {
             "apikey": key,
@@ -33,30 +33,30 @@ export class HabitosSyncService {
           }
         });
         
-        const existingHabito = await checkResponse.json();
+        const existingHabit = await checkResponse.json();
           
-        // Se o hábito não existir, inserir
-        if (!existingHabito || existingHabito.length === 0) {
-          let habitoData: any = {
-            id: habito.id,
-            titulo: habito.titulo || habito.nome,
-            descricao: habito.descricao || '',
-            concluido: habito.concluido || false,
-            recorrencia: habito.recorrencia || 'diario',
-            data_criacao: habito.data_criacao || new Date().toISOString(),
-            data_conclusao: habito.data_conclusao || null
+        // If habit doesn't exist, insert it
+        if (!existingHabit || existingHabit.length === 0) {
+          let habitData: any = {
+            id: habit.id,
+            title: habit.title || habit.titulo || habit.nome,
+            description: habit.description || habit.descricao || '',
+            completed: habit.completed || habit.concluido || false,
+            recurrence: habit.recurrence || habit.recorrencia || 'daily',
+            created_at: habit.created_at || habit.data_criacao || new Date().toISOString(),
+            completed_at: habit.completed_at || habit.data_conclusao || null
           };
 
-          if (habito.equipe_id) {
-            // Para hábitos de equipe
-            habitoData.equipe_id = habito.equipe_id;
+          if (habit.equipe_id) {
+            // For team habits
+            habitData.equipe_id = habit.equipe_id;
           } else {
-            // Para hábitos individuais
-            habitoData.usuario_id = habito.usuario_id || '1';
-            habitoData.verificado = habito.verificado || false;
-            habitoData.verificacao_necessaria = habito.verificacao_necessaria || false;
-            habitoData.horario = habito.horario || null;
-            habitoData.evidencia = habito.evidencia || null;
+            // For individual habits
+            habitData.usuario_id = habit.usuario_id || '1';
+            habitData.verified = habit.verified || habit.verificado || false;
+            habitData.verification_required = habit.verification_required || habit.verificacao_necessaria || false;
+            habitData.schedule = habit.schedule || habit.horario || null;
+            habitData.evidence = habit.evidence || habit.evidencia || null;
           }
 
           const insertResponse = await fetch(`${url}/rest/v1/${tableName}`, {
@@ -67,21 +67,21 @@ export class HabitosSyncService {
               "Content-Type": "application/json",
               "Prefer": "return=minimal"
             },
-            body: JSON.stringify(habitoData)
+            body: JSON.stringify(habitData)
           });
             
           if (!insertResponse.ok) {
-            console.error("Erro ao inserir hábito no Supabase:", await insertResponse.text());
+            console.error("Error inserting habit into Supabase:", await insertResponse.text());
           } else {
-            console.log(`Hábito ${habito.titulo || habito.nome} sincronizado com Supabase`);
+            console.log(`Habit ${habit.title || habit.titulo || habit.nome} synced with Supabase`);
           }
         }
       }
       
-      console.log("Sincronização de hábitos com Supabase concluída");
+      console.log("Habits sync with Supabase completed");
       return true;
     } catch (error) {
-      console.error("Erro ao sincronizar hábitos com Supabase:", error);
+      console.error("Error syncing habits with Supabase:", error);
       return false;
     }
   }

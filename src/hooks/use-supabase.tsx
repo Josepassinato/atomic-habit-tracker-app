@@ -2,34 +2,34 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { SupabaseClient, createClient } from '@supabase/supabase-js';
 
-// Tipos para as tabelas do nosso banco de dados
-export type Equipe = {
+// Types for our database tables
+export type Team = {
   id: string;
-  nome: string;
+  name: string;
   empresa_id: string;
-  criado_em: string;
+  created_at: string;
 };
 
-export type Vendedor = {
+export type SalesRep = {
   id: string;
-  nome: string;
+  name: string;
   email: string;
   equipe_id: string;
   vendas_total: number;
   meta_atual: number;
   taxa_conversao: number;
-  criado_em: string;
+  created_at: string;
 };
 
-export type Empresa = {
+export type Company = {
   id: string;
-  nome: string;
-  segmento: string;
-  tamanho_equipe: string;
-  criado_em: string;
+  name: string;
+  segment: string;
+  team_size: string;
+  created_at: string;
 };
 
-// Context para gerenciar o cliente Supabase
+// Context for managing the Supabase client
 type SupabaseContextType = {
   supabase: SupabaseClient | null;
   loading: boolean;
@@ -44,7 +44,7 @@ const SupabaseContext = createContext<SupabaseContextType>({
   isConfigured: false,
 });
 
-// Provider para disponibilizar o cliente Supabase
+// Provider to make the Supabase client available
 export const SupabaseProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [supabase, setSupabase] = useState<SupabaseClient | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -54,19 +54,19 @@ export const SupabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   useEffect(() => {
     const initSupabase = async () => {
       try {
-        // Tentar buscar credenciais do armazenamento local
+        // Try to get credentials from local storage
         const supabaseUrl = localStorage.getItem('supabase_url');
         const supabaseKey = localStorage.getItem('supabase_key');
         
         if (supabaseUrl && supabaseKey) {
           const client = createClient(supabaseUrl, supabaseKey);
           
-          // Testar a conexão
+          // Test the connection
           const { error } = await client.from('test').select('*').limit(1);
           
           if (error && error.code !== 'PGRST116') {
-            // PGRST116 significa que a tabela não existe, o que é ok para o teste
-            console.warn('Erro ao conectar com Supabase:', error);
+            // PGRST116 means the table doesn't exist, which is OK for the test
+            console.warn('Error connecting to Supabase:', error);
             setSupabase(null);
             setIsConfigured(false);
           } else {
@@ -74,12 +74,12 @@ export const SupabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
             setIsConfigured(true);
           }
         } else {
-          console.info('Credenciais do Supabase não encontradas');
+          console.info('Supabase credentials not found');
           setSupabase(null);
           setIsConfigured(false);
         }
       } catch (err) {
-        console.error('Erro ao inicializar Supabase:', err);
+        console.error('Error initializing Supabase:', err);
         setError(err as Error);
         setSupabase(null);
         setIsConfigured(false);
@@ -98,46 +98,46 @@ export const SupabaseProvider: React.FC<{ children: React.ReactNode }> = ({ chil
   );
 };
 
-// Hook para usar o cliente Supabase
+// Hook to use the Supabase client
 export const useSupabase = () => {
   const context = useContext(SupabaseContext);
   if (context === undefined) {
-    throw new Error('useSupabase deve ser usado dentro de um SupabaseProvider');
+    throw new Error('useSupabase must be used within a SupabaseProvider');
   }
   return context;
 };
 
-// Hook para buscar equipes
-export const useEquipes = () => {
+// Hook to fetch teams
+export const useTeams = () => {
   const { supabase } = useSupabase();
-  const [equipes, setEquipes] = useState<Equipe[]>([]);
+  const [teams, setTeams] = useState<Team[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    const fetchEquipes = async () => {
+    const fetchTeams = async () => {
       try {
         setLoading(true);
         
-        // Equipes default para fallback
-        const equipesDefault: Equipe[] = [
+        // Default teams for fallback
+        const defaultTeams: Team[] = [
           {
             id: '1',
-            nome: 'Equipe Comercial',
+            name: 'Sales Team',
             empresa_id: '1',
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           },
           {
             id: '2',
-            nome: 'Equipe de Sucesso do Cliente',
+            name: 'Customer Success Team',
             empresa_id: '1',
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           }
         ];
         
         if (supabase) {
           const { data, error } = await supabase
-            .from('equipes')
+            .from('teams')
             .select('*');
             
           if (error) {
@@ -145,39 +145,39 @@ export const useEquipes = () => {
           }
           
           if (data && data.length > 0) {
-            setEquipes(data);
+            setTeams(data);
           } else {
-            // Se não houver dados, inicializar com dados padrão
-            await supabase.from('equipes').upsert(equipesDefault);
-            setEquipes(equipesDefault);
+            // If no data, initialize with default data
+            await supabase.from('teams').upsert(defaultTeams);
+            setTeams(defaultTeams);
           }
         } else {
-          // Modo local com localStorage
-          const savedEquipes = localStorage.getItem('equipes');
-          if (savedEquipes) {
-            setEquipes(JSON.parse(savedEquipes));
+          // Local mode with localStorage
+          const savedTeams = localStorage.getItem('teams');
+          if (savedTeams) {
+            setTeams(JSON.parse(savedTeams));
           } else {
-            localStorage.setItem('equipes', JSON.stringify(equipesDefault));
-            setEquipes(equipesDefault);
+            localStorage.setItem('teams', JSON.stringify(defaultTeams));
+            setTeams(defaultTeams);
           }
         }
       } catch (err) {
-        console.error('Erro ao buscar equipes:', err);
+        console.error('Error fetching teams:', err);
         setError(err as Error);
         
-        // Fallback para dados padrão
-        setEquipes([
+        // Fallback to default data
+        setTeams([
           {
             id: '1',
-            nome: 'Equipe Comercial',
+            name: 'Sales Team',
             empresa_id: '1',
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           },
           {
             id: '2',
-            nome: 'Equipe de Sucesso do Cliente',
+            name: 'Customer Success Team',
             empresa_id: '1',
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           }
         ]);
       } finally {
@@ -185,63 +185,63 @@ export const useEquipes = () => {
       }
     };
 
-    fetchEquipes();
+    fetchTeams();
   }, [supabase]);
 
-  return { equipes, loading, error };
+  return { teams, loading, error };
 };
 
-// Hook para buscar vendedores
-export const useVendedores = (equipeId?: string) => {
+// Hook to fetch sales reps
+export const useSalesReps = (teamId?: string) => {
   const { supabase } = useSupabase();
-  const [vendedores, setVendedores] = useState<Vendedor[]>([]);
+  const [salesReps, setSalesReps] = useState<SalesRep[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   
   useEffect(() => {
-    const fetchVendedores = async () => {
+    const fetchSalesReps = async () => {
       try {
         setLoading(true);
         
-        // Vendedores default para fallback
-        const vendedoresDefault: Vendedor[] = [
+        // Default sales reps for fallback
+        const defaultSalesReps: SalesRep[] = [
           {
             id: '1',
-            nome: 'João Silva',
-            email: 'joao@example.com',
+            name: 'John Silva',
+            email: 'john@example.com',
             equipe_id: '1',
             vendas_total: 120000,
             meta_atual: 150000,
             taxa_conversao: 0.35,
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           },
           {
             id: '2',
-            nome: 'Maria Souza',
+            name: 'Maria Souza',
             email: 'maria@example.com',
             equipe_id: '1',
             vendas_total: 180000,
             meta_atual: 150000,
             taxa_conversao: 0.42,
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           },
           {
             id: '3',
-            nome: 'Carlos Pereira',
+            name: 'Carlos Pereira',
             email: 'carlos@example.com',
             equipe_id: '2',
             vendas_total: 90000,
             meta_atual: 120000,
             taxa_conversao: 0.28,
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           }
         ];
         
         if (supabase) {
-          let query = supabase.from('vendedores').select('*');
+          let query = supabase.from('sales_reps').select('*');
           
-          if (equipeId) {
-            query = query.eq('equipe_id', equipeId);
+          if (teamId) {
+            query = query.eq('equipe_id', teamId);
           }
           
           const { data, error } = await query;
@@ -251,86 +251,86 @@ export const useVendedores = (equipeId?: string) => {
           }
           
           if (data && data.length > 0) {
-            setVendedores(data);
+            setSalesReps(data);
           } else {
-            // Se não houver dados, inicializar com dados padrão
-            await supabase.from('vendedores').upsert(vendedoresDefault);
+            // If no data, initialize with default data
+            await supabase.from('sales_reps').upsert(defaultSalesReps);
             
-            if (equipeId) {
-              setVendedores(vendedoresDefault.filter(v => v.equipe_id === equipeId));
+            if (teamId) {
+              setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));
             } else {
-              setVendedores(vendedoresDefault);
+              setSalesReps(defaultSalesReps);
             }
           }
         } else {
-          // Modo local com localStorage
-          const savedVendedores = localStorage.getItem('vendedores');
-          if (savedVendedores) {
-            const allVendedores = JSON.parse(savedVendedores);
-            if (equipeId) {
-              setVendedores(allVendedores.filter((v: Vendedor) => v.equipe_id === equipeId));
+          // Local mode with localStorage
+          const savedSalesReps = localStorage.getItem('sales_reps');
+          if (savedSalesReps) {
+            const allSalesReps = JSON.parse(savedSalesReps);
+            if (teamId) {
+              setSalesReps(allSalesReps.filter((v: SalesRep) => v.equipe_id === teamId));
             } else {
-              setVendedores(allVendedores);
+              setSalesReps(allSalesReps);
             }
           } else {
-            localStorage.setItem('vendedores', JSON.stringify(vendedoresDefault));
-            if (equipeId) {
-              setVendedores(vendedoresDefault.filter(v => v.equipe_id === equipeId));
+            localStorage.setItem('sales_reps', JSON.stringify(defaultSalesReps));
+            if (teamId) {
+              setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));
             } else {
-              setVendedores(vendedoresDefault);
+              setSalesReps(defaultSalesReps);
             }
           }
         }
       } catch (err) {
-        console.error('Erro ao buscar vendedores:', err);
+        console.error('Error fetching sales reps:', err);
         setError(err as Error);
         
-        // Fallback para dados filtrados
-        const vendedoresDefault = [
+        // Fallback to filtered data
+        const defaultSalesReps = [
           {
             id: '1',
-            nome: 'João Silva',
-            email: 'joao@example.com',
+            name: 'John Silva',
+            email: 'john@example.com',
             equipe_id: '1',
             vendas_total: 120000,
             meta_atual: 150000,
             taxa_conversao: 0.35,
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           },
           {
             id: '2',
-            nome: 'Maria Souza',
+            name: 'Maria Souza',
             email: 'maria@example.com',
             equipe_id: '1',
             vendas_total: 180000,
             meta_atual: 150000,
             taxa_conversao: 0.42,
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           },
           {
             id: '3',
-            nome: 'Carlos Pereira',
+            name: 'Carlos Pereira',
             email: 'carlos@example.com',
             equipe_id: '2',
             vendas_total: 90000,
             meta_atual: 120000,
             taxa_conversao: 0.28,
-            criado_em: new Date().toISOString(),
+            created_at: new Date().toISOString(),
           }
         ];
         
-        if (equipeId) {
-          setVendedores(vendedoresDefault.filter(v => v.equipe_id === equipeId));
+        if (teamId) {
+          setSalesReps(defaultSalesReps.filter(v => v.equipe_id === teamId));
         } else {
-          setVendedores(vendedoresDefault);
+          setSalesReps(defaultSalesReps);
         }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchVendedores();
-  }, [supabase, equipeId]);
+    fetchSalesReps();
+  }, [supabase, teamId]);
 
-  return { vendedores, loading, error };
+  return { salesReps, loading, error };
 };

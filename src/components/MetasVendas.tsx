@@ -8,57 +8,57 @@ import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
 import { useLanguage } from "@/i18n";
 
-interface Meta {
+interface Goal {
   id: number;
-  nome: string;
-  valor: number;
-  atual: number;
-  percentual: number;
+  name: string;
+  target_value: number;
+  current_value: number;
+  percentage: number;
 }
 
-const metasIniciais = [
+const initialGoals = [
   {
     id: 1,
-    nome: "Main Goal",
-    valor: 120000,
-    atual: 102000,
-    percentual: 85,
+    name: "Main Goal",
+    target_value: 120000,
+    current_value: 102000,
+    percentage: 85,
   },
   {
     id: 2,
-    nome: "Prospecting Goal",
-    valor: 50,
-    atual: 45,
-    percentual: 90,
+    name: "Prospecting Goal",
+    target_value: 50,
+    current_value: 45,
+    percentage: 90,
   },
   {
     id: 3,
-    nome: "Conversion Goal",
-    valor: 30,
-    atual: 18,
-    percentual: 60,
+    name: "Conversion Goal",
+    target_value: 30,
+    current_value: 18,
+    percentage: 60,
   },
 ];
 
 const MetasVendas = () => {
   const { supabase } = useSupabase();
-  const [metas, setMetas] = useState<Meta[]>([]);
+  const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sugestaoIA, setSugestaoIA] = useState<string>("Focus on the conversion goal by increasing the number of follow-ups for each qualified lead.");
+  const [aiSuggestion, setAiSuggestion] = useState<string>("Focus on the conversion goal by increasing the number of follow-ups for each qualified lead.");
   const { t } = useLanguage();
   
   useEffect(() => {
-    fetchMetas();
+    fetchGoals();
   }, []);
 
-  const fetchMetas = async () => {
+  const fetchGoals = async () => {
     setLoading(true);
     
     try {
       if (supabase) {
-        // Buscar metas do Supabase
+        // Fetch goals from Supabase
         const { data, error } = await supabase
-          .from('metas')
+          .from('goals')
           .select('*')
           .order('id');
         
@@ -68,50 +68,50 @@ const MetasVendas = () => {
         }
         
         if (data && data.length > 0) {
-          setMetas(data);
+          setGoals(data);
         } else {
-          // Se não houver dados, inicializa com dados padrão
+          // If no data, initialize with default data
           const { error: insertError } = await supabase
-            .from('metas')
-            .upsert(metasIniciais);
+            .from('goals')
+            .upsert(initialGoals);
           
           if (insertError) {
             console.error("Error inserting goals:", insertError);
           }
           
-          setMetas(metasIniciais);
+          setGoals(initialGoals);
         }
         
-        // Buscar sugestão da IA
-        const { data: sugestaoData, error: sugestaoError } = await supabase
-          .from('sugestoes_ia')
-          .select('texto')
-          .eq('tipo', 'meta')
+        // Fetch AI suggestion
+        const { data: suggestionData, error: suggestionError } = await supabase
+          .from('ai_suggestions')
+          .select('text')
+          .eq('type', 'goal')
           .limit(1)
           .single();
         
-        if (!sugestaoError && sugestaoData) {
-          setSugestaoIA(sugestaoData.texto);
+        if (!suggestionError && suggestionData) {
+          setAiSuggestion(suggestionData.text);
         }
       } else {
-        // Fallback para dados locais
-        const salvasMetas = localStorage.getItem('metas');
-        if (salvasMetas) {
-          setMetas(JSON.parse(salvasMetas));
+        // Fallback to local data
+        const savedGoals = localStorage.getItem('goals');
+        if (savedGoals) {
+          setGoals(JSON.parse(savedGoals));
         } else {
-          setMetas(metasIniciais);
-          localStorage.setItem('metas', JSON.stringify(metasIniciais));
+          setGoals(initialGoals);
+          localStorage.setItem('goals', JSON.stringify(initialGoals));
         }
         
-        const salvaSugestao = localStorage.getItem('sugestao_metas');
-        if (salvaSugestao) {
-          setSugestaoIA(salvaSugestao);
+        const savedSuggestion = localStorage.getItem('goal_suggestion');
+        if (savedSuggestion) {
+          setAiSuggestion(savedSuggestion);
         }
       }
     } catch (error) {
       console.error("Error loading goals:", error);
       toast.error("Unable to load goals");
-      setMetas(metasIniciais);
+      setGoals(initialGoals);
     } finally {
       setLoading(false);
     }
@@ -138,30 +138,30 @@ const MetasVendas = () => {
           </div>
         ) : (
           <div className="space-y-6">
-            {metas.map((meta) => (
-              <div key={meta.id} className="space-y-2">
+            {goals.map((goal) => (
+              <div key={goal.id} className="space-y-2">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <h4 className="font-medium">{meta.nome}</h4>
+                    <h4 className="font-medium">{goal.name}</h4>
                     <div className="text-sm text-muted-foreground">
-                      {meta.nome === "Main Goal"
-                        ? `$${meta.atual.toLocaleString()} of $${meta.valor.toLocaleString()}`
-                        : `${meta.atual} of ${meta.valor}`}
+                      {goal.name === "Main Goal"
+                        ? `$${goal.current_value.toLocaleString()} of $${goal.target_value.toLocaleString()}`
+                        : `${goal.current_value} of ${goal.target_value}`}
                     </div>
                   </div>
                   <Badge
-                    variant={meta.percentual >= 80 ? "secondary" : meta.percentual >= 50 ? "outline" : "destructive"}
+                    variant={goal.percentage >= 80 ? "secondary" : goal.percentage >= 50 ? "outline" : "destructive"}
                   >
-                    {meta.percentual}%
+                    {goal.percentage}%
                   </Badge>
                 </div>
-                <Progress value={meta.percentual} className="h-2" />
+                <Progress value={goal.percentage} className="h-2" />
               </div>
             ))}
             <div className="rounded-md bg-muted p-3 text-sm">
               <p className="font-medium">AI Suggestion:</p>
               <p className="mt-1 text-muted-foreground">
-                {sugestaoIA}
+                {aiSuggestion}
               </p>
             </div>
           </div>

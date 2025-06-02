@@ -9,332 +9,164 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      configuracoes: {
+      companies: {
         Row: {
-          atualizado_em: string
-          chave: string
-          criado_em: string
+          created_at: string
           id: string
-          user_id: string
-          valor: Json
+          name: string
+          segment: string | null
+          team_size: string | null
         }
         Insert: {
-          atualizado_em?: string
-          chave: string
-          criado_em?: string
+          created_at?: string
           id?: string
-          user_id: string
-          valor: Json
+          name: string
+          segment?: string | null
+          team_size?: string | null
         }
         Update: {
-          atualizado_em?: string
-          chave?: string
-          criado_em?: string
+          created_at?: string
           id?: string
-          user_id?: string
-          valor?: Json
+          name?: string
+          segment?: string | null
+          team_size?: string | null
         }
         Relationships: []
       }
-      empresas: {
+      goals: {
         Row: {
-          criado_em: string
-          id: string
-          nome: string
-          segmento: string | null
-          tamanho_equipe: string | null
-        }
-        Insert: {
-          criado_em?: string
-          id?: string
-          nome: string
-          segmento?: string | null
-          tamanho_equipe?: string | null
-        }
-        Update: {
-          criado_em?: string
-          id?: string
-          nome?: string
-          segmento?: string | null
-          tamanho_equipe?: string | null
-        }
-        Relationships: []
-      }
-      equipes: {
-        Row: {
-          criado_em: string
-          empresa_id: string | null
-          id: string
-          meta_total: number | null
-          nome: string
-        }
-        Insert: {
-          criado_em?: string
-          empresa_id?: string | null
-          id?: string
-          meta_total?: number | null
-          nome: string
-        }
-        Update: {
-          criado_em?: string
-          empresa_id?: string | null
-          id?: string
-          meta_total?: number | null
-          nome?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "equipes_empresa_id_fkey"
-            columns: ["empresa_id"]
-            isOneToOne: false
-            referencedRelation: "empresas"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      habitos: {
-        Row: {
-          concluido: boolean | null
-          data_conclusao: string | null
-          data_criacao: string
-          descricao: string | null
-          equipe_id: string | null
-          evidencia: Json | null
-          horario: string | null
-          id: string
-          recorrencia: string | null
-          titulo: string
-          usuario_id: string | null
-          verificacao_necessaria: boolean | null
-          verificado: boolean | null
-        }
-        Insert: {
-          concluido?: boolean | null
-          data_conclusao?: string | null
-          data_criacao?: string
-          descricao?: string | null
-          equipe_id?: string | null
-          evidencia?: Json | null
-          horario?: string | null
-          id?: string
-          recorrencia?: string | null
-          titulo: string
-          usuario_id?: string | null
-          verificacao_necessaria?: boolean | null
-          verificado?: boolean | null
-        }
-        Update: {
-          concluido?: boolean | null
-          data_conclusao?: string | null
-          data_criacao?: string
-          descricao?: string | null
-          equipe_id?: string | null
-          evidencia?: Json | null
-          horario?: string | null
-          id?: string
-          recorrencia?: string | null
-          titulo?: string
-          usuario_id?: string | null
-          verificacao_necessaria?: boolean | null
-          verificado?: boolean | null
-        }
-        Relationships: [
-          {
-            foreignKeyName: "habitos_equipe_id_fkey"
-            columns: ["equipe_id"]
-            isOneToOne: false
-            referencedRelation: "equipes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      habitos_equipe: {
-        Row: {
-          concluido: boolean | null
-          data_conclusao: string | null
-          data_criacao: string
-          descricao: string | null
-          equipe_id: string
-          id: string
-          recorrencia: string | null
-          titulo: string
-        }
-        Insert: {
-          concluido?: boolean | null
-          data_conclusao?: string | null
-          data_criacao?: string
-          descricao?: string | null
-          equipe_id: string
-          id?: string
-          recorrencia?: string | null
-          titulo: string
-        }
-        Update: {
-          concluido?: boolean | null
-          data_conclusao?: string | null
-          data_criacao?: string
-          descricao?: string | null
-          equipe_id?: string
-          id?: string
-          recorrencia?: string | null
-          titulo?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "habitos_equipe_equipe_id_fkey"
-            columns: ["equipe_id"]
-            isOneToOne: false
-            referencedRelation: "equipes"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      metas: {
-        Row: {
-          atual: number | null
-          atualizado_em: string
-          criado_em: string
+          created_at: string
+          current_value: number | null
           equipe_id: string | null
           id: string
-          nome: string
-          percentual: number | null
-          tipo: string | null
+          name: string
+          percentage: number | null
+          target_value: number
+          type: string | null
+          updated_at: string
           usuario_id: string | null
-          valor: number
         }
         Insert: {
-          atual?: number | null
-          atualizado_em?: string
-          criado_em?: string
+          created_at?: string
+          current_value?: number | null
           equipe_id?: string | null
           id?: string
-          nome: string
-          percentual?: number | null
-          tipo?: string | null
+          name: string
+          percentage?: number | null
+          target_value: number
+          type?: string | null
+          updated_at?: string
           usuario_id?: string | null
-          valor: number
         }
         Update: {
-          atual?: number | null
-          atualizado_em?: string
-          criado_em?: string
+          created_at?: string
+          current_value?: number | null
           equipe_id?: string | null
           id?: string
-          nome?: string
-          percentual?: number | null
-          tipo?: string | null
+          name?: string
+          percentage?: number | null
+          target_value?: number
+          type?: string | null
+          updated_at?: string
           usuario_id?: string | null
-          valor?: number
         }
         Relationships: [
           {
             foreignKeyName: "metas_equipe_id_fkey"
             columns: ["equipe_id"]
             isOneToOne: false
-            referencedRelation: "equipes"
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
       }
-      user_dashboard_widgets: {
+      habits: {
         Row: {
-          atualizado_em: string
-          criado_em: string
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          equipe_id: string | null
+          evidence: Json | null
           id: string
-          user_id: string
-          widgets: Json
+          recurrence: string | null
+          schedule: string | null
+          title: string
+          usuario_id: string | null
+          verification_required: boolean | null
+          verified: boolean | null
         }
         Insert: {
-          atualizado_em?: string
-          criado_em?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          equipe_id?: string | null
+          evidence?: Json | null
           id?: string
-          user_id: string
-          widgets?: Json
+          recurrence?: string | null
+          schedule?: string | null
+          title: string
+          usuario_id?: string | null
+          verification_required?: boolean | null
+          verified?: boolean | null
         }
         Update: {
-          atualizado_em?: string
-          criado_em?: string
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          equipe_id?: string | null
+          evidence?: Json | null
           id?: string
-          user_id?: string
-          widgets?: Json
-        }
-        Relationships: []
-      }
-      user_profiles: {
-        Row: {
-          atualizado_em: string
-          criado_em: string
-          email: string | null
-          empresa_id: string | null
-          id: string
-          nome: string | null
-          role: string | null
-          teams: Json | null
-          user_id: string
-        }
-        Insert: {
-          atualizado_em?: string
-          criado_em?: string
-          email?: string | null
-          empresa_id?: string | null
-          id?: string
-          nome?: string | null
-          role?: string | null
-          teams?: Json | null
-          user_id: string
-        }
-        Update: {
-          atualizado_em?: string
-          criado_em?: string
-          email?: string | null
-          empresa_id?: string | null
-          id?: string
-          nome?: string | null
-          role?: string | null
-          teams?: Json | null
-          user_id?: string
+          recurrence?: string | null
+          schedule?: string | null
+          title?: string
+          usuario_id?: string | null
+          verification_required?: boolean | null
+          verified?: boolean | null
         }
         Relationships: [
           {
-            foreignKeyName: "user_profiles_empresa_id_fkey"
-            columns: ["empresa_id"]
+            foreignKeyName: "habitos_equipe_id_fkey"
+            columns: ["equipe_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "teams"
             referencedColumns: ["id"]
           },
         ]
       }
-      vendedores: {
+      sales_reps: {
         Row: {
-          criado_em: string
+          created_at: string
           email: string
           empresa_id: string | null
           equipe_id: string | null
           id: string
           meta_atual: number | null
-          nome: string
+          name: string
           taxa_conversao: number | null
           vendas_total: number | null
         }
         Insert: {
-          criado_em?: string
+          created_at?: string
           email: string
           empresa_id?: string | null
           equipe_id?: string | null
           id?: string
           meta_atual?: number | null
-          nome: string
+          name: string
           taxa_conversao?: number | null
           vendas_total?: number | null
         }
         Update: {
-          criado_em?: string
+          created_at?: string
           email?: string
           empresa_id?: string | null
           equipe_id?: string | null
           id?: string
           meta_atual?: number | null
-          nome?: string
+          name?: string
           taxa_conversao?: number | null
           vendas_total?: number | null
         }
@@ -343,14 +175,182 @@ export type Database = {
             foreignKeyName: "vendedores_empresa_id_fkey"
             columns: ["empresa_id"]
             isOneToOne: false
-            referencedRelation: "empresas"
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "vendedores_equipe_id_fkey"
             columns: ["equipe_id"]
             isOneToOne: false
-            referencedRelation: "equipes"
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      settings: {
+        Row: {
+          created_at: string
+          id: string
+          key: string
+          updated_at: string
+          user_id: string
+          value: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          key: string
+          updated_at?: string
+          user_id: string
+          value: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          key?: string
+          updated_at?: string
+          user_id?: string
+          value?: Json
+        }
+        Relationships: []
+      }
+      team_habits: {
+        Row: {
+          completed: boolean | null
+          completed_at: string | null
+          created_at: string
+          description: string | null
+          equipe_id: string
+          id: string
+          recurrence: string | null
+          title: string
+        }
+        Insert: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          equipe_id: string
+          id?: string
+          recurrence?: string | null
+          title: string
+        }
+        Update: {
+          completed?: boolean | null
+          completed_at?: string | null
+          created_at?: string
+          description?: string | null
+          equipe_id?: string
+          id?: string
+          recurrence?: string | null
+          title?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "habitos_equipe_equipe_id_fkey"
+            columns: ["equipe_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      teams: {
+        Row: {
+          created_at: string
+          empresa_id: string | null
+          id: string
+          meta_total: number | null
+          name: string
+        }
+        Insert: {
+          created_at?: string
+          empresa_id?: string | null
+          id?: string
+          meta_total?: number | null
+          name: string
+        }
+        Update: {
+          created_at?: string
+          empresa_id?: string | null
+          id?: string
+          meta_total?: number | null
+          name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipes_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_dashboard_widgets: {
+        Row: {
+          created_at: string
+          id: string
+          updated_at: string
+          user_id: string
+          widgets: Json
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id: string
+          widgets?: Json
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          updated_at?: string
+          user_id?: string
+          widgets?: Json
+        }
+        Relationships: []
+      }
+      user_profiles: {
+        Row: {
+          created_at: string
+          email: string | null
+          empresa_id: string | null
+          id: string
+          name: string | null
+          role: string | null
+          teams: Json | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          empresa_id?: string | null
+          id?: string
+          name?: string | null
+          role?: string | null
+          teams?: Json | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          empresa_id?: string | null
+          id?: string
+          name?: string | null
+          role?: string | null
+          teams?: Json | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_profiles_empresa_id_fkey"
+            columns: ["empresa_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
             referencedColumns: ["id"]
           },
         ]

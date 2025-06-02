@@ -2,28 +2,28 @@
 import { supabaseConfigService } from "../supabase-config";
 
 /**
- * Service for syncing vendedores data with Supabase
+ * Service for syncing sales reps data with Supabase
  */
-export class VendedoresSyncService {
+export class SalesRepsSyncService {
   /**
-   * Sincroniza vendedores do localStorage para o Supabase
+   * Syncs sales reps from localStorage to Supabase
    */
-  async syncToSupabase(vendedores: any[]): Promise<boolean> {
+  async syncToSupabase(salesReps: any[]): Promise<boolean> {
     const url = supabaseConfigService.getUrl();
     const key = supabaseConfigService.getApiKey();
     
-    if (!url || !key || !vendedores || vendedores.length === 0) {
-      console.log("Dados incompletos, não é possível sincronizar vendedores");
+    if (!url || !key || !salesReps || salesReps.length === 0) {
+      console.log("Incomplete data, cannot sync sales reps");
       return false;
     }
     
     try {
-      console.log("Sincronizando vendedores com o Supabase...");
+      console.log("Syncing sales reps with Supabase...");
       
-      // Para cada vendedor no array
-      for (const vendedor of vendedores) {
-        // Verificar se o vendedor já existe no Supabase
-        const checkResponse = await fetch(`${url}/rest/v1/vendedores?id=eq.${vendedor.id}`, {
+      // For each sales rep in the array
+      for (const salesRep of salesReps) {
+        // Check if sales rep already exists in Supabase
+        const checkResponse = await fetch(`${url}/rest/v1/sales_reps?id=eq.${salesRep.id}`, {
           method: "GET",
           headers: {
             "apikey": key,
@@ -31,11 +31,11 @@ export class VendedoresSyncService {
           }
         });
         
-        const existingVendedor = await checkResponse.json();
+        const existingSalesRep = await checkResponse.json();
           
-        // Se o vendedor não existir, inserir
-        if (!existingVendedor || existingVendedor.length === 0) {
-          const insertResponse = await fetch(`${url}/rest/v1/vendedores`, {
+        // If sales rep doesn't exist, insert it
+        if (!existingSalesRep || existingSalesRep.length === 0) {
+          const insertResponse = await fetch(`${url}/rest/v1/sales_reps`, {
             method: "POST",
             headers: {
               "apikey": key,
@@ -44,30 +44,30 @@ export class VendedoresSyncService {
               "Prefer": "return=minimal"
             },
             body: JSON.stringify({
-              id: vendedor.id,
-              nome: vendedor.nome,
-              email: vendedor.email || `vendedor${vendedor.id}@exemplo.com`,
-              equipe_id: vendedor.equipe_id,
+              id: salesRep.id,
+              name: salesRep.name || salesRep.nome,
+              email: salesRep.email || `salesrep${salesRep.id}@example.com`,
+              equipe_id: salesRep.equipe_id,
               empresa_id: '00000000-0000-0000-0000-000000000001',
-              vendas_total: vendedor.vendas_total || 0,
-              meta_atual: vendedor.meta_atual || 100000,
-              taxa_conversao: vendedor.taxa_conversao || 0.3,
-              criado_em: new Date().toISOString()
+              vendas_total: salesRep.vendas_total || 0,
+              meta_atual: salesRep.meta_atual || 100000,
+              taxa_conversao: salesRep.taxa_conversao || 0.3,
+              created_at: new Date().toISOString()
             })
           });
             
           if (!insertResponse.ok) {
-            console.error("Erro ao inserir vendedor no Supabase:", await insertResponse.text());
+            console.error("Error inserting sales rep into Supabase:", await insertResponse.text());
           } else {
-            console.log(`Vendedor ${vendedor.nome} sincronizado com Supabase`);
+            console.log(`Sales rep ${salesRep.name || salesRep.nome} synced with Supabase`);
           }
         }
       }
       
-      console.log("Sincronização de vendedores com Supabase concluída");
+      console.log("Sales reps sync with Supabase completed");
       return true;
     } catch (error) {
-      console.error("Erro ao sincronizar vendedores com Supabase:", error);
+      console.error("Error syncing sales reps with Supabase:", error);
       return false;
     }
   }

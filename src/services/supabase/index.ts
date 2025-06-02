@@ -14,7 +14,7 @@ class SupabaseService {
   setApiKey(apiKey: string) {
     supabaseConfigService.setApiKey(apiKey);
     
-    // Tenta salvar a configuração no banco de dados se possível
+    // Try to save configuration to database if possible
     supabaseSettingsService.saveConfigToDatabase();
   }
 
@@ -25,7 +25,7 @@ class SupabaseService {
   setUrl(url: string) {
     supabaseConfigService.setUrl(url);
     
-    // Tenta salvar a configuração no banco de dados se possível
+    // Try to save configuration to database if possible
     supabaseSettingsService.saveConfigToDatabase();
   }
 
@@ -56,16 +56,16 @@ class SupabaseService {
     return this.dataSyncOrchestrator.syncTeamsToSupabase(teams);
   }
 
-  syncVendedoresToSupabase(vendedores: any[]) {
-    return this.dataSyncOrchestrator.syncVendedoresToSupabase(vendedores);
+  syncSalesRepsToSupabase(salesReps: any[]) {
+    return this.dataSyncOrchestrator.syncSalesRepsToSupabase(salesReps);
   }
   
-  syncHabitosToSupabase(habitos: any[]) {
-    return this.dataSyncOrchestrator.syncHabitosToSupabase(habitos);
+  syncHabitsToSupabase(habits: any[]) {
+    return this.dataSyncOrchestrator.syncHabitsToSupabase(habits);
   }
   
-  syncMetasToSupabase(metas: any[]) {
-    return this.dataSyncOrchestrator.syncMetasToSupabase(metas);
+  syncGoalsToSupabase(goals: any[]) {
+    return this.dataSyncOrchestrator.syncGoalsToSupabase(goals);
   }
   
   syncAllDataToSupabase() {
@@ -73,5 +73,5 @@ class SupabaseService {
   }
 }
 
-// Exporta uma instância única do serviço
+// Export a single instance of the service
 export const supabaseService = new SupabaseService();

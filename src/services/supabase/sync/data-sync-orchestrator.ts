@@ -3,9 +3,9 @@ import { supabaseConfigService } from "../supabase-config";
 import { toast } from "sonner";
 import { EmpresasSyncService } from "./empresas-sync";
 import { TeamsSyncService } from "./teams-sync";
-import { VendedoresSyncService } from "./vendedores-sync";
-import { HabitosSyncService } from "./habitos-sync";
-import { MetasSyncService } from "./metas-sync";
+import { SalesRepsSyncService } from "./vendedores-sync";
+import { HabitsSyncService } from "./habitos-sync";
+import { GoalsSyncService } from "./metas-sync";
 
 /**
  * Orchestrator service for coordinating all data sync operations
@@ -13,60 +13,60 @@ import { MetasSyncService } from "./metas-sync";
 export class DataSyncOrchestratorService {
   private empresasSync = new EmpresasSyncService();
   private teamsSync = new TeamsSyncService();
-  private vendedoresSync = new VendedoresSyncService();
-  private habitosSync = new HabitosSyncService();
-  private metasSync = new MetasSyncService();
+  private salesRepsSync = new SalesRepsSyncService();
+  private habitsSync = new HabitsSyncService();
+  private goalsSync = new GoalsSyncService();
 
   /**
-   * Sincroniza todos os dados do localStorage para o Supabase
+   * Syncs all data from localStorage to Supabase
    */
   async syncAllDataToSupabase(): Promise<boolean> {
     const isConfigured = supabaseConfigService.isConfigured();
     
     if (!isConfigured) {
-      toast.error("Supabase não está configurado. Configure antes de tentar sincronizar dados.");
+      toast.error("Supabase is not configured. Configure before trying to sync data.");
       return false;
     }
     
     try {
-      toast.loading("Sincronizando dados com o Supabase...");
+      toast.loading("Syncing data with Supabase...");
       
-      // Buscar dados do localStorage
-      const teams = localStorage.getItem('equipes') ? JSON.parse(localStorage.getItem('equipes')!) : [];
-      const vendedores = localStorage.getItem('vendedores') ? JSON.parse(localStorage.getItem('vendedores')!) : [];
-      const habitos = localStorage.getItem('habitos') ? JSON.parse(localStorage.getItem('habitos')!) : [];
-      const habitosEquipe = localStorage.getItem('habitos_equipe') ? JSON.parse(localStorage.getItem('habitos_equipe')!) : [];
-      const metas = localStorage.getItem('metas') ? JSON.parse(localStorage.getItem('metas')!) : [];
+      // Fetch data from localStorage
+      const teams = localStorage.getItem('teams') ? JSON.parse(localStorage.getItem('teams')!) : [];
+      const salesReps = localStorage.getItem('sales_reps') ? JSON.parse(localStorage.getItem('sales_reps')!) : [];
+      const habits = localStorage.getItem('habits') ? JSON.parse(localStorage.getItem('habits')!) : [];
+      const teamHabits = localStorage.getItem('team_habits') ? JSON.parse(localStorage.getItem('team_habits')!) : [];
+      const goals = localStorage.getItem('goals') ? JSON.parse(localStorage.getItem('goals')!) : [];
       
-      // Sincronizar todos os dados
-      const empresasResult = await this.empresasSync.syncToSupabase();
+      // Sync all data
+      const companiesResult = await this.empresasSync.syncToSupabase();
       const teamsResult = await this.teamsSync.syncToSupabase(teams);
-      const vendedoresResult = await this.vendedoresSync.syncToSupabase(vendedores);
-      const habitosResult = await this.habitosSync.syncToSupabase(habitos);
-      const habitosEquipeResult = await this.habitosSync.syncToSupabase(habitosEquipe);
-      const metasResult = await this.metasSync.syncToSupabase(metas);
+      const salesRepsResult = await this.salesRepsSync.syncToSupabase(salesReps);
+      const habitsResult = await this.habitsSync.syncToSupabase(habits);
+      const teamHabitsResult = await this.habitsSync.syncToSupabase(teamHabits);
+      const goalsResult = await this.goalsSync.syncToSupabase(goals);
       
-      // Verificar se tudo foi sincronizado com sucesso
-      const allSuccess = empresasResult && teamsResult && vendedoresResult && habitosResult && habitosEquipeResult && metasResult;
+      // Check if everything was synced successfully
+      const allSuccess = companiesResult && teamsResult && salesRepsResult && habitsResult && teamHabitsResult && goalsResult;
       
       toast.dismiss();
       if (allSuccess) {
-        toast.success("Todos os dados foram sincronizados com o Supabase!");
+        toast.success("All data was synced with Supabase!");
         return true;
       } else {
-        toast.warning("Alguns dados não puderam ser sincronizados completamente.");
+        toast.warning("Some data could not be synced completely.");
         return false;
       }
     } catch (error) {
-      console.error("Erro ao sincronizar dados com Supabase:", error);
+      console.error("Error syncing data with Supabase:", error);
       toast.dismiss();
-      toast.error("Erro ao sincronizar dados com o Supabase.");
+      toast.error("Error syncing data with Supabase.");
       return false;
     }
   }
 
   // Individual sync methods for specific tables
-  async syncEmpresasToSupabase() {
+  async syncCompaniesToSupabase() {
     return this.empresasSync.syncToSupabase();
   }
 
@@ -74,15 +74,15 @@ export class DataSyncOrchestratorService {
     return this.teamsSync.syncToSupabase(teams);
   }
 
-  async syncVendedoresToSupabase(vendedores: any[]) {
-    return this.vendedoresSync.syncToSupabase(vendedores);
+  async syncSalesRepsToSupabase(salesReps: any[]) {
+    return this.salesRepsSync.syncToSupabase(salesReps);
   }
   
-  async syncHabitosToSupabase(habitos: any[]) {
-    return this.habitosSync.syncToSupabase(habitos);
+  async syncHabitsToSupabase(habits: any[]) {
+    return this.habitsSync.syncToSupabase(habits);
   }
   
-  async syncMetasToSupabase(metas: any[]) {
-    return this.metasSync.syncToSupabase(metas);
+  async syncGoalsToSupabase(goals: any[]) {
+    return this.goalsSync.syncToSupabase(goals);
   }
 }

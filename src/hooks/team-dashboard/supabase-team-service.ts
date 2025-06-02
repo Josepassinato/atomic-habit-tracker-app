@@ -9,126 +9,126 @@ export class SupabaseTeamService {
     if (!this.supabase) return;
     
     try {
-      console.log("Sincronizando equipes com o Supabase...");
+      console.log("Syncing teams with Supabase...");
       const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
       
       if (!user) {
-        console.warn("Usuário não encontrado, não é possível sincronizar com Supabase");
+        console.warn("User not found, cannot sync with Supabase");
         return;
       }
       
-      // Para cada equipe no array
+      // For each team in the array
       for (const team of teams) {
-        // Verifica se a equipe já existe no Supabase
+        // Check if team already exists in Supabase
         const { data: existingTeam, error: checkError } = await this.supabase
-          .from('equipes')
+          .from('teams')
           .select('*')
           .eq('id', team.id)
           .single();
           
         if (checkError && checkError.code !== 'PGRST116') {
-          console.error("Erro ao verificar equipe:", checkError);
+          console.error("Error checking team:", checkError);
           continue;
         }
         
-        // Se a equipe não existir, insere
+        // If team doesn't exist, insert it
         if (!existingTeam) {
           const { error: insertError } = await this.supabase
-            .from('equipes')
+            .from('teams')
             .insert({
               id: team.id,
-              nome: team.nome || team.name, // Compatibilidade com diferentes formatos
+              name: team.name || team.nome, // Compatibility with different formats
               empresa_id: user.empresa_id || '1',
-              criado_em: new Date().toISOString()
+              created_at: new Date().toISOString()
             });
             
           if (insertError) {
-            console.error("Erro ao inserir equipe no Supabase:", insertError);
+            console.error("Error inserting team into Supabase:", insertError);
           } else {
-            console.log(`Equipe ${team.nome || team.name} sincronizada com Supabase`);
+            console.log(`Team ${team.name || team.nome} synced with Supabase`);
           }
         }
       }
       
-      console.log("Sincronização com Supabase concluída");
+      console.log("Supabase sync completed");
     } catch (error) {
-      console.error("Erro ao sincronizar com Supabase:", error);
+      console.error("Error syncing with Supabase:", error);
     }
   }
 
   async fetchTeamMetrics(user: any): Promise<TeamMetrics[]> {
     // Fetch teams
-    let query = this.supabase.from('equipes').select('*');
+    let query = this.supabase.from('teams').select('*');
     
-    // Se o usuário não for admin, filtra apenas para sua empresa
+    // If user is not admin, filter only for their company
     if (user.role !== 'admin' && user.empresa_id) {
       query = query.eq('empresa_id', user.empresa_id);
     }
     
-    const { data: equipes, error: equipeError } = await query;
+    const { data: teams, error: teamError } = await query;
       
-    if (equipeError) {
-      console.error("Erro ao buscar equipes:", equipeError);
-      throw equipeError;
+    if (teamError) {
+      console.error("Error fetching teams:", teamError);
+      throw teamError;
     }
     
-    console.log("Equipes encontradas:", equipes);
+    console.log("Teams found:", teams);
     
-    // Se não houver equipes no Supabase mas houver no localStorage, vamos sincronizá-las
-    if ((!equipes || equipes.length === 0) && user.teams && user.teams.length > 0) {
-      console.log("Sincronizando equipes do localStorage para o Supabase...");
+    // If no teams in Supabase but there are in localStorage, sync them
+    if ((!teams || teams.length === 0) && user.teams && user.teams.length > 0) {
+      console.log("Syncing teams from localStorage to Supabase...");
       await this.syncTeamsToSupabase(user.teams);
       
-      // Busca novamente após sincronização
-      const { data: syncedEquipes, error: syncError } = await query;
+      // Fetch again after sync
+      const { data: syncedTeams, error: syncError } = await query;
       
       if (syncError) {
-        console.error("Erro ao buscar equipes sincronizadas:", syncError);
+        console.error("Error fetching synced teams:", syncError);
         throw syncError;
       }
       
-      if (syncedEquipes && syncedEquipes.length > 0) {
-        console.log("Equipes sincronizadas encontradas:", syncedEquipes);
-        return this.processTeams(syncedEquipes);
+      if (syncedTeams && syncedTeams.length > 0) {
+        console.log("Synced teams found:", syncedTeams);
+        return this.processTeams(syncedTeams);
       }
     }
     
-    if (!equipes || equipes.length === 0) {
-      console.log("Nenhuma equipe encontrada");
+    if (!teams || teams.length === 0) {
+      console.log("No teams found");
       return [];
     }
     
-    return this.processTeams(equipes);
+    return this.processTeams(teams);
   }
 
-  private async processTeams(equipes: TeamData[]): Promise<TeamMetrics[]> {
+  private async processTeams(teams: TeamData[]): Promise<TeamMetrics[]> {
     const metrics: TeamMetrics[] = [];
     
     // Fetch data for each team
-    for (const equipe of equipes) {
-      // Get vendedores for the team
-      const { data: vendedoresData, error: vendedoresError } = await this.supabase
-        .from('vendedores')
+    for (const team of teams) {
+      // Get sales reps for the team
+      const { data: salesRepsData, error: salesRepsError } = await this.supabase
+        .from('sales_reps')
         .select('*')
-        .eq('equipe_id', equipe.id);
+        .eq('equipe_id', team.id);
         
-      if (vendedoresError) throw vendedoresError;
+      if (salesRepsError) throw salesRepsError;
       
-      const vendedores = vendedoresData || [];
-      console.log(`Vendedores para equipe ${equipe.nome}:`, vendedores);
+      const salesReps = salesRepsData || [];
+      console.log(`Sales reps for team ${team.name}:`, salesReps);
       
       // Get habits for the team
-      const { data: habitosData, error: habitosError } = await this.supabase
-        .from('habitos_equipe')
+      const { data: habitsData, error: habitsError } = await this.supabase
+        .from('team_habits')
         .select('*')
-        .eq('equipe_id', equipe.id);
+        .eq('equipe_id', team.id);
         
-      if (habitosError) throw habitosError;
+      if (habitsError) throw habitsError;
       
-      const habitos = habitosData || [];
+      const habits = habitsData || [];
       
       // Calculate team metrics
-      const teamMetrics = TeamMetricsCalculator.calculateTeamMetrics(equipe, vendedores, habitos);
+      const teamMetrics = TeamMetricsCalculator.calculateTeamMetrics(team, salesReps, habits);
       metrics.push(teamMetrics);
     }
     

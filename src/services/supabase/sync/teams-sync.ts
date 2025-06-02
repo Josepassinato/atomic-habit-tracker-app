@@ -9,27 +9,27 @@ export class TeamsSyncService {
   private empresasSync = new EmpresasSyncService();
 
   /**
-   * Sincroniza equipes do localStorage para o Supabase
+   * Syncs teams from localStorage to Supabase
    */
   async syncToSupabase(teams: any[]): Promise<boolean> {
     const url = supabaseConfigService.getUrl();
     const key = supabaseConfigService.getApiKey();
     
     if (!url || !key || !teams || teams.length === 0) {
-      console.log("Dados incompletos, não é possível sincronizar equipes");
+      console.log("Incomplete data, cannot sync teams");
       return false;
     }
     
     try {
-      console.log("Sincronizando equipes com o Supabase...");
+      console.log("Syncing teams with Supabase...");
       
-      // Garantir que a empresa padrão existe
+      // Ensure default company exists
       await this.empresasSync.syncToSupabase();
       
-      // Para cada equipe no array
+      // For each team in the array
       for (const team of teams) {
-        // Verificar se a equipe já existe no Supabase
-        const checkResponse = await fetch(`${url}/rest/v1/equipes?id=eq.${team.id}`, {
+        // Check if team already exists in Supabase
+        const checkResponse = await fetch(`${url}/rest/v1/teams?id=eq.${team.id}`, {
           method: "GET",
           headers: {
             "apikey": key,
@@ -39,9 +39,9 @@ export class TeamsSyncService {
         
         const existingTeam = await checkResponse.json();
           
-        // Se a equipe não existir, inserir
+        // If team doesn't exist, insert it
         if (!existingTeam || existingTeam.length === 0) {
-          const insertResponse = await fetch(`${url}/rest/v1/equipes`, {
+          const insertResponse = await fetch(`${url}/rest/v1/teams`, {
             method: "POST",
             headers: {
               "apikey": key,
@@ -51,25 +51,25 @@ export class TeamsSyncService {
             },
             body: JSON.stringify({
               id: team.id,
-              nome: team.nome || team.name,
+              name: team.name || team.nome,
               empresa_id: '00000000-0000-0000-0000-000000000001',
               meta_total: team.meta_total || 100000,
-              criado_em: new Date().toISOString()
+              created_at: new Date().toISOString()
             })
           });
             
           if (!insertResponse.ok) {
-            console.error("Erro ao inserir equipe no Supabase:", await insertResponse.text());
+            console.error("Error inserting team into Supabase:", await insertResponse.text());
           } else {
-            console.log(`Equipe ${team.nome || team.name} sincronizada com Supabase`);
+            console.log(`Team ${team.name || team.nome} synced with Supabase`);
           }
         }
       }
       
-      console.log("Sincronização de equipes com Supabase concluída");
+      console.log("Team sync with Supabase completed");
       return true;
     } catch (error) {
-      console.error("Erro ao sincronizar equipes com Supabase:", error);
+      console.error("Error syncing teams with Supabase:", error);
       return false;
     }
   }
