@@ -31,53 +31,53 @@ const SugestaoHabitosDialog: React.FC<SugestaoHabitosDialogProps> = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Sugestão de Hábitos Personalizados</DialogTitle>
+          <DialogTitle>Personalized Habit Suggestions</DialogTitle>
           <DialogDescription>
-            Descreva o modelo de negócio da sua empresa para receber sugestões de hábitos otimizados para sua equipe de vendas.
+            Describe your company's business model to receive optimized habit suggestions for your sales team.
           </DialogDescription>
         </DialogHeader>
         
         {!habitosSugeridos.length ? (
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <label htmlFor="segmento" className="text-sm font-medium">Segmento/Indústria</label>
+              <label htmlFor="segmento" className="text-sm font-medium">Segment/Industry</label>
               <Input 
                 id="segmento" 
                 name="segmento" 
-                placeholder="Ex: SaaS, Varejo, Saúde, etc." 
+                placeholder="e.g., SaaS, Retail, Healthcare, etc." 
                 value={modeloNegocio.segmento}
                 onChange={onInputChange}
               />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="cicloVenda" className="text-sm font-medium">Ciclo de Vendas</label>
+              <label htmlFor="cicloVenda" className="text-sm font-medium">Sales Cycle</label>
               <Input 
                 id="cicloVenda" 
                 name="cicloVenda" 
-                placeholder="Ex: Curto (1-30 dias), Médio, Longo (>90 dias)" 
+                placeholder="e.g., Short (1-30 days), Medium, Long (>90 days)" 
                 value={modeloNegocio.cicloVenda}
                 onChange={onInputChange}
               />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="tamEquipe" className="text-sm font-medium">Tamanho da Equipe de Vendas</label>
+              <label htmlFor="tamEquipe" className="text-sm font-medium">Sales Team Size</label>
               <Input 
                 id="tamEquipe" 
                 name="tamEquipe" 
-                placeholder="Ex: 5, 10, 25, etc." 
+                placeholder="e.g., 5, 10, 25, etc." 
                 value={modeloNegocio.tamEquipe}
                 onChange={onInputChange}
               />
             </div>
             
             <div className="space-y-2">
-              <label htmlFor="objetivoPrincipal" className="text-sm font-medium">Objetivo Principal</label>
+              <label htmlFor="objetivoPrincipal" className="text-sm font-medium">Main Objective</label>
               <Textarea 
                 id="objetivoPrincipal" 
                 name="objetivoPrincipal" 
-                placeholder="Ex: Aumentar conversão, Reduzir ciclo de vendas, Expandir para Enterprise, etc." 
+                placeholder="e.g., Increase conversion, Reduce sales cycle, Expand to Enterprise, etc." 
                 value={modeloNegocio.objetivoPrincipal}
                 onChange={onInputChange}
               />
@@ -85,15 +85,15 @@ const SugestaoHabitosDialog: React.FC<SugestaoHabitosDialogProps> = ({
           </div>
         ) : (
           <div className="py-4">
-            <h4 className="font-medium mb-3">Hábitos Sugeridos pela IA:</h4>
+            <h4 className="font-medium mb-3">AI Suggested Habits:</h4>
             <div className="space-y-3">
               {habitosSugeridos.map((habito) => (
                 <div key={habito.id} className="border p-3 rounded-md">
                   <div className="flex items-center justify-between">
-                    <h5 className="font-medium">{habito.titulo}</h5>
-                    <span className="text-sm text-muted-foreground">{habito.horario}</span>
+                    <h5 className="font-medium">{habito.title}</h5>
+                    <span className="text-sm text-muted-foreground">{habito.schedule}</span>
                   </div>
-                  <p className="text-sm text-muted-foreground mt-1">{habito.descricao}</p>
+                  <p className="text-sm text-muted-foreground mt-1">{habito.description}</p>
                 </div>
               ))}
             </div>
@@ -102,16 +102,16 @@ const SugestaoHabitosDialog: React.FC<SugestaoHabitosDialogProps> = ({
         
         <DialogFooter>
           <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancelar
+            Cancel
           </Button>
           
           {habitosSugeridos.length ? (
             <Button onClick={onAdicionarHabitos}>
-              Adicionar Hábitos
+              Add Habits
             </Button>
           ) : (
             <Button onClick={onSugerirHabitos} disabled={carregandoSugestoes}>
-              {carregandoSugestoes ? "Gerando sugestões..." : "Gerar Sugestões"}
+              {carregandoSugestoes ? "Generating suggestions..." : "Generate Suggestions"}
             </Button>
           )}
         </DialogFooter>

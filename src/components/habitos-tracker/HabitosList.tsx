@@ -32,7 +32,7 @@ const HabitosList: React.FC<HabitosListProps> = ({
       
       {habitos.length === 0 && (
         <div className="py-6 text-center text-muted-foreground">
-          <p>Nenhum hábito criado ainda. Comece a construir seu sucesso!</p>
+          <p>No habits created yet. Start building your success!</p>
         </div>
       )}
       
@@ -42,7 +42,7 @@ const HabitosList: React.FC<HabitosListProps> = ({
         className="mt-4 w-full flex items-center justify-center hover:bg-slate-50 hover:text-slate-900 transition-all"
         onClick={onAbrirDialogoSugestao}
       >
-        <Plus className="h-4 w-4 mr-2" /> Sugerir Hábitos Personalizados
+        <Plus className="h-4 w-4 mr-2" /> Suggest Personalized Habits
       </Button>
     </div>
   );

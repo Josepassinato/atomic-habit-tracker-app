@@ -20,7 +20,7 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
 
   const handleMarcarConcluido = async () => {
     setIsCompleting(true);
-    // Simular um pequeno atraso para mostrar o feedback visual
+    // Simulate a small delay to show visual feedback
     await new Promise(resolve => setTimeout(resolve, 600));
     onMarcarConcluido(habito.id);
     setIsCompleting(false);
@@ -44,7 +44,7 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
         ) : (
           <div className="flex h-6 w-6 items-center justify-center rounded-full border hover:bg-slate-50 cursor-pointer"
                onClick={handleMarcarConcluido}>
-            <span className="sr-only">Não concluído</span>
+            <span className="sr-only">Not completed</span>
           </div>
         )}
       </div>
@@ -62,7 +62,7 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
           <div className="flex items-center mt-1">
             {habito.evidence ? (
               <span className="text-xs bg-green-50 text-green-700 px-2 py-0.5 rounded border border-green-200">
-                Evidência enviada
+                Evidence submitted
               </span>
             ) : (
               <HabitoEvidencia 
@@ -84,10 +84,10 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
             {isCompleting ? (
               <>
                 <Loader className="h-4 w-4 mr-2 animate-spin" />
-                Concluindo...
+                Completing...
               </>
             ) : (
-              <>Marcar como concluído</>
+              <>Mark as completed</>
             )}
           </Button>
         )}
@@ -95,14 +95,14 @@ const HabitoItem: React.FC<HabitoItemProps> = ({
         {habito.completed && habito.evidence && !habito.verified && (
           <p className="text-xs text-amber-600 mt-1 flex items-center">
             <Loader className="h-3 w-3 mr-1 animate-spin" />
-            Aguardando verificação do gerente
+            Awaiting manager verification
           </p>
         )}
         
         {habito.verified && (
           <p className="text-xs text-green-600 mt-1 flex items-center animate-fade-in">
             <Check className="h-3 w-3 mr-1" />
-            Verificado pelo gerente
+            Verified by manager
           </p>
         )}
       </div>

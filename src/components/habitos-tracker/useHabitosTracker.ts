@@ -7,7 +7,7 @@ import { Habito, ModeloNegocio } from "../habitos/types";
 
 export const useHabitosTracker = () => {
   const [habitos, setHabitos] = useState<Habito[]>(() => {
-    // Tenta recuperar do localStorage, senão usa os hábitos iniciais
+    // Try to recover from localStorage, otherwise use initial habits
     const salvos = localStorage.getItem("habitos");
     return salvos ? JSON.parse(salvos) : initialHabits;
   });
@@ -16,7 +16,7 @@ export const useHabitosTracker = () => {
   const [carregandoFeedback, setCarregandoFeedback] = useState(false);
   const [animateProgress, setAnimateProgress] = useState(false);
   
-  // Estados para o diálogo de sugestão de hábitos
+  // States for the habit suggestion dialog
   const [dialogAberto, setDialogAberto] = useState(false);
   const [modeloNegocio, setModeloNegocio] = useState<ModeloNegocio>({
     segmento: "",
@@ -31,11 +31,11 @@ export const useHabitosTracker = () => {
   const habitosVerificados = habitos.filter((habito) => habito.verified).length;
   const progresso = habitos.length > 0 ? (habitosCumpridos / habitos.length) * 100 : 0;
   
-  // Salvar hábitos no localStorage quando mudarem
+  // Save habits to localStorage when they change
   useEffect(() => {
     localStorage.setItem("habitos", JSON.stringify(habitos));
     
-    // Animar a barra de progresso quando os hábitos cumpridos mudarem
+    // Animate progress bar when completed habits change
     if (habitosCumpridos > 0) {
       setAnimateProgress(true);
       const timer = setTimeout(() => setAnimateProgress(false), 1000);
@@ -47,8 +47,8 @@ export const useHabitosTracker = () => {
     const habito = habitos.find(h => h.id === id);
     
     if (habito && habito.verificationRequired && !habito.evidence) {
-      toast.warning("Por favor, adicione uma evidência antes de concluir este hábito", {
-        description: "Este hábito requer verificação para ser concluído.",
+      toast.warning("Please add evidence before completing this habit", {
+        description: "This habit requires verification to be completed.",
         duration: 4000
       });
       return;
@@ -58,9 +58,9 @@ export const useHabitosTracker = () => {
       habito.id === id ? { ...habito, completed: true } : habito
     ));
 
-    // Mostrar toast com mais detalhes
-    toast.success("Hábito marcado como concluído!", {
-      description: `Você progrediu para ${habitosCumpridos + 1} de ${habitos.length} hábitos para hoje.`,
+    // Show toast with more details
+    toast.success("Habit marked as completed!", {
+      description: `You progressed to ${habitosCumpridos + 1} of ${habitos.length} habits for today.`,
       duration: 4000
     });
   }, [habitos, habitosCumpridos]);
@@ -68,8 +68,8 @@ export const useHabitosTracker = () => {
   const reiniciarHabitos = useCallback(() => {
     setHabitos(initialHabits.map(h => ({...h, completed: false, evidence: undefined})));
     setFeedback("");
-    toast.info("Hábitos reiniciados para o próximo dia.", {
-      description: "Todos os hábitos foram desmarcados e estão prontos para serem concluídos novamente."
+    toast.info("Habits restarted for the next day.", {
+      description: "All habits have been unchecked and are ready to be completed again."
     });
   }, []);
 
@@ -78,12 +78,12 @@ export const useHabitosTracker = () => {
     try {
       const mensagemFeedback = await getAIFeedback(habitos);
       setFeedback(mensagemFeedback);
-      toast.success("Feedback da IA gerado com sucesso!", {
-        description: "O assistente analisou seus hábitos e forneceu recomendações."
+      toast.success("AI feedback generated successfully!", {
+        description: "The assistant analyzed your habits and provided recommendations."
       });
     } catch (error) {
-      toast.error("Erro ao gerar feedback", {
-        description: "Tente novamente em alguns instantes."
+      toast.error("Error generating feedback", {
+        description: "Please try again in a few moments."
       });
     } finally {
       setCarregandoFeedback(false);
@@ -110,12 +110,12 @@ export const useHabitosTracker = () => {
       };
       const habitosPersonalizados = await generateSuggestedHabits(businessModel);
       setHabitosSugeridos(habitosPersonalizados);
-      toast.info("Sugestões de hábitos geradas", {
-        description: `${habitosPersonalizados.length} novos hábitos foram sugeridos para seu perfil.`
+      toast.info("Habit suggestions generated", {
+        description: `${habitosPersonalizados.length} new habits were suggested for your profile.`
       });
     } catch (error) {
-      toast.error("Erro ao gerar sugestões", {
-        description: "Tente novamente em alguns instantes."
+      toast.error("Error generating suggestions", {
+        description: "Please try again in a few moments."
       });
     } finally {
       setCarregandoSugestoes(false);
@@ -124,18 +124,18 @@ export const useHabitosTracker = () => {
   
   const adicionarHabitosSugeridos = useCallback(() => {
     if (habitosSugeridos.length === 0) {
-      toast.warning("Não há hábitos para adicionar", {
-        description: "Gere sugestões primeiro antes de adicioná-las."
+      toast.warning("No habits to add", {
+        description: "Generate suggestions first before adding them."
       });
       return;
     }
     
-    // Adicionar hábitos sugeridos à lista atual
+    // Add suggested habits to current list
     setHabitos(prev => [...prev, ...habitosSugeridos]);
     setHabitosSugeridos([]);
     setDialogAberto(false);
-    toast.success("Hábitos personalizados adicionados com sucesso!", {
-      description: `${habitosSugeridos.length} novos hábitos foram adicionados à sua lista.`
+    toast.success("Personalized habits added successfully!", {
+      description: `${habitosSugeridos.length} new habits were added to your list.`
     });
   }, [habitosSugeridos]);
 
