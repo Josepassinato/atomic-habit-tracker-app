@@ -7,6 +7,63 @@ import { toast } from "sonner";
  */
 class SupabaseDataSyncService {
   /**
+   * Sincroniza empresas do localStorage para o Supabase
+   */
+  async syncEmpresasToSupabase(): Promise<boolean> {
+    const url = supabaseConfigService.getUrl();
+    const key = supabaseConfigService.getApiKey();
+    
+    if (!url || !key) {
+      console.log("Supabase não configurado, não é possível sincronizar empresas");
+      return false;
+    }
+    
+    try {
+      console.log("Sincronizando empresa padrão com o Supabase...");
+      
+      // Verificar se a empresa padrão já existe
+      const checkResponse = await fetch(`${url}/rest/v1/empresas?id=eq.00000000-0000-0000-0000-000000000001`, {
+        method: "GET",
+        headers: {
+          "apikey": key,
+          "Authorization": `Bearer ${key}`
+        }
+      });
+      
+      const existingEmpresa = await checkResponse.json();
+      
+      if (!existingEmpresa || existingEmpresa.length === 0) {
+        // Inserir empresa padrão se não existir
+        const insertResponse = await fetch(`${url}/rest/v1/empresas`, {
+          method: "POST",
+          headers: {
+            "apikey": key,
+            "Authorization": `Bearer ${key}`,
+            "Content-Type": "application/json",
+            "Prefer": "return=minimal"
+          },
+          body: JSON.stringify({
+            id: '00000000-0000-0000-0000-000000000001',
+            nome: 'Empresa Padrão',
+            segmento: 'Vendas',
+            tamanho_equipe: 'Pequeno'
+          })
+        });
+        
+        if (!insertResponse.ok) {
+          console.error("Erro ao inserir empresa padrão:", await insertResponse.text());
+          return false;
+        }
+      }
+      
+      return true;
+    } catch (error) {
+      console.error("Erro ao sincronizar empresas:", error);
+      return false;
+    }
+  }
+
+  /**
    * Sincroniza equipes do localStorage para o Supabase
    */
   async syncTeamsToSupabase(teams: any[]): Promise<boolean> {
@@ -20,16 +77,13 @@ class SupabaseDataSyncService {
     
     try {
       console.log("Sincronizando equipes com o Supabase...");
-      const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
       
-      if (!user) {
-        console.warn("Usuário não encontrado, não é possível sincronizar com Supabase");
-        return false;
-      }
+      // Garantir que a empresa padrão existe
+      await this.syncEmpresasToSupabase();
       
       // Para cada equipe no array
       for (const team of teams) {
-        // Verifica se a equipe já existe no Supabase
+        // Verificar se a equipe já existe no Supabase
         const checkResponse = await fetch(`${url}/rest/v1/equipes?id=eq.${team.id}`, {
           method: "GET",
           headers: {
@@ -40,7 +94,7 @@ class SupabaseDataSyncService {
         
         const existingTeam = await checkResponse.json();
           
-        // Se a equipe não existir, insere
+        // Se a equipe não existir, inserir
         if (!existingTeam || existingTeam.length === 0) {
           const insertResponse = await fetch(`${url}/rest/v1/equipes`, {
             method: "POST",
@@ -52,8 +106,9 @@ class SupabaseDataSyncService {
             },
             body: JSON.stringify({
               id: team.id,
-              nome: team.nome || team.name, // Compatibilidade com diferentes formatos
-              empresa_id: user.empresa_id || '1',
+              nome: team.nome || team.name,
+              empresa_id: '00000000-0000-0000-0000-000000000001',
+              meta_total: team.meta_total || 100000,
               criado_em: new Date().toISOString()
             })
           });
@@ -88,16 +143,10 @@ class SupabaseDataSyncService {
     
     try {
       console.log("Sincronizando vendedores com o Supabase...");
-      const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
-      
-      if (!user) {
-        console.warn("Usuário não encontrado, não é possível sincronizar vendedores com Supabase");
-        return false;
-      }
       
       // Para cada vendedor no array
       for (const vendedor of vendedores) {
-        // Verifica se o vendedor já existe no Supabase
+        // Verificar se o vendedor já existe no Supabase
         const checkResponse = await fetch(`${url}/rest/v1/vendedores?id=eq.${vendedor.id}`, {
           method: "GET",
           headers: {
@@ -108,7 +157,7 @@ class SupabaseDataSyncService {
         
         const existingVendedor = await checkResponse.json();
           
-        // Se o vendedor não existir, insere
+        // Se o vendedor não existir, inserir
         if (!existingVendedor || existingVendedor.length === 0) {
           const insertResponse = await fetch(`${url}/rest/v1/vendedores`, {
             method: "POST",
@@ -123,6 +172,7 @@ class SupabaseDataSyncService {
               nome: vendedor.nome,
               email: vendedor.email || `vendedor${vendedor.id}@exemplo.com`,
               equipe_id: vendedor.equipe_id,
+              empresa_id: '00000000-0000-0000-0000-000000000001',
               vendas_total: vendedor.vendas_total || 0,
               meta_atual: vendedor.meta_atual || 100000,
               taxa_conversao: vendedor.taxa_conversao || 0.3,
@@ -160,17 +210,13 @@ class SupabaseDataSyncService {
     
     try {
       console.log("Sincronizando hábitos com o Supabase...");
-      const user = localStorage.getItem('user') ? JSON.parse(localStorage.getItem('user')!) : null;
-      
-      if (!user) {
-        console.warn("Usuário não encontrado, não é possível sincronizar hábitos com Supabase");
-        return false;
-      }
       
       // Para cada hábito no array
       for (const habito of habitos) {
-        // Verifica se o hábito já existe no Supabase
-        const checkResponse = await fetch(`${url}/rest/v1/habitos${habito.equipe_id ? '_equipe' : ''}?id=eq.${habito.id}`, {
+        const tableName = habito.equipe_id ? 'habitos_equipe' : 'habitos';
+        
+        // Verificar se o hábito já existe no Supabase
+        const checkResponse = await fetch(`${url}/rest/v1/${tableName}?id=eq.${habito.id}`, {
           method: "GET",
           headers: {
             "apikey": key,
@@ -180,9 +226,30 @@ class SupabaseDataSyncService {
         
         const existingHabito = await checkResponse.json();
           
-        // Se o hábito não existir, insere
+        // Se o hábito não existir, inserir
         if (!existingHabito || existingHabito.length === 0) {
-          const tableName = habito.equipe_id ? 'habitos_equipe' : 'habitos';
+          let habitoData: any = {
+            id: habito.id,
+            titulo: habito.titulo || habito.nome,
+            descricao: habito.descricao || '',
+            concluido: habito.concluido || false,
+            recorrencia: habito.recorrencia || 'diario',
+            data_criacao: habito.data_criacao || new Date().toISOString(),
+            data_conclusao: habito.data_conclusao || null
+          };
+
+          if (habito.equipe_id) {
+            // Para hábitos de equipe
+            habitoData.equipe_id = habito.equipe_id;
+          } else {
+            // Para hábitos individuais
+            habitoData.usuario_id = habito.usuario_id || '1';
+            habitoData.verificado = habito.verificado || false;
+            habitoData.verificacao_necessaria = habito.verificacao_necessaria || false;
+            habitoData.horario = habito.horario || null;
+            habitoData.evidencia = habito.evidencia || null;
+          }
+
           const insertResponse = await fetch(`${url}/rest/v1/${tableName}`, {
             method: "POST",
             headers: {
@@ -191,17 +258,7 @@ class SupabaseDataSyncService {
               "Content-Type": "application/json",
               "Prefer": "return=minimal"
             },
-            body: JSON.stringify({
-              id: habito.id,
-              titulo: habito.titulo || habito.nome,
-              descricao: habito.descricao || '',
-              concluido: habito.concluido || false,
-              recorrencia: habito.recorrencia || 'diario',
-              usuario_id: habito.equipe_id ? null : (habito.usuario_id || user.id),
-              equipe_id: habito.equipe_id || null,
-              data_criacao: habito.data_criacao || new Date().toISOString(),
-              data_conclusao: habito.data_conclusao || null
-            })
+            body: JSON.stringify(habitoData)
           });
             
           if (!insertResponse.ok) {
@@ -237,7 +294,7 @@ class SupabaseDataSyncService {
       
       // Para cada meta no array
       for (const meta of metas) {
-        // Verifica se a meta já existe no Supabase
+        // Verificar se a meta já existe no Supabase
         const checkResponse = await fetch(`${url}/rest/v1/metas?id=eq.${meta.id}`, {
           method: "GET",
           headers: {
@@ -248,7 +305,7 @@ class SupabaseDataSyncService {
         
         const existingMeta = await checkResponse.json();
           
-        // Se a meta não existir, insere
+        // Se a meta não existir, inserir
         if (!existingMeta || existingMeta.length === 0) {
           const insertResponse = await fetch(`${url}/rest/v1/metas`, {
             method: "POST",
@@ -264,7 +321,11 @@ class SupabaseDataSyncService {
               valor: meta.valor,
               atual: meta.atual,
               percentual: meta.percentual,
-              criado_em: new Date().toISOString()
+              tipo: meta.tipo || 'vendas',
+              usuario_id: meta.usuario_id || '1',
+              equipe_id: meta.equipe_id || null,
+              criado_em: new Date().toISOString(),
+              atualizado_em: new Date().toISOString()
             })
           });
             
@@ -298,22 +359,23 @@ class SupabaseDataSyncService {
     try {
       toast.loading("Sincronizando dados com o Supabase...");
       
-      // Busca dados do localStorage
+      // Buscar dados do localStorage
       const teams = localStorage.getItem('equipes') ? JSON.parse(localStorage.getItem('equipes')!) : [];
       const vendedores = localStorage.getItem('vendedores') ? JSON.parse(localStorage.getItem('vendedores')!) : [];
       const habitos = localStorage.getItem('habitos') ? JSON.parse(localStorage.getItem('habitos')!) : [];
       const habitosEquipe = localStorage.getItem('habitos_equipe') ? JSON.parse(localStorage.getItem('habitos_equipe')!) : [];
       const metas = localStorage.getItem('metas') ? JSON.parse(localStorage.getItem('metas')!) : [];
       
-      // Sincroniza todos os dados
+      // Sincronizar todos os dados
+      const empresasResult = await this.syncEmpresasToSupabase();
       const teamsResult = await this.syncTeamsToSupabase(teams);
       const vendedoresResult = await this.syncVendedoresToSupabase(vendedores);
       const habitosResult = await this.syncHabitosToSupabase(habitos);
       const habitosEquipeResult = await this.syncHabitosToSupabase(habitosEquipe);
       const metasResult = await this.syncMetasToSupabase(metas);
       
-      // Verifica se tudo foi sincronizado com sucesso
-      const allSuccess = teamsResult && vendedoresResult && habitosResult && habitosEquipeResult && metasResult;
+      // Verificar se tudo foi sincronizado com sucesso
+      const allSuccess = empresasResult && teamsResult && vendedoresResult && habitosResult && habitosEquipeResult && metasResult;
       
       toast.dismiss();
       if (allSuccess) {

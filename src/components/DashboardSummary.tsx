@@ -100,8 +100,8 @@ const DashboardSummary = () => {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">{t('salesGoal') || "Sales Goal"}</CardTitle>
-          <CardDescription>{t('currentMonthProgress') || "Current month progress"}</CardDescription>
+          <CardTitle className="text-lg font-medium">Sales Goal</CardTitle>
+          <CardDescription>Current month progress</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -128,8 +128,8 @@ const DashboardSummary = () => {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">{t('atomicHabits') || "Atomic Habits"}</CardTitle>
-          <CardDescription>{t('dailyCompletion') || "Daily completion"}</CardDescription>
+          <CardTitle className="text-lg font-medium">Atomic Habits</CardTitle>
+          <CardDescription>Daily completion</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
@@ -156,8 +156,8 @@ const DashboardSummary = () => {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">{t('totalBonus') || "Total Bonus"}</CardTitle>
-          <CardDescription>{t('accumulatedReward') || "Accumulated reward"}</CardDescription>
+          <CardTitle className="text-lg font-medium">Total Bonus</CardTitle>
+          <CardDescription>Accumulated reward</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
