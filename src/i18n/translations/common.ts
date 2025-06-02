@@ -79,6 +79,7 @@ export const commonTranslations = {
     dashboard: 'Dashboard',
     reports: 'Reports',
     notifications: 'Notifications',
+    onboarding: 'Team Setup',
     
     // Common phrases
     noDataAvailable: 'No data available',
@@ -214,6 +215,7 @@ export const commonTranslations = {
     dashboard: 'Panel',
     reports: 'Reportes',
     notifications: 'Notificaciones',
+    onboarding: 'Configuración de Equipo',
     
     // Common phrases
     noDataAvailable: 'No hay datos disponibles',
@@ -349,6 +351,7 @@ export const commonTranslations = {
     dashboard: 'Painel',
     reports: 'Relatórios',
     notifications: 'Notificações',
+    onboarding: 'Configuração da Equipe',
     
     // Common phrases
     noDataAvailable: 'Nenhum dado disponível',
