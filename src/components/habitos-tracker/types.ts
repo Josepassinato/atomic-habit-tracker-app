@@ -1,6 +1,8 @@
 
 import { HabitoEvidenciaType } from "../habitos/HabitoEvidencia";
+import { HabitEvidenceType } from "../habits/HabitEvidence";
 import { Habito, ModeloNegocio } from "../habitos/types";
+import { Habit, BusinessModel } from "../habits/types";
 
 export interface HabitosTrackerProps {
   className?: string;
@@ -29,4 +31,23 @@ export interface HabitosSugestaoProps {
   onSugerirHabitos: () => void;
   onAdicionarHabitos: () => void;
   carregandoSugestoes: boolean;
+}
+
+// English versions
+export interface HabitsTrackerProps {
+  className?: string;
+}
+
+export interface HabitsStatsProps {
+  habits: Habit[];
+  completedHabits: number;
+  verifiedHabits: number;
+  progress: number;
+  animateProgress: boolean;
+}
+
+export interface HabitsActionsProps {
+  onRestart: () => void;
+  onRequestFeedback: () => void;
+  loadingFeedback: boolean;
 }
