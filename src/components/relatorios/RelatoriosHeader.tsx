@@ -13,7 +13,7 @@ export const RelatoriosHeader: React.FC<RelatoriosHeaderProps> = ({
   onDownloadRelatorio,
   onOpenEmailDialog,
 }) => {
-  const { t, language } = useLanguage();
+  const { language } = useLanguage();
   
   // Header content based on language
   const getHeaderContent = () => {
