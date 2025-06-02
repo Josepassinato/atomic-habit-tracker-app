@@ -10,10 +10,12 @@ import LanguageSelector from "./LanguageSelector";
 import { NotificacoesBadge } from "./notificacoes/NotificacoesProvider";
 import SupabaseSyncButton from "./SupabaseSyncButton";
 import { useSupabase } from "@/hooks/use-supabase";
+import { useLanguage } from "@/i18n";
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { isConfigured } = useSupabase();
+  const { t } = useLanguage();
   
   return (
     <header className="fixed top-0 left-0 right-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -59,7 +61,7 @@ const Header: React.FC = () => {
               }
             }}
           >
-            Dashboard
+            {t('dashboard')}
           </Button>
         </div>
       </div>
