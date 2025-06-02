@@ -4,24 +4,27 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/i18n";
 
 const PrivacyTab: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Configurações de Privacidade</CardTitle>
+          <CardTitle>{t('privacySettings')}</CardTitle>
           <CardDescription>
-            Gerencie suas preferências de privacidade e segurança
+            {t('managePrivacyPreferences')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="space-y-4">
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <div className="font-medium">Compartilhamento de Dados</div>
+                <div className="font-medium">{t('dataSharing')}</div>
                 <div className="text-sm text-muted-foreground">
-                  Controle quais dados são compartilhados para análise
+                  {t('controlDataSharing')}
                 </div>
               </div>
               <Switch defaultChecked={true} />
@@ -29,9 +32,9 @@ const PrivacyTab: React.FC = () => {
             
             <div className="flex items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <div className="font-medium">Histórico de Atividades</div>
+                <div className="font-medium">{t('activityHistory')}</div>
                 <div className="text-sm text-muted-foreground">
-                  Manter histórico de suas atividades e interações
+                  {t('keepActivityHistory')}
                 </div>
               </div>
               <Switch defaultChecked={true} />
@@ -40,16 +43,16 @@ const PrivacyTab: React.FC = () => {
             <Separator className="my-4" />
           
             <div className="space-y-2">
-              <h3 className="font-medium">Segurança da Conta</h3>
+              <h3 className="font-medium">{t('accountSecurity')}</h3>
               <div className="grid gap-2">
                 <Button variant="outline" className="justify-start">
-                  Alterar Senha
+                  {t('changePassword')}
                 </Button>
                 <Button variant="outline" className="justify-start">
-                  Verificação em Duas Etapas
+                  {t('twoFactorAuth')}
                 </Button>
                 <Button variant="outline" className="justify-start text-destructive hover:bg-destructive/10">
-                  Excluir Conta
+                  {t('deleteAccount')}
                 </Button>
               </div>
             </div>

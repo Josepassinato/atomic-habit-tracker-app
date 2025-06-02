@@ -7,8 +7,11 @@ import { Switch } from "@/components/ui/switch";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { Save } from "lucide-react";
+import { useLanguage } from "@/i18n";
 
 const NotificationsTab: React.FC = () => {
+  const { t } = useLanguage();
+  
   const notificacoesForm = useForm({
     defaultValues: {
       emailNotificacoes: true,
@@ -18,18 +21,17 @@ const NotificationsTab: React.FC = () => {
   });
   
   const salvarNotificacoes = (data: any) => {
-    // Aqui você implementaria a lógica para salvar as preferências de notificação
-    toast.success("Preferências de notificação salvas com sucesso!");
-    console.log("Preferências de notificação:", data);
+    toast.success(t('notificationPreferencesSaved'));
+    console.log("Notification preferences:", data);
   };
   
   return (
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>Preferências de Notificação</CardTitle>
+          <CardTitle>{t('notificationPreferences')}</CardTitle>
           <CardDescription>
-            Configure como e quando deseja receber notificações
+            {t('configureNotifications')}
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -41,9 +43,9 @@ const NotificationsTab: React.FC = () => {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Notificações por Email</FormLabel>
+                      <FormLabel className="text-base">{t('emailNotifications')}</FormLabel>
                       <div className="text-sm text-muted-foreground">
-                        Receba atualizações importantes por email
+                        {t('receiveImportantUpdates')}
                       </div>
                     </div>
                     <FormControl>
@@ -62,9 +64,9 @@ const NotificationsTab: React.FC = () => {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Lembretes Diários</FormLabel>
+                      <FormLabel className="text-base">{t('dailyReminders')}</FormLabel>
                       <div className="text-sm text-muted-foreground">
-                        Receba lembretes sobre seus hábitos diários
+                        {t('receiveDailyHabitsReminders')}
                       </div>
                     </div>
                     <FormControl>
@@ -83,9 +85,9 @@ const NotificationsTab: React.FC = () => {
                 render={({ field }) => (
                   <FormItem className="flex items-center justify-between rounded-lg border p-4">
                     <div className="space-y-0.5">
-                      <FormLabel className="text-base">Relatório Semanal</FormLabel>
+                      <FormLabel className="text-base">{t('weeklyReport')}</FormLabel>
                       <div className="text-sm text-muted-foreground">
-                        Receba um resumo semanal de sua performance
+                        {t('receiveWeeklyPerformance')}
                       </div>
                     </div>
                     <FormControl>
@@ -100,7 +102,7 @@ const NotificationsTab: React.FC = () => {
               
               <Button type="submit">
                 <Save className="mr-2 h-4 w-4" />
-                Salvar Preferências
+                {t('savePreferences')}
               </Button>
             </form>
           </Form>

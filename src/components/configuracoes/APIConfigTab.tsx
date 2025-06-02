@@ -2,24 +2,26 @@
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
+import { useLanguage } from "@/i18n";
 
 const APIConfigTab: React.FC = () => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-6">
       <IntegracoesCRM />
       
       <Card>
         <CardHeader>
-          <CardTitle>Recursos de IA</CardTitle>
+          <CardTitle>{t('aiFeatures')}</CardTitle>
           <CardDescription>
-            Informações sobre os recursos de inteligência artificial
+            {t('aiResourcesInfo')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="p-4 bg-blue-50 border border-blue-200 rounded-md">
             <p className="text-sm text-blue-800">
-              Os recursos de IA estão disponíveis em toda a plataforma e são gerenciados pelo administrador do SaaS.
-              Não é necessária nenhuma configuração adicional para utilizar as funcionalidades de IA.
+              {t('aiManagedBySaas')}
             </p>
           </div>
         </CardContent>

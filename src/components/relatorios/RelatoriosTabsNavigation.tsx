@@ -19,7 +19,7 @@ export const RelatoriosTabsNavigation: React.FC = () => {
       </TabsTrigger>
       <TabsTrigger value="notificacoes" className="flex items-center gap-2">
         <Bell className="h-4 w-4" />
-        Notifications
+        {t('notifications')}
       </TabsTrigger>
       <TabsTrigger value="habitos">{t('habits')}</TabsTrigger>
     </TabsList>
