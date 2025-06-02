@@ -2,6 +2,7 @@
 import React from "react";
 import { Progress } from "@/components/ui/progress";
 import { HabitosStatsProps } from "./types";
+import { useLanguage } from "@/i18n";
 
 const HabitosStats: React.FC<HabitosStatsProps> = ({
   habitos,
@@ -10,13 +11,15 @@ const HabitosStats: React.FC<HabitosStatsProps> = ({
   progresso,
   animateProgress
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <>
       <div>
-        Progresso de hoje: {habitosCumpridos} de {habitos.length} hábitos
+        {t('todayProgress')}: {habitosCumpridos} {t('habitsOf')} {habitos.length} {t('habits').toLowerCase()}
         {habitosVerificados > 0 && (
           <span className="text-green-600 ml-1">
-            ({habitosVerificados} verificado{habitosVerificados > 1 ? 's' : ''})
+            ({habitosVerificados} {t('verified')}{habitosVerificados > 1 ? 's' : ''})
           </span>
         )}
       </div>

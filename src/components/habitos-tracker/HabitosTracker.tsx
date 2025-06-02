@@ -8,8 +8,10 @@ import HabitosList from "./HabitosList";
 import HabitosActions from "./HabitosActions";
 import { useHabitosTracker } from "./useHabitosTracker";
 import { HabitosTrackerProps } from "./types";
+import { useLanguage } from "@/i18n";
 
 const HabitosTracker: React.FC<HabitosTrackerProps> = ({ className }) => {
+  const { t } = useLanguage();
   const {
     habitos,
     feedback,
@@ -35,7 +37,7 @@ const HabitosTracker: React.FC<HabitosTrackerProps> = ({ className }) => {
   return (
     <Card className={`h-full ${className || ''}`}>
       <CardHeader>
-        <CardTitle>Hábitos Atômicos Diários</CardTitle>
+        <CardTitle>{t('atomicHabitsDaily')}</CardTitle>
         <CardDescription>
           <HabitosStats 
             habitos={habitos}

@@ -5,6 +5,7 @@ import HabitoItem from "../habitos/HabitoItem";
 import { Habito } from "../habitos/types";
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
+import { useLanguage } from "@/i18n";
 
 interface HabitosListProps {
   habitos: Habito[];
@@ -19,6 +20,8 @@ const HabitosList: React.FC<HabitosListProps> = ({
   onMarcarConcluido,
   onOpenSuggestDialog
 }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="space-y-4">
       {habitos.map((habito) => (
@@ -42,7 +45,7 @@ const HabitosList: React.FC<HabitosListProps> = ({
         className="mt-4 w-full flex items-center justify-center hover:bg-slate-50 hover:text-slate-900 transition-all"
         onClick={onOpenSuggestDialog}
       >
-        <Plus className="h-4 w-4 mr-2" /> Sugerir Hábitos Personalizados
+        <Plus className="h-4 w-4 mr-2" /> {t('suggestPersonalizedHabits')}
       </Button>
     </div>
   );
