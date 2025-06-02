@@ -11,12 +11,17 @@ import {
 import { Globe } from "lucide-react";
 
 const LanguageSelector: React.FC = () => {
-  const { language, setLanguage, t } = useLanguage();
+  const { language, setLanguage } = useLanguage();
 
   const languages: Record<Language, string> = {
     en: "English",
     es: "Español",
     pt: "Português"
+  };
+
+  const handleLanguageChange = (newLanguage: Language) => {
+    console.log('Changing language from', language, 'to', newLanguage);
+    setLanguage(newLanguage);
   };
 
   return (
@@ -32,7 +37,7 @@ const LanguageSelector: React.FC = () => {
           <DropdownMenuItem
             key={code}
             className={language === code ? "bg-muted" : ""}
-            onClick={() => setLanguage(code as Language)}
+            onClick={() => handleLanguageChange(code as Language)}
           >
             {name}
           </DropdownMenuItem>

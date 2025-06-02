@@ -22,7 +22,9 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   // Save language preference to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('language', language);
-    console.log('Language set to:', language);
+    console.log('Language changed to:', language);
+    // Force a re-render by updating the document language attribute
+    document.documentElement.lang = language;
   }, [language]);
 
   // Ensure English is set as default on first load if no preference exists
@@ -36,7 +38,21 @@ export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) 
   
   // Translation function
   const t = (key: TranslationKey): string => {
-    return translations[language][key] || translations.en[key] || key;
+    const translation = translations[language][key];
+    if (translation) {
+      return translation;
+    }
+    
+    // Fallback to English
+    const englishTranslation = translations.en[key];
+    if (englishTranslation) {
+      console.warn(`Translation missing for key "${key}" in language "${language}", using English fallback`);
+      return englishTranslation;
+    }
+    
+    // Last resort: return the key itself
+    console.error(`Translation missing for key "${key}" in all languages`);
+    return key;
   };
   
   return (
