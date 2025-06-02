@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n";
 
 interface Meta {
   id: number;
@@ -18,21 +19,21 @@ interface Meta {
 const metasIniciais = [
   {
     id: 1,
-    nome: "Meta Principal",
+    nome: "Main Goal",
     valor: 120000,
     atual: 102000,
     percentual: 85,
   },
   {
     id: 2,
-    nome: "Meta de Prospecção",
+    nome: "Prospecting Goal",
     valor: 50,
     atual: 45,
     percentual: 90,
   },
   {
     id: 3,
-    nome: "Meta de Conversão",
+    nome: "Conversion Goal",
     valor: 30,
     atual: 18,
     percentual: 60,
@@ -43,7 +44,8 @@ const MetasVendas = () => {
   const { supabase } = useSupabase();
   const [metas, setMetas] = useState<Meta[]>([]);
   const [loading, setLoading] = useState(true);
-  const [sugestaoIA, setSugestaoIA] = useState<string>("Concentre-se na meta de conversão aumentando o número de follow-ups para cada lead qualificado.");
+  const [sugestaoIA, setSugestaoIA] = useState<string>("Focus on the conversion goal by increasing the number of follow-ups for each qualified lead.");
+  const { t } = useLanguage();
   
   useEffect(() => {
     fetchMetas();
@@ -61,7 +63,7 @@ const MetasVendas = () => {
           .order('id');
         
         if (error) {
-          console.error("Erro ao buscar metas:", error);
+          console.error("Error fetching goals:", error);
           throw error;
         }
         
@@ -74,7 +76,7 @@ const MetasVendas = () => {
             .upsert(metasIniciais);
           
           if (insertError) {
-            console.error("Erro ao inserir metas:", insertError);
+            console.error("Error inserting goals:", insertError);
           }
           
           setMetas(metasIniciais);
@@ -107,8 +109,8 @@ const MetasVendas = () => {
         }
       }
     } catch (error) {
-      console.error("Erro ao carregar metas:", error);
-      toast.error("Não foi possível carregar as metas");
+      console.error("Error loading goals:", error);
+      toast.error("Unable to load goals");
       setMetas(metasIniciais);
     } finally {
       setLoading(false);
@@ -120,12 +122,12 @@ const MetasVendas = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Metas de Vendas</CardTitle>
-            <CardDescription>Mês de {new Date().toLocaleDateString('pt-BR', { month: 'long' })}, {new Date().getFullYear()}</CardDescription>
+            <CardTitle>Sales Goals</CardTitle>
+            <CardDescription>{new Date().toLocaleDateString('en-US', { month: 'long' })}, {new Date().getFullYear()}</CardDescription>
           </div>
           <Badge className="flex items-center gap-1" variant="outline">
             <TrendingUp className="h-3 w-3" />
-            Definido pela IA
+            AI Defined
           </Badge>
         </div>
       </CardHeader>
@@ -142,9 +144,9 @@ const MetasVendas = () => {
                   <div className="space-y-0.5">
                     <h4 className="font-medium">{meta.nome}</h4>
                     <div className="text-sm text-muted-foreground">
-                      {meta.nome === "Meta Principal"
-                        ? `R$ ${meta.atual.toLocaleString()} de R$ ${meta.valor.toLocaleString()}`
-                        : `${meta.atual} de ${meta.valor}`}
+                      {meta.nome === "Main Goal"
+                        ? `$${meta.atual.toLocaleString()} of $${meta.valor.toLocaleString()}`
+                        : `${meta.atual} of ${meta.valor}`}
                     </div>
                   </div>
                   <Badge
@@ -157,7 +159,7 @@ const MetasVendas = () => {
               </div>
             ))}
             <div className="rounded-md bg-muted p-3 text-sm">
-              <p className="font-medium">Sugestão da IA:</p>
+              <p className="font-medium">AI Suggestion:</p>
               <p className="mt-1 text-muted-foreground">
                 {sugestaoIA}
               </p>

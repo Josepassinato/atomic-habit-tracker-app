@@ -53,6 +53,13 @@ export const dashboardTranslations = {
     suggestPersonalizedHabits: 'Suggest Personalized Habits',
     aiHabitsFeedback: 'Based on your recent activity, I recommend focusing on consistency rather than intensity. Small daily actions compound into extraordinary results.',
     
+    // CRM Integration
+    crmDocumentImportantInteractions: 'Document important interactions',
+    addEvidence: 'Add Evidence',
+    markAsCompleted: 'Mark as completed',
+    endOfDay: 'End of Day',
+    reflectionOnAchievements: 'Reflection on achievements and improvements',
+    
     // Settings/Configuration
     apisAndIntegrations: 'APIs and Integrations',
     aiFeatures: 'AI Features',
@@ -86,6 +93,35 @@ export const dashboardTranslations = {
     // Reports
     notifications: 'Notifications',
     privacy: 'Privacy',
+    
+    // Teams Dashboard
+    teamsAdvancedDashboard: 'Advanced Teams Dashboard',
+    realTimeMetricsAnalytics: 'Real-time metrics and detailed analytics',
+    totalTeams: 'Total Teams',
+    activeSalesReps: 'Active Sales Reps',
+    overallGoal: 'Overall Goal',
+    averageEfficiency: 'Average Efficiency',
+    goalProgress: 'Goal Progress',
+    habitsCompleted: 'Habits Completed',
+    conversionRate: 'Conversion Rate',
+    leadsPerSalesRep: 'Leads/Sales Rep',
+    averageTime: 'Avg Time',
+    efficiency: 'Efficiency',
+    clinicSales: 'Clinic Sales',
+    courseSales: 'Course Sales',
+    active: 'active',
+    of: 'of',
+    salesRep: 'sales rep',
+    update: 'Update',
+    updating: 'Updating...',
+    viewDetails: 'View Details',
+    configureTeams: 'Configure Teams',
+    noTeamsFound: 'No teams found. Configure your teams first.',
+    recommendation: 'Recommendation',
+    connectToSupabase: 'Connect to Supabase for real-time metrics.',
+    connectToSupabaseButton: 'Connect to Supabase',
+    connectToSupabaseInfo: 'Connect to Supabase through the green button in the top right corner.',
+    realTime: 'Real Time'
   },
   es: {
     // Dashboard main
@@ -140,6 +176,13 @@ export const dashboardTranslations = {
     suggestPersonalizedHabits: 'Sugerir Hábitos Personalizados',
     aiHabitsFeedback: 'Basado en tu actividad reciente, recomiendo enfocarte en la consistencia en lugar de la intensidad. Las pequeñas acciones diarias se convierten en resultados extraordinarios.',
     
+    // CRM Integration
+    crmDocumentImportantInteractions: 'Documentar interacciones importantes',
+    addEvidence: 'Adicionar Evidencia',
+    markAsCompleted: 'Marcar como completado',
+    endOfDay: 'Fin del Día',
+    reflectionOnAchievements: 'Reflexión sobre logros y mejoras',
+    
     // Settings/Configuration
     apisAndIntegrations: 'APIs e Integraciones',
     aiFeatures: 'Características de IA',
@@ -173,6 +216,35 @@ export const dashboardTranslations = {
     // Reports
     notifications: 'Notificaciones',
     privacy: 'Privacidad',
+    
+    // Teams Dashboard
+    teamsAdvancedDashboard: 'Panel Avanzado de Equipos',
+    realTimeMetricsAnalytics: 'Métricas en tiempo real y análisis detallados',
+    totalTeams: 'Total de Equipos',
+    activeSalesReps: 'Vendedores Activos',
+    overallGoal: 'Meta General',
+    averageEfficiency: 'Eficiencia Promedio',
+    goalProgress: 'Progreso de Meta',
+    habitsCompleted: 'Hábitos Completados',
+    conversionRate: 'Tasa de Conversión',
+    leadsPerSalesRep: 'Leads/Vendedor',
+    averageTime: 'Tiempo Promedio',
+    efficiency: 'Eficiencia',
+    clinicSales: 'Ventas de Clínicas',
+    courseSales: 'Ventas de Cursos',
+    active: 'activos',
+    of: 'de',
+    salesRep: 'vendedor',
+    update: 'Actualizar',
+    updating: 'Actualizando...',
+    viewDetails: 'Ver Detalles',
+    configureTeams: 'Configurar Equipos',
+    noTeamsFound: 'No se encontraron equipos. Configura tus equipos primero.',
+    recommendation: 'Recomendación',
+    connectToSupabase: 'Conecta a Supabase para métricas en tiempo real.',
+    connectToSupabaseButton: 'Conectar a Supabase',
+    connectToSupabaseInfo: 'Conéctate a Supabase a través del botón verde en la esquina superior derecha.',
+    realTime: 'Tiempo Real'
   },
   pt: {
     // Dashboard main
@@ -227,6 +299,13 @@ export const dashboardTranslations = {
     suggestPersonalizedHabits: 'Sugerir Hábitos Personalizados',
     aiHabitsFeedback: 'Com base na sua atividade recente, recomendo focar na consistência em vez da intensidade. Pequenas ações diárias se transformam em resultados extraordinários.',
     
+    // CRM Integration
+    crmDocumentImportantInteractions: 'Documentar interações importantes',
+    addEvidence: 'Adicionar Evidência',
+    markAsCompleted: 'Marcar como concluído',
+    endOfDay: 'Encerramento do Dia',
+    reflectionOnAchievements: 'Reflexão sobre conquistas e melhorias',
+    
     // Settings/Configuration
     apisAndIntegrations: 'APIs e Integrações',
     aiFeatures: 'Recursos de IA',
@@ -260,5 +339,34 @@ export const dashboardTranslations = {
     // Reports
     notifications: 'Notificações',
     privacy: 'Privacidade',
+    
+    // Teams Dashboard
+    teamsAdvancedDashboard: 'Dashboard Avançado de Equipes',
+    realTimeMetricsAnalytics: 'Métricas em tempo real e análises detalhadas',
+    totalTeams: 'Total de Equipes',
+    activeSalesReps: 'Vendedores Ativos',
+    overallGoal: 'Meta Geral',
+    averageEfficiency: 'Eficiência Média',
+    goalProgress: 'Progresso da Meta',
+    habitsCompleted: 'Hábitos Completados',
+    conversionRate: 'Taxa de Conversão',
+    leadsPerSalesRep: 'Leads/Vendedor',
+    averageTime: 'Tempo Médio',
+    efficiency: 'Eficiência',
+    clinicSales: 'Vendas em clínicas',
+    courseSales: 'Vendas de cursos',
+    active: 'ativos',
+    of: 'de',
+    salesRep: 'vendedor',
+    update: 'Atualizar',
+    updating: 'Atualizando...',
+    viewDetails: 'Ver Detalhes',
+    configureTeams: 'Configurar Equipes',
+    noTeamsFound: 'Nenhuma equipe encontrada. Configure suas equipes primeiro.',
+    recommendation: 'Recomendação',
+    connectToSupabase: 'Conecte ao Supabase para métricas em tempo real.',
+    connectToSupabaseButton: 'Conectar ao Supabase',
+    connectToSupabaseInfo: 'Conecte-se ao Supabase através do botão verde no canto superior direito.',
+    realTime: 'Tempo Real'
   },
 };

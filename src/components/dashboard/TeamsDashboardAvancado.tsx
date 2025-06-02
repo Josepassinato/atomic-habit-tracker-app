@@ -21,6 +21,7 @@ import { useTeamDashboard } from "@/hooks/use-team-dashboard";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { useSupabase } from "@/hooks/use-supabase";
+import { useLanguage } from "@/i18n";
 
 interface MetricaAvancada {
   id: string;
@@ -49,10 +50,11 @@ const TeamsDashboardAvancado: React.FC = () => {
   const [metricas, setMetricas] = useState<MetricaAvancada[]>([]);
   const navigate = useNavigate();
   const { isConfigured } = useSupabase();
+  const { t } = useLanguage();
 
-  // Format to Brazilian Real
+  // Format to currency
   const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(value);
   };
 
   // Enriquece as métricas básicas com dados avançados
@@ -86,7 +88,7 @@ const TeamsDashboardAvancado: React.FC = () => {
   const handleRefresh = async () => {
     setIsRefreshing(true);
     await refreshTeamMetrics();
-    toast.success("Métricas atualizadas em tempo real!");
+    toast.success("Metrics updated in real time!");
     setIsRefreshing(false);
   };
 
@@ -98,14 +100,14 @@ const TeamsDashboardAvancado: React.FC = () => {
     <div className="mt-6">
       <div className="flex justify-between items-center mb-6">
         <div>
-          <h2 className="text-2xl font-bold">Dashboard Avançado de Equipes</h2>
-          <p className="text-muted-foreground">Métricas em tempo real e análises detalhadas</p>
+          <h2 className="text-2xl font-bold">Advanced Teams Dashboard</h2>
+          <p className="text-muted-foreground">Real-time metrics and detailed analytics</p>
         </div>
         <div className="flex gap-2 items-center">
           {isConfigured && (
             <Badge variant="outline" className="bg-green-50 text-green-700 flex items-center gap-1">
               <Database className="h-3 w-3" />
-              Tempo Real
+              Real Time
             </Badge>
           )}
           <Button 
@@ -115,14 +117,14 @@ const TeamsDashboardAvancado: React.FC = () => {
             disabled={isRefreshing}
           >
             <RefreshCw className={`h-4 w-4 mr-2 ${isRefreshing ? 'animate-spin' : ''}`} />
-            {isRefreshing ? "Atualizando..." : "Atualizar"}
+            {isRefreshing ? "Updating..." : "Update"}
           </Button>
           <Button 
             variant="default" 
             size="sm"
             onClick={() => navigate('/vendedores')}
           >
-            Ver Detalhes
+            View Details
           </Button>
         </div>
       </div>
@@ -130,31 +132,31 @@ const TeamsDashboardAvancado: React.FC = () => {
       {metricas.length === 0 ? (
         <Card>
           <CardContent className="py-6 text-center">
-            <p className="text-muted-foreground">Nenhuma equipe encontrada. Configure suas equipes primeiro.</p>
+            <p className="text-muted-foreground">No teams found. Configure your teams first.</p>
             <div className="mt-4 space-y-2">
               <Button 
                 variant="default" 
                 size="sm"
                 onClick={() => navigate('/onboarding')}
               >
-                Configurar Equipes
+                Configure Teams
               </Button>
               
               {!isConfigured && (
                 <div className="pt-4 border-t mt-4">
                   <p className="text-sm text-amber-600 mb-2">
-                    <strong>Recomendação:</strong> Conecte ao Supabase para métricas em tempo real.
+                    <strong>Recommendation:</strong> Connect to Supabase for real-time metrics.
                   </p>
                   <Button 
                     variant="outline"
                     size="sm"
                     className="bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100"
                     onClick={() => {
-                      toast.info("Conecte-se ao Supabase através do botão verde no canto superior direito.");
+                      toast.info("Connect to Supabase through the green button in the top right corner.");
                     }}
                   >
                     <Database className="h-4 w-4 mr-2" />
-                    Conectar ao Supabase
+                    Connect to Supabase
                   </Button>
                 </div>
               )}
@@ -169,7 +171,7 @@ const TeamsDashboardAvancado: React.FC = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Total de Equipes</p>
+                    <p className="text-sm font-medium text-muted-foreground">Total Teams</p>
                     <p className="text-2xl font-bold">{metricas.length}</p>
                   </div>
                   <Users className="h-8 w-8 text-primary" />
@@ -181,7 +183,7 @@ const TeamsDashboardAvancado: React.FC = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Vendedores Ativos</p>
+                    <p className="text-sm font-medium text-muted-foreground">Active Sales Reps</p>
                     <p className="text-2xl font-bold">
                       {metricas.reduce((acc, m) => acc + m.vendedoresAtivos, 0)}
                     </p>
@@ -195,7 +197,7 @@ const TeamsDashboardAvancado: React.FC = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Meta Geral</p>
+                    <p className="text-sm font-medium text-muted-foreground">Overall Goal</p>
                     <p className="text-2xl font-bold">
                       {Math.round(metricas.reduce((acc, m) => acc + m.progressoMeta, 0) / metricas.length)}%
                     </p>
@@ -209,7 +211,7 @@ const TeamsDashboardAvancado: React.FC = () => {
               <CardContent className="p-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="text-sm font-medium text-muted-foreground">Eficiência Média</p>
+                    <p className="text-sm font-medium text-muted-foreground">Average Efficiency</p>
                     <p className="text-2xl font-bold">
                       {Math.round(metricas.reduce((acc, m) => acc + m.eficienciaEquipe, 0) / metricas.length)}%
                     </p>
@@ -237,7 +239,7 @@ const TeamsDashboardAvancado: React.FC = () => {
                     </CardTitle>
                     <div className="flex gap-2">
                       <Badge variant="secondary">
-                        {team.vendedoresAtivos}/{team.vendedores} ativos
+                        {team.vendedoresAtivos}/{team.vendedores} active
                       </Badge>
                       {team.crescimentoSemanal > 0 ? (
                         <Badge variant="outline" className="text-green-600">
@@ -253,9 +255,9 @@ const TeamsDashboardAvancado: React.FC = () => {
                     </div>
                   </div>
                   <CardDescription>
-                    {formatCurrency(team.metaAtual)} de {formatCurrency(team.metaTotal)}
+                    {formatCurrency(team.metaAtual)} of {formatCurrency(team.metaTotal)}
                     {" • "}
-                    Média: {formatCurrency(team.mediaVendasPorVendedor)}/vendedor
+                    Average: {formatCurrency(team.mediaVendasPorVendedor)}/sales rep
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="pt-4">
@@ -265,7 +267,7 @@ const TeamsDashboardAvancado: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-sm font-medium flex items-center gap-1">
                           <TrendingUp className="h-4 w-4 text-primary" />
-                          Progresso da Meta
+                          Goal Progress
                         </div>
                         <span className={`text-sm font-bold ${
                           team.progressoMeta >= 75 ? 'text-green-500' : 
@@ -282,13 +284,13 @@ const TeamsDashboardAvancado: React.FC = () => {
                       <div className="flex items-center justify-between mb-2">
                         <div className="text-sm font-medium flex items-center gap-1">
                           <Flag className="h-4 w-4 text-primary" />
-                          Hábitos Completados
+                          Habits Completed
                         </div>
                         <span className={`text-sm font-bold ${
                           team.progressoHabitos >= 75 ? 'text-green-500' : 
                           team.progressoHabitos >= 50 ? 'text-amber-500' : 'text-red-500'
                         }`}>
-                          {team.habitosConcluidos} de {team.habitosTotal} ({team.progressoHabitos}%)
+                          {team.habitosConcluidos} of {team.habitosTotal} ({team.progressoHabitos}%)
                         </span>
                       </div>
                       <Progress value={team.progressoHabitos} className="h-2" />
@@ -297,22 +299,22 @@ const TeamsDashboardAvancado: React.FC = () => {
                     {/* Métricas Avançadas */}
                     <div className="grid grid-cols-2 gap-4 pt-2 border-t">
                       <div className="text-center">
-                        <p className="text-xs text-muted-foreground">Taxa Conversão</p>
+                        <p className="text-xs text-muted-foreground">Conversion Rate</p>
                         <p className="text-sm font-semibold">{team.taxaConversao}%</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs text-muted-foreground">Leads/Vendedor</p>
+                        <p className="text-xs text-muted-foreground">Leads/Sales Rep</p>
                         <p className="text-sm font-semibold">{team.leadsPorVendedor}</p>
                       </div>
                       <div className="text-center">
                         <p className="text-xs text-muted-foreground flex items-center justify-center gap-1">
                           <Clock className="h-3 w-3" />
-                          Tempo Médio
+                          Avg Time
                         </p>
                         <p className="text-sm font-semibold">{team.tempoMedioFechamento}d</p>
                       </div>
                       <div className="text-center">
-                        <p className="text-xs text-muted-foreground">Eficiência</p>
+                        <p className="text-xs text-muted-foreground">Efficiency</p>
                         <p className="text-sm font-semibold text-green-600">{team.eficienciaEquipe}%</p>
                       </div>
                     </div>
