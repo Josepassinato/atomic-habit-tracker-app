@@ -47,19 +47,20 @@ const Index = () => {
           <div className="lg:col-span-2">
             <div className="grid gap-6 md:grid-cols-2">
               <div>
-                <h2 className="mb-3 text-xl font-semibold">{t('goals')}</h2>
+                <h2 className="mb-3 text-xl font-semibold">Sales Goals</h2>
                 <MetasVendas />
               </div>
               <div>
-                <h2 className="mb-3 text-xl font-semibold">{t('atomicHabits')}</h2>
+                <h2 className="mb-3 text-xl font-semibold">Atomic Habits</h2>
                 <HabitosTracker />
               </div>
             </div>
           </div>
           <div>
-            <h2 className="mb-3 text-xl font-semibold">{t('settings')}</h2>
+            <h2 className="mb-3 text-xl font-semibold">AI Consulting</h2>
             <ConsultoriaIA />
             <div className="mt-6">
+              <h3 className="mb-3 text-lg font-semibold">CRM Integrations</h3>
               <IntegracoesCRM />
             </div>
           </div>

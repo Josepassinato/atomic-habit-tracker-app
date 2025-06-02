@@ -2,12 +2,15 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Widget } from "./types/widget.types";
+import { useLanguage } from "@/i18n";
 
 interface DashboardWidgetGridProps {
   widgetsAtivos: Widget[];
 }
 
 export const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({ widgetsAtivos }) => {
+  const { t } = useLanguage();
+  
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
       {widgetsAtivos.map((widget) => {
@@ -24,7 +27,7 @@ export const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({ widget
               </CardHeader>
               <CardContent>
                 <div className="h-40 flex items-center justify-center border border-dashed rounded-md">
-                  <span className="text-muted-foreground">Conteúdo do widget {widget.tipo}</span>
+                  <span className="text-muted-foreground">Widget content {widget.tipo}</span>
                 </div>
               </CardContent>
             </Card>

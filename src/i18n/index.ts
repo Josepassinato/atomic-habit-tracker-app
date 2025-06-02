@@ -60,6 +60,11 @@ export const useLanguage = () => {
         'layoutSaved': 'Layout saved successfully!',
         'saveLayout': 'Save Layout',
         
+        // Dashboard sections
+        'salesGoals': 'Sales Goals',
+        'aiConsulting': 'AI Consulting',
+        'crmIntegrations': 'CRM Integrations',
+        
         // Settings
         'notificationPreferences': 'Notification Preferences',
         'configureNotifications': 'Configure how you receive notifications',
