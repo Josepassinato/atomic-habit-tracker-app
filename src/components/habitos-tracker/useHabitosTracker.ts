@@ -3,7 +3,7 @@ import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { HabitoEvidenciaType } from "../habitos/HabitoEvidencia";
 import { initialHabits, getAIFeedback, generateSuggestedHabits } from "../habitos/HabitosService";
-import { Habito, BusinessModel } from "../habitos/types";
+import { Habito, ModeloNegocio } from "../habitos/types";
 
 export const useHabitosTracker = () => {
   const [habitos, setHabitos] = useState<Habito[]>(() => {
@@ -18,11 +18,11 @@ export const useHabitosTracker = () => {
   
   // Estados para o diálogo de sugestão de hábitos
   const [dialogAberto, setDialogAberto] = useState(false);
-  const [modeloNegocio, setModeloNegocio] = useState<BusinessModel>({
-    segment: "",
-    salesCycle: "",
-    teamSize: "",
-    mainObjective: ""
+  const [modeloNegocio, setModeloNegocio] = useState<ModeloNegocio>({
+    segmento: "",
+    cicloVenda: "",
+    tamEquipe: "",
+    objetivoPrincipal: ""
   });
   const [carregandoSugestoes, setCarregandoSugestoes] = useState(false);
   const [habitosSugeridos, setHabitosSugeridos] = useState<Habito[]>([]);
@@ -101,7 +101,14 @@ export const useHabitosTracker = () => {
   const sugerirHabitosPersonalizados = useCallback(async () => {
     setCarregandoSugestoes(true);
     try {
-      const habitosPersonalizados = await generateSuggestedHabits(modeloNegocio);
+      // Convert ModeloNegocio to BusinessModel for the service call
+      const businessModel = {
+        segment: modeloNegocio.segmento,
+        salesCycle: modeloNegocio.cicloVenda,
+        teamSize: modeloNegocio.tamEquipe,
+        mainObjective: modeloNegocio.objetivoPrincipal
+      };
+      const habitosPersonalizados = await generateSuggestedHabits(businessModel);
       setHabitosSugeridos(habitosPersonalizados);
       toast.info("Sugestões de hábitos geradas", {
         description: `${habitosPersonalizados.length} novos hábitos foram sugeridos para seu perfil.`
