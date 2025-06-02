@@ -19,25 +19,25 @@ const Dashboard = () => {
   const [carregado, setCarregado] = useState(false);
   
   useEffect(() => {
-    // Verificação simples de autenticação
+    // Simple authentication check
     const user = localStorage.getItem("user");
     if (!user) {
-      // Para fins de desenvolvimento, vamos apenas criar um usuário temporário
-      localStorage.setItem("user", JSON.stringify({ id: 1, nome: "Usuário de Teste" }));
+      // For development purposes, create a temporary user
+      localStorage.setItem("user", JSON.stringify({ id: 1, nome: "Test User" }));
     }
     
-    // Usamos o estado para controlar se a página já foi carregada
-    // e apenas mostrar a notificação na primeira vez
+    // Control if page has been loaded to show notification only once
     if (!carregado) {
       setCarregado(true);
       
-      // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
-      // Apenas adiciona a notificação se ainda não foi exibida
+      // Only add notification if not already shown
       if (!notificacaoExibida.current) {
-        // Pequeno delay para evitar múltiplas notificações
+        // Small delay to avoid multiple notifications
         const timer = setTimeout(() => {
-          const welcomeMessage = language === 'pt' ? "Bem-vindo de volta!" : language === 'es' ? "¡Bienvenido de vuelta!" : "Welcome back!";
-          const habitsMessage = language === 'pt' ? "Você tem 3 hábitos para concluir hoje." : language === 'es' ? "Tienes 3 hábitos para completar hoy." : "You have 3 habits to complete today.";
+          const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'user') || "Welcome back!";
+          const habitsMessage = language === 'pt' ? "Você tem 3 hábitos para concluir hoje." : 
+                                language === 'es' ? "Tienes 3 hábitos para completar hoy." : 
+                                "You have 3 habits to complete today.";
           
           adicionarNotificacao({
             titulo: welcomeMessage,
@@ -50,33 +50,7 @@ const Dashboard = () => {
         return () => clearTimeout(timer);
       }
     }
-  }, [navigate, adicionarNotificacao, carregado, language]);
-
-  const getContent = () => {
-    switch(language) {
-      case 'pt':
-        return {
-          salesPerformanceTitle: 'Desempenho de Vendas',
-          atomicHabitsTitle: 'Hábitos Atômicos',
-          aiAssistantTitle: 'Assistente IA'
-        };
-      case 'es':
-        return {
-          salesPerformanceTitle: 'Rendimiento de Ventas',
-          atomicHabitsTitle: 'Hábitos Atómicos',
-          aiAssistantTitle: 'Asistente IA'
-        };
-      case 'en':
-      default:
-        return {
-          salesPerformanceTitle: 'Sales Performance',
-          atomicHabitsTitle: 'Atomic Habits',
-          aiAssistantTitle: 'AI Assistant'
-        };
-    }
-  };
-
-  const content = getContent();
+  }, [navigate, adicionarNotificacao, carregado, language, t]);
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -88,17 +62,17 @@ const Dashboard = () => {
             <div className="lg:col-span-2">
               <div className="grid gap-6 md:grid-cols-2">
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">{content.salesPerformanceTitle}</h2>
+                  <h2 className="mb-3 text-xl font-semibold">Sales Performance</h2>
                   <MetasVendas />
                 </div>
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">{content.atomicHabitsTitle}</h2>
+                  <h2 className="mb-3 text-xl font-semibold">Atomic Habits</h2>
                   <HabitosTracker />
                 </div>
               </div>
             </div>
             <div>
-              <h2 className="mb-3 text-xl font-semibold">{content.aiAssistantTitle}</h2>
+              <h2 className="mb-3 text-xl font-semibold">AI Assistant</h2>
               <ConsultoriaIA />
               <div className="mt-6">
                 <IntegracoesCRM />

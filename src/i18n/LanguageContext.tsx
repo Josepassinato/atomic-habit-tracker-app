@@ -7,21 +7,32 @@ import { LanguageContextType, LanguageProviderProps } from './types';
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<LanguageProviderProps> = ({ children }) => {
-  // Default to English as the official language
+  // Always default to English as the official language
   const [language, setLanguage] = useState<Language>(() => {
+    // First check localStorage for saved preference
     const savedLanguage = localStorage.getItem('language') as Language;
     if (savedLanguage && ['en', 'es', 'pt'].includes(savedLanguage)) {
       return savedLanguage;
     }
     
-    // Always default to English as the official language
+    // If no saved preference, default to English
     return 'en';
   });
   
   // Save language preference to localStorage when it changes
   useEffect(() => {
     localStorage.setItem('language', language);
+    console.log('Language set to:', language);
   }, [language]);
+
+  // Ensure English is set as default on first load if no preference exists
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language');
+    if (!savedLanguage) {
+      localStorage.setItem('language', 'en');
+      console.log('Default language set to English');
+    }
+  }, []);
   
   // Translation function
   const t = (key: TranslationKey): string => {

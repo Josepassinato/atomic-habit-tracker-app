@@ -30,7 +30,7 @@ const DashboardPersonalizavel: React.FC<DashboardPersonalizavelProps> = ({ child
   return (
     <>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold">{t('dashboard')}</h1>
+        <h1 className="text-3xl font-bold">Dashboard</h1>
         <DashboardCustomizeDialog 
           widgets={widgets}
           toggleWidget={toggleWidget}
