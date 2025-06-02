@@ -5,10 +5,31 @@ import { HabitEvidenceType } from "../habits/HabitEvidence";
 import { habitosIniciais, getFeedbackIA, gerarHabitosSugeridos } from "../habitos/HabitosService";
 import { Habit, BusinessModel } from "../habits/types";
 
+// Convert Portuguese habits to English format
+const convertToEnglishHabits = (habitos: any[]): Habit[] => {
+  return habitos.map(habito => ({
+    id: habito.id,
+    titulo: habito.titulo,
+    descricao: habito.descricao,
+    cumprido: habito.cumprido,
+    horario: habito.horario,
+    evidencia: habito.evidencia ? {
+      type: habito.evidencia.tipo || 'text',
+      content: habito.evidencia.conteudo || habito.evidencia.content || ''
+    } : undefined,
+    verificacaoNecessaria: habito.verificacaoNecessaria,
+    verificado: habito.verificado,
+    dataCriacao: habito.dataCriacao
+  }));
+};
+
 export const useHabitsTracker = () => {
   const [habits, setHabits] = useState<Habit[]>(() => {
     const saved = localStorage.getItem("habits");
-    return saved ? JSON.parse(saved) : habitosIniciais;
+    if (saved) {
+      return convertToEnglishHabits(JSON.parse(saved));
+    }
+    return convertToEnglishHabits(habitosIniciais);
   });
   
   const [feedback, setFeedback] = useState<string>("");
@@ -61,7 +82,8 @@ export const useHabitsTracker = () => {
   }, [habits, completedHabits]);
   
   const restartHabits = useCallback(() => {
-    setHabits(habitosIniciais.map(h => ({...h, cumprido: false, evidencia: undefined})));
+    const resetHabits = convertToEnglishHabits(habitosIniciais).map(h => ({...h, cumprido: false, evidencia: undefined}));
+    setHabits(resetHabits);
     setFeedback("");
     toast.info("Habits restarted for the next day.", {
       description: "All habits have been unmarked and are ready to be completed again."
@@ -71,7 +93,23 @@ export const useHabitsTracker = () => {
   const requestAIFeedback = useCallback(async () => {
     setLoadingFeedback(true);
     try {
-      const feedbackMessage = await getFeedbackIA(habits);
+      // Convert to Portuguese format for the service call
+      const habitosForService = habits.map(habit => ({
+        id: habit.id,
+        titulo: habit.titulo,
+        descricao: habit.descricao,
+        cumprido: habit.cumprido,
+        horario: habit.horario,
+        evidencia: habit.evidencia ? {
+          tipo: habit.evidencia.type,
+          conteudo: habit.evidencia.content
+        } : undefined,
+        verificacaoNecessaria: habit.verificacaoNecessaria,
+        verificado: habit.verificado,
+        dataCriacao: habit.dataCriacao
+      }));
+      
+      const feedbackMessage = await getFeedbackIA(habitosForService);
       setFeedback(feedbackMessage);
       toast.success("AI feedback generated successfully!", {
         description: "The assistant analyzed your habits and provided recommendations."
@@ -96,10 +134,19 @@ export const useHabitsTracker = () => {
   const suggestPersonalizedHabits = useCallback(async () => {
     setLoadingSuggestions(true);
     try {
-      const personalizedHabits = await gerarHabitosSugeridos(businessModel);
-      setSuggestedHabits(personalizedHabits);
+      // Convert to Portuguese format for the service call
+      const modeloNegocio = {
+        segmento: businessModel.segmento,
+        cicloVenda: businessModel.cicloVenda,
+        tamEquipe: businessModel.tamEquipe,
+        objetivoPrincipal: businessModel.objetivoPrincipal
+      };
+      
+      const personalizedHabits = await gerarHabitosSugeridos(modeloNegocio);
+      const convertedHabits = convertToEnglishHabits(personalizedHabits);
+      setSuggestedHabits(convertedHabits);
       toast.info("Habit suggestions generated", {
-        description: `${personalizedHabits.length} new habits were suggested for your profile.`
+        description: `${convertedHabits.length} new habits were suggested for your profile.`
       });
     } catch (error) {
       toast.error("Error generating suggestions", {
