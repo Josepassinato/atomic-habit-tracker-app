@@ -16,8 +16,8 @@ const Index = () => {
   const notificacaoExibida = useRef(false);
   
   useEffect(() => {
-    // Demonstração do sistema de notificações - em um app real, seria baseado em eventos
-    // Apenas adiciona a notificação se ainda não foi exibida
+    // Demo notification system - in a real app, this would be based on events
+    // Only add notification if not already shown
     if (!notificacaoExibida.current) {
       const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'user') || "Welcome back!";
       const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
