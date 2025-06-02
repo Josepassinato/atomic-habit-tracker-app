@@ -24,6 +24,20 @@ const convertToEnglishHabits = (habitos: any[]): Habit[] => {
   }));
 };
 
+// Map English evidence types to Portuguese
+const mapEvidenceTypeToPortuguese = (type: "text" | "screenshot" | "file"): "texto" | "screenshot" | "arquivo" => {
+  switch (type) {
+    case "text":
+      return "texto";
+    case "screenshot":
+      return "screenshot";
+    case "file":
+      return "arquivo";
+    default:
+      return "texto";
+  }
+};
+
 export const useHabitsTracker = () => {
   const [habits, setHabits] = useState<Habit[]>(() => {
     const saved = localStorage.getItem("habits");
@@ -102,7 +116,7 @@ export const useHabitsTracker = () => {
         cumprido: habit.cumprido,
         horario: habit.horario,
         evidencia: habit.evidencia ? {
-          tipo: habit.evidencia.type,
+          tipo: mapEvidenceTypeToPortuguese(habit.evidencia.type),
           conteudo: habit.evidencia.content,
           timestamp: habit.evidencia.timestamp
         } : undefined,
