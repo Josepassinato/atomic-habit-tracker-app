@@ -2,19 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
-import { RelatorioDashboardCards } from "@/components/relatorios/RelatorioDashboardCards";
-import { RelatorioFiltros } from "@/components/relatorios/RelatorioFiltros";
-import { RelatorioTabs } from "@/components/relatorios/RelatorioTabs";
 import RelatoriosAvancados from "@/components/relatorios/RelatoriosAvancados";
 import NotificacoesEmpresa from "@/components/notificacoes/NotificacoesEmpresa";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useRelatorioData } from "@/hooks/useRelatorioData";
 import VerificacaoHabitos from "@/components/habitos/VerificacaoHabitos";
-import { Button } from "@/components/ui/button";
-import { Download, Mail, Bell, BarChart3 } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { toast } from "sonner";
+import { Tabs, TabsContent } from "@/components/ui/tabs";
+import { useRelatorioData } from "@/hooks/useRelatorioData";
+import { RelatoriosHeader } from "@/components/relatorios/RelatoriosHeader";
+import { RelatoriosEmailDialog } from "@/components/relatorios/RelatoriosEmailDialog";
+import { RelatoriosTabsNavigation } from "@/components/relatorios/RelatoriosTabsNavigation";
+import { RelatoriosDashboardContent } from "@/components/relatorios/RelatoriosDashboardContent";
+import { RelatoriosFooter } from "@/components/relatorios/RelatoriosFooter";
+import { downloadRelatorio } from "@/services/relatorios-service";
 
 const Relatorios = () => {
   const navigate = useNavigate();
@@ -37,7 +35,6 @@ const Relatorios = () => {
   
   const [activeTab, setActiveTab] = useState<string>("dashboard");
   const [emailDialogOpen, setEmailDialogOpen] = useState(false);
-  const [emailDestino, setEmailDestino] = useState("");
 
   useEffect(() => {
     // Aqui faremos a integração com Supabase para verificar autenticação
@@ -48,142 +45,46 @@ const Relatorios = () => {
   }, [navigate]);
 
   const handleDownloadRelatorio = () => {
-    // Simula o download de um relatório
-    const relatorioData = {
-      data: new Date().toLocaleDateString(),
-      periodo: periodoSelecionado,
-      equipe: equipeId === "todas" ? "Todas as equipes" : equipes.find(e => e.id === equipeId)?.nome,
-      vendedores: vendedoresFiltrados,
-      metricas: {
-        totalVendas,
-        totalMetas,
-        percentualMeta,
-        mediaConversao
-      }
-    };
-
-    // Converte dados para JSON string
-    const jsonString = JSON.stringify(relatorioData, null, 2);
-    
-    // Cria um blob com os dados
-    const blob = new Blob([jsonString], { type: "application/json" });
-    
-    // Cria um URL do blob
-    const url = URL.createObjectURL(blob);
-    
-    // Cria um link para download
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `relatorio-vendas-${new Date().toISOString().split('T')[0]}.json`;
-    
-    // Simula um clique no link
-    document.body.appendChild(a);
-    a.click();
-    
-    // Limpa depois do download
-    setTimeout(() => {
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }, 100);
-
-    toast.success("Relatório baixado com sucesso!");
-  };
-
-  const handleEnviarEmail = (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Simula o envio do email - em produção seria integrado com backend
-    if (!emailDestino || !emailDestino.includes('@')) {
-      toast.error("Por favor, insira um e-mail válido.");
-      return;
-    }
-
-    // Em uma aplicação real, aqui seria feita uma chamada para o backend
-    console.log(`Enviando relatório para: ${emailDestino}`);
-    console.log({
-      periodo: periodoSelecionado,
-      equipe: equipeId,
-      data: date,
-      metricas: {
-        totalVendas,
-        totalMetas,
-        percentualMeta,
-        mediaConversao
-      }
-    });
-    
-    // Fecha o dialog e mostra feedback
-    setEmailDialogOpen(false);
-    setEmailDestino("");
-    toast.success(`Relatório enviado para ${emailDestino}`);
+    downloadRelatorio(
+      periodoSelecionado,
+      equipeId,
+      totalVendas,
+      totalMetas,
+      percentualMeta,
+      mediaConversao,
+      vendedoresFiltrados,
+      equipes
+    );
   };
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-50">
       <Header />
       <main className="container flex-1 py-6">
-        <div className="flex justify-between items-center mb-6">
-          <div>
-            <h1 className="text-3xl font-bold">Painel da Empresa</h1>
-            <p className="text-muted-foreground">Relatórios, alertas e análises em tempo real</p>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="outline" onClick={handleDownloadRelatorio} className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Baixar Relatório
-            </Button>
-            <Button onClick={() => setEmailDialogOpen(true)} className="flex items-center gap-2">
-              <Mail className="h-4 w-4" />
-              Enviar por Email
-            </Button>
-          </div>
-        </div>
+        <RelatoriosHeader
+          onDownloadRelatorio={handleDownloadRelatorio}
+          onOpenEmailDialog={() => setEmailDialogOpen(true)}
+        />
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="mb-2">
-            <TabsTrigger value="dashboard" className="flex items-center gap-2">
-              <BarChart3 className="h-4 w-4" />
-              Dashboard
-            </TabsTrigger>
-            <TabsTrigger value="relatorios-avancados" className="flex items-center gap-2">
-              <Download className="h-4 w-4" />
-              Relatórios Avançados
-            </TabsTrigger>
-            <TabsTrigger value="notificacoes" className="flex items-center gap-2">
-              <Bell className="h-4 w-4" />
-              Notificações
-            </TabsTrigger>
-            <TabsTrigger value="habitos">Verificação de Hábitos</TabsTrigger>
-          </TabsList>
+          <RelatoriosTabsNavigation />
           
-          <TabsContent value="dashboard" className="space-y-6">
-            {/* Card de resumo */}
-            <RelatorioDashboardCards 
-              totalVendas={totalVendas}
-              totalMetas={totalMetas}
-              percentualMeta={percentualMeta}
-              mediaConversao={mediaConversao}
-              isLoading={isLoading}
-            />
-
-            {/* Filtros de relatório */}
-            <RelatorioFiltros 
-              periodoSelecionado={periodoSelecionado}
-              setPeriodoSelecionado={setPeriodoSelecionado}
-              equipeId={equipeId}
-              setEquipeId={setEquipeId}
-              date={date}
-              setDate={setDate}
-              equipes={equipes}
-              onGenerateReport={generateReport}
-            />
-
-            {/* Tabs para diferentes visões */}
-            <RelatorioTabs 
-              vendedoresFiltrados={vendedoresFiltrados}
-              equipes={equipes}
-            />
-          </TabsContent>
+          <RelatoriosDashboardContent
+            totalVendas={totalVendas}
+            totalMetas={totalMetas}
+            percentualMeta={percentualMeta}
+            mediaConversao={mediaConversao}
+            isLoading={isLoading}
+            periodoSelecionado={periodoSelecionado}
+            setPeriodoSelecionado={setPeriodoSelecionado}
+            equipeId={equipeId}
+            setEquipeId={setEquipeId}
+            date={date}
+            setDate={setDate}
+            equipes={equipes}
+            onGenerateReport={generateReport}
+            vendedoresFiltrados={vendedoresFiltrados}
+          />
 
           <TabsContent value="relatorios-avancados">
             <RelatoriosAvancados />
@@ -198,40 +99,20 @@ const Relatorios = () => {
           </TabsContent>
         </Tabs>
       </main>
-      <footer className="border-t bg-white py-4">
-        <div className="container text-center text-sm text-muted-foreground">
-          Habitus © 2025 - O futuro da automação de vendas e performance
-        </div>
-      </footer>
+      
+      <RelatoriosFooter />
 
-      {/* Dialog para envio por email */}
-      <Dialog open={emailDialogOpen} onOpenChange={setEmailDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Enviar relatório por email</DialogTitle>
-            <DialogDescription>
-              Insira o endereço de email para enviar o relatório de desempenho de vendas.
-            </DialogDescription>
-          </DialogHeader>
-          <form onSubmit={handleEnviarEmail}>
-            <div className="py-4">
-              <Input
-                placeholder="exemplo@email.com"
-                value={emailDestino}
-                onChange={(e) => setEmailDestino(e.target.value)}
-                type="email"
-                required
-              />
-            </div>
-            <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setEmailDialogOpen(false)}>
-                Cancelar
-              </Button>
-              <Button type="submit">Enviar</Button>
-            </DialogFooter>
-          </form>
-        </DialogContent>
-      </Dialog>
+      <RelatoriosEmailDialog
+        open={emailDialogOpen}
+        onOpenChange={setEmailDialogOpen}
+        periodoSelecionado={periodoSelecionado}
+        equipeId={equipeId}
+        date={date}
+        totalVendas={totalVendas}
+        totalMetas={totalMetas}
+        percentualMeta={percentualMeta}
+        mediaConversao={mediaConversao}
+      />
     </div>
   );
 };
