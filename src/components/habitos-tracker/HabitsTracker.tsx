@@ -6,31 +6,31 @@ import HabitSuggestionDialog from "../habits/HabitSuggestionDialog";
 import HabitsStats from "./HabitsStats";
 import HabitsList from "./HabitsList";
 import HabitsActions from "./HabitsActions";
-import { useHabitsTracker } from "./useHabitsTracker";
+import { useHabitosTracker } from "./useHabitosTracker";
 import { HabitsTrackerProps } from "./types";
 
 const HabitsTracker: React.FC<HabitsTrackerProps> = ({ className }) => {
   const {
-    habits,
+    habitos: habits,
     feedback,
-    loadingFeedback,
+    carregandoFeedback: loadingFeedback,
     animateProgress,
-    dialogOpen,
-    setDialogOpen,
-    businessModel,
-    loadingSuggestions,
-    suggestedHabits,
-    completedHabits,
-    verifiedHabits,
-    progress,
-    markAsCompleted,
-    restartHabits,
-    requestAIFeedback,
+    dialogAberto: dialogOpen,
+    setDialogAberto: setDialogOpen,
+    modeloNegocio: businessModel,
+    carregandoSugestoes: loadingSuggestions,
+    habitosSugeridos: suggestedHabits,
+    habitosCumpridos: completedHabits,
+    habitosVerificados: verifiedHabits,
+    progresso: progress,
+    marcarComoConcluido: markAsCompleted,
+    reiniciarHabitos: restartHabits,
+    solicitarFeedbackIA: requestAIFeedback,
     handleInputChange,
-    suggestPersonalizedHabits,
-    addSuggestedHabits,
-    handleEvidenceSubmitted
-  } = useHabitsTracker();
+    sugerirHabitosPersonalizados: suggestPersonalizedHabits,
+    adicionarHabitosSugeridos: addSuggestedHabits,
+    handleEvidenciaSubmitted: handleEvidenceSubmitted
+  } = useHabitosTracker();
 
   return (
     <Card className={`h-full ${className || ''}`}>
