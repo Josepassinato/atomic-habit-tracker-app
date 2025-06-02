@@ -1,4 +1,4 @@
 
-import HabitosTracker from "./habitos-tracker/HabitosTracker";
+import HabitsTracker from "./habitos-tracker/HabitsTracker";
 
-export default HabitosTracker;
+export default HabitsTracker;
