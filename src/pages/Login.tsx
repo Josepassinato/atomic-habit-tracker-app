@@ -26,21 +26,33 @@ const Login = () => {
     try {
       // Simulate login validation
       if (email && password) {
+        // Determine user role based on email
+        let userRole = "salesperson";
+        if (email === "admin@habitus.com") {
+          userRole = "admin";
+        }
+        
         const userData = {
           id: 1,
-          nome: "Test User",
+          nome: userRole === "admin" ? "Administrador" : "Test User",
           email: email,
-          role: "salesperson"
+          role: userRole
         };
         
         storageService.setItem('user', userData);
-        toast.success("Login successful!");
-        navigate("/dashboard");
+        toast.success(`Login realizado com sucesso! Papel: ${userRole}`);
+        
+        // Redirect based on role
+        if (userRole === "admin") {
+          navigate("/admin");
+        } else {
+          navigate("/dashboard");
+        }
       } else {
-        toast.error("Please fill in all fields");
+        toast.error("Por favor, preencha todos os campos");
       }
     } catch (error) {
-      toast.error("Login error");
+      toast.error("Erro no login");
     } finally {
       setLoading(false);
     }
@@ -51,16 +63,16 @@ const Login = () => {
       <div className="p-4">
         <Button variant="ghost" size="sm" onClick={handleBack} className="flex items-center gap-2">
           <ArrowLeft size={16} />
-          Back
+          Voltar
         </Button>
       </div>
       
       <div className="flex-1 flex items-center justify-center px-4">
         <Card className="w-full max-w-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-2xl">Access your account</CardTitle>
+            <CardTitle className="text-2xl">Acesse sua conta</CardTitle>
             <CardDescription>
-              Enter to track your habits and goals
+              Entre para acompanhar seus hábitos e metas
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -70,14 +82,14 @@ const Login = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="your@email.com"
+                  placeholder="seu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password">Password</Label>
+                <Label htmlFor="password">Senha</Label>
                 <Input
                   id="password"
                   type="password"
@@ -88,21 +100,29 @@ const Login = () => {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={loading}>
-                {loading ? "Signing in..." : "Sign In"}
+                {loading ? "Entrando..." : "Entrar"}
               </Button>
             </form>
+            
+            <div className="mt-6 p-3 bg-blue-50 border border-blue-200 rounded-md">
+              <p className="text-sm text-blue-800 font-medium mb-2">Contas de teste:</p>
+              <div className="text-xs text-blue-700 space-y-1">
+                <p><strong>Admin:</strong> admin@habitus.com (qualquer senha)</p>
+                <p><strong>Usuário:</strong> qualquer@email.com (qualquer senha)</p>
+              </div>
+            </div>
             
             <div className="mt-6 text-center space-y-2">
               <Link 
                 to="/recuperar-senha" 
                 className="text-sm text-primary hover:underline"
               >
-                Forgot your password?
+                Esqueceu sua senha?
               </Link>
               <div className="text-sm text-muted-foreground">
-                Don't have an account?{" "}
+                Não tem uma conta?{" "}
                 <Link to="/registro" className="text-primary hover:underline">
-                  Create free account
+                  Criar conta gratuita
                 </Link>
               </div>
             </div>
