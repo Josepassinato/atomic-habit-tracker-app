@@ -77,7 +77,6 @@ const Onboarding = () => {
           <TeamsTab 
             currentTeam={currentTeam}
             teams={teams}
-            setCurrentTeam={setCurrentTeam}
             teamDialogOpen={teamDialogOpen}
             setTeamDialogOpen={setTeamDialogOpen}
             editingTeamId={editingTeamId}
