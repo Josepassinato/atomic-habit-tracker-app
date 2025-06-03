@@ -75,23 +75,19 @@ const Onboarding = () => {
     if (!currentTabData) return null;
 
     const Component = currentTabData.component;
-    const commonProps = {
+    
+    // Base props that most components need
+    const baseProps = {
       currentTeam,
       teams,
-      setCurrentTeam,
-      habitosSelecionados,
-      handleHabitoToggle,
-      metaMensal,
-      setMetaMensal,
-      metaDiaria,
-      setMetaDiaria
+      setCurrentTeam
     };
 
-    // Add specific props for TeamsTab
+    // Add specific props based on the current tab
     if (currentTab === "teams") {
       return (
         <Component 
-          {...commonProps}
+          {...baseProps}
           teamDialogOpen={teamDialogOpen}
           setTeamDialogOpen={setTeamDialogOpen}
           editingTeamId={editingTeamId}
@@ -105,7 +101,22 @@ const Onboarding = () => {
       );
     }
 
-    return <Component {...commonProps} />;
+    if (currentTab === "habits" || currentTab === "goals") {
+      return (
+        <Component 
+          {...baseProps}
+          habitosSelecionados={habitosSelecionados}
+          handleHabitoToggle={handleHabitoToggle}
+          metaMensal={metaMensal}
+          setMetaMensal={setMetaMensal}
+          metaDiaria={metaDiaria}
+          setMetaDiaria={setMetaDiaria}
+        />
+      );
+    }
+
+    // For integrations and rewards tabs, only pass base props
+    return <Component {...baseProps} />;
   };
 
   return (
