@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Star, Award, TrendingUp, Zap } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
+import { useLanguage } from "@/i18n";
 
 interface Conquista {
   id: number;
@@ -27,15 +28,16 @@ const GamificacaoCard: React.FC<GamificacaoCardProps> = ({
   proximoNivel,
   conquistasRecentes,
 }) => {
+  const { t } = useLanguage();
   const progressoProximoNivel = Math.min((pontos / proximoNivel) * 100, 100);
 
   return (
     <Card>
       <CardHeader className="pb-2">
         <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">Minha Performance</CardTitle>
+          <CardTitle className="text-lg">{t('myPerformance')}</CardTitle>
           <Badge variant="outline" className="flex gap-1 items-center">
-            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" /> {pontos} pts
+            <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" /> {pontos} {t('points')}
           </Badge>
         </div>
       </CardHeader>
@@ -46,14 +48,14 @@ const GamificacaoCard: React.FC<GamificacaoCardProps> = ({
           </div>
           <div className="flex-1">
             <div className="flex justify-between items-center mb-1">
-              <span className="font-medium">Nível {nivel}</span>
-              <span className="text-xs text-muted-foreground">{pontos}/{proximoNivel} pontos</span>
+              <span className="font-medium">{t('level')} {nivel}</span>
+              <span className="text-xs text-muted-foreground">{pontos}/{proximoNivel} {t('points')}</span>
             </div>
             <Progress value={progressoProximoNivel} className="h-2" />
           </div>
         </div>
 
-        <h4 className="font-medium text-sm mb-3">Conquistas Recentes</h4>
+        <h4 className="font-medium text-sm mb-3">{t('recentAchievements')}</h4>
         <div className="space-y-3">
           {conquistasRecentes.map((conquista) => (
             <div key={conquista.id} className="flex items-center gap-3">
@@ -65,7 +67,7 @@ const GamificacaoCard: React.FC<GamificacaoCardProps> = ({
                 <p className="text-xs text-muted-foreground">{conquista.descricao}</p>
               </div>
               {conquista.completa ? (
-                <Badge className="bg-green-500">Completa</Badge>
+                <Badge className="bg-green-500">{t('complete')}</Badge>
               ) : (
                 <div className="w-10 h-1 bg-slate-200 rounded-full">
                   <div 

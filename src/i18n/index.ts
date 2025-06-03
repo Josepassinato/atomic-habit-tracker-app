@@ -51,6 +51,22 @@ export const useLanguage = () => {
         'total': 'Total',
         'weeklyProgress': 'Weekly Progress',
         
+        // Gamification and achievements - NEW TRANSLATIONS
+        'myPerformance': 'My Performance',
+        'recentAchievements': 'Recent Achievements',
+        'addEvidence': 'Add Evidence',
+        'complete': 'Complete',
+        'level': 'Level',
+        'points': 'pts',
+        'overview': 'Overview',
+        'averageCompletion': 'Average Completion',
+        'consistentDays': 'Consistent Days',
+        'currentStreak': 'Current Streak',
+        'mostEffectiveHabits': 'Most Effective Habits',
+        'completionRate': 'Completion Rate',
+        'inSales': 'in Sales',
+        'habitsProgress': 'Habits Progress',
+        
         // Notifications and warnings
         'notifications': 'Notifications',
         'welcomeMessage': 'Welcome back, {{role}}!',
@@ -83,10 +99,6 @@ export const useLanguage = () => {
         'salesGoals': 'Sales Goals',
         'aiConsulting': 'AI Consulting',
         'crmIntegrations': 'CRM Integrations',
-        'myPerformance': 'My Performance',
-        'recentAchievements': 'Recent Achievements',
-        'level': 'Level',
-        'points': 'pts',
         
         // Settings
         'notificationPreferences': 'Notification Preferences',

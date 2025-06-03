@@ -5,6 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { FileCheck, Image, FileText } from "lucide-react";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n";
 
 interface HabitoEvidenciaProps {
   habitoId: number;
@@ -23,6 +24,7 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
   titulo,
   onEvidenciaSubmitted,
 }) => {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [evidenciaTipo, setEvidenciaTipo] = useState<"texto" | "screenshot" | "arquivo">("texto");
   const [evidenciaTexto, setEvidenciaTexto] = useState("");
@@ -30,7 +32,7 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
 
   const handleSubmit = () => {
     if (evidenciaTipo === "texto" && !evidenciaTexto.trim()) {
-      toast.error("Por favor, insira uma descrição da evidência");
+      toast.error("Please enter a description of the evidence");
       return;
     }
 
@@ -49,7 +51,7 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
       setIsSubmitting(false);
       setOpen(false);
       
-      toast.success("Evidência enviada com sucesso!");
+      toast.success("Evidence submitted successfully!");
       
       // Limpar o formulário
       setEvidenciaTexto("");
@@ -60,13 +62,13 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
   return (
     <>
       <Button variant="ghost" size="sm" onClick={() => setOpen(true)}>
-        Adicionar Evidência
+        {t('addEvidence')}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Adicionar Evidência para "{titulo}"</DialogTitle>
+            <DialogTitle>Add Evidence for "{titulo}"</DialogTitle>
           </DialogHeader>
 
           <div className="py-4 space-y-4">
@@ -78,7 +80,7 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
                 onClick={() => setEvidenciaTipo("texto")}
               >
                 <FileText className="h-4 w-4 mr-2" />
-                Descrição
+                Description
               </Button>
               <Button 
                 type="button"
@@ -96,13 +98,13 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
                 onClick={() => setEvidenciaTipo("arquivo")}
               >
                 <FileCheck className="h-4 w-4 mr-2" />
-                Arquivo
+                File
               </Button>
             </div>
 
             {evidenciaTipo === "texto" && (
               <Textarea
-                placeholder="Descreva como você concluiu este hábito..."
+                placeholder="Describe how you completed this habit..."
                 value={evidenciaTexto}
                 onChange={(e) => setEvidenciaTexto(e.target.value)}
                 rows={5}
@@ -113,10 +115,10 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
               <div className="border-2 border-dashed rounded-md p-8 text-center cursor-pointer hover:bg-slate-50">
                 <Image className="h-8 w-8 mx-auto mb-2 text-slate-400" />
                 <p className="text-sm text-slate-500">
-                  Clique para fazer upload de uma imagem ou screenshot
+                  Click to upload an image or screenshot
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  (Funcionalidade simulada - na versão completa permitiria upload)
+                  (Simulated functionality - full version would allow upload)
                 </p>
               </div>
             )}
@@ -125,10 +127,10 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
               <div className="border-2 border-dashed rounded-md p-8 text-center cursor-pointer hover:bg-slate-50">
                 <FileCheck className="h-8 w-8 mx-auto mb-2 text-slate-400" />
                 <p className="text-sm text-slate-500">
-                  Clique para fazer upload de um arquivo (PDF, Excel, etc.)
+                  Click to upload a file (PDF, Excel, etc.)
                 </p>
                 <p className="text-xs text-slate-400 mt-1">
-                  (Funcionalidade simulada - na versão completa permitiria upload)
+                  (Simulated functionality - full version would allow upload)
                 </p>
               </div>
             )}
@@ -136,10 +138,10 @@ const HabitoEvidencia: React.FC<HabitoEvidenciaProps> = ({
 
           <DialogFooter>
             <Button variant="outline" onClick={() => setOpen(false)}>
-              Cancelar
+              {t('cancel')}
             </Button>
             <Button onClick={handleSubmit} disabled={isSubmitting}>
-              {isSubmitting ? "Enviando..." : "Enviar Evidência"}
+              {isSubmitting ? "Submitting..." : "Submit Evidence"}
             </Button>
           </DialogFooter>
         </DialogContent>

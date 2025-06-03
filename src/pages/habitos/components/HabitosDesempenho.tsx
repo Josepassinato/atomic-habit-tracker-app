@@ -81,7 +81,7 @@ const EffectiveHabits: React.FC<{ habitos: Habito[] }> = ({ habitos }) => {
         {habitos.slice(0, 3).map((habito) => (
           <div key={habito.id} className="flex items-center justify-between border p-3 rounded-md">
             <div>
-              <h4 className="font-medium">{habito.titulo}</h4>
+              <h4 className="font-medium">{habito.title}</h4>
               <p className="text-sm text-muted-foreground">{t('completionRate')}: 85%</p>
             </div>
             <div className="text-sm font-bold text-green-600">+15% {t('inSales')}</div>
