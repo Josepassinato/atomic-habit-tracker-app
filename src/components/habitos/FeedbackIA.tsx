@@ -19,7 +19,8 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
   
   if (!feedback) return null;
   
-  const apiKeyMissing = !openAIService.getApiKey();
+  // Verifica se a chave da API está configurada no sistema
+  const apiKeyMissing = !openAIService.getApiKeySync();
   
   const irParaAdmin = () => {
     navigate("/admin");
@@ -29,7 +30,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
     <div className={`mt-6 p-4 rounded-md border ${apiKeyMissing ? 'bg-amber-50' : 'bg-slate-50'}`}>
       <div className={`flex items-center gap-2 mb-2 ${apiKeyMissing ? 'text-amber-600' : 'text-primary'}`}>
         {apiKeyMissing ? <AlertCircle size={18} /> : <Brain size={18} />}
-        <h4 className="font-medium">{apiKeyMissing ? t('configurationRequired') : t('aiFeedback')}</h4>
+        <h4 className="font-medium">{apiKeyMissing ? 'Configuração Necessária' : 'Feedback da IA'}</h4>
       </div>
       <p className="text-sm">{feedback}</p>
       
@@ -41,7 +42,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
             onClick={irParaAdmin}
             className="text-amber-600 border-amber-200 hover:bg-amber-100"
           >
-            {t('configureOpenAiApi')}
+            Configurar API da OpenAI no Painel Admin
           </Button>
         </div>
       )}
@@ -49,7 +50,7 @@ const FeedbackIA: React.FC<FeedbackIAProps> = ({ feedback }) => {
       {apiKeyMissing && !isAdmin && (
         <div className="mt-3">
           <p className="text-xs text-amber-600">
-            {t('adminNeedsToConfigureApi')}
+            O administrador do sistema precisa configurar a API da OpenAI para habilitar esta funcionalidade.
           </p>
         </div>
       )}
