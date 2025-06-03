@@ -1,5 +1,6 @@
 
 import { AdminMetrics } from "@/types/admin";
+import { supabase } from "@/integrations/supabase/client";
 
 // Tipos para os dados do painel administrativo
 export type EmpresaAdmin = {
@@ -16,87 +17,73 @@ export type EmpresaAdmin = {
 export const adminDataService = {
   // Função para carregar os dados do painel administrativo
   async carregarDadosAdmin(): Promise<{ empresas: EmpresaAdmin[]; estatisticas: AdminMetrics }> {
-    // Em um app real, estes dados viriam do Supabase
-    // Por enquanto, usamos dados fictícios para demonstração
-    const dadosFicticios: EmpresaAdmin[] = [
-      {
-        id: "1",
-        nome: "TechSolutions Ltda",
-        segmento: "Tecnologia",
-        plano: "Enterprise",
-        data_cadastro: "2025-02-15",
-        tokens_consumidos: 125000,
-        tokens_limite: 500000,
-        status: "ativo"
-      },
-      {
-        id: "2",
-        nome: "Vendas Globais SA",
-        segmento: "Varejo",
-        plano: "Professional",
-        data_cadastro: "2025-03-21",
-        tokens_consumidos: 43200,
-        tokens_limite: 100000,
-        status: "ativo"
-      },
-      {
-        id: "3",
-        nome: "Marketing Digital Express",
-        segmento: "Marketing",
-        plano: "Starter",
-        data_cadastro: "2025-04-05",
-        tokens_consumidos: 9800,
-        tokens_limite: 50000,
-        status: "trial"
-      },
-      {
-        id: "4",
-        nome: "Consultoria Nexus",
-        segmento: "Consultoria",
-        plano: "Professional",
-        data_cadastro: "2025-03-10",
-        tokens_consumidos: 78500,
-        tokens_limite: 100000,
-        status: "ativo"
-      },
-      {
-        id: "5",
-        nome: "Imobiliária Futuro",
-        segmento: "Imobiliário",
-        plano: "Starter",
-        data_cadastro: "2025-02-28",
-        tokens_consumidos: 12300,
-        tokens_limite: 50000,
-        status: "inativo"
+    try {
+      // Buscar empresas reais do Supabase
+      const { data: companies, error: companiesError } = await supabase
+        .from('companies')
+        .select('*');
+
+      if (companiesError) {
+        console.error("Erro ao buscar empresas:", companiesError);
+        throw companiesError;
       }
-    ];
 
-    // Calcula estatísticas
-    const ativas = dadosFicticios.filter(e => e.status === "ativo").length;
-    const inativas = dadosFicticios.filter(e => e.status === "inativo").length;
-    const trial = dadosFicticios.filter(e => e.status === "trial").length;
-    const tokens = dadosFicticios.reduce((acc, emp) => acc + emp.tokens_consumidos, 0);
-    
-    // Cálculo simplificado da receita
-    const receita = dadosFicticios.reduce((acc, emp) => {
-      if (emp.status !== "ativo") return acc;
-      switch(emp.plano) {
-        case "Enterprise": return acc + 997;
-        case "Professional": return acc + 497;
-        case "Starter": return acc + 197;
-        default: return acc;
+      // Buscar dados de usuários/profiles para completar as informações
+      const { data: profiles, error: profilesError } = await supabase
+        .from('user_profiles')
+        .select('*');
+
+      if (profilesError) {
+        console.error("Erro ao buscar profiles:", profilesError);
       }
-    }, 0);
 
-    const estatisticas: AdminMetrics = {
-      totalEmpresas: dadosFicticios.length,
-      empresasAtivas: ativas,
-      empresasInativas: inativas,
-      empresasTrial: trial,
-      tokensTotais: tokens,
-      receitaMensal: receita
-    };
+      // Mapear dados reais para o formato esperado
+      const empresasReais: EmpresaAdmin[] = (companies || []).map(company => ({
+        id: company.id,
+        nome: company.name || 'Empresa sem nome',
+        segmento: company.segment || 'Não definido',
+        plano: 'Professional', // Por enquanto, usar um plano padrão
+        data_cadastro: new Date(company.created_at).toISOString().split('T')[0],
+        tokens_consumidos: 0, // Será implementado quando tivermos sistema de tokens
+        tokens_limite: 100000, // Limite padrão
+        status: "ativo" as const
+      }));
 
-    return { empresas: dadosFicticios, estatisticas };
+      // Calcular estatísticas reais
+      const totalEmpresas = empresasReais.length;
+      const empresasAtivas = empresasReais.filter(e => e.status === "ativo").length;
+      const empresasInativas = empresasReais.filter(e => e.status === "inativo").length;
+      const empresasTrial = empresasReais.filter(e => e.status === "trial").length;
+      const tokensTotais = empresasReais.reduce((acc, emp) => acc + emp.tokens_consumidos, 0);
+
+      // Cálculo simplificado da receita baseado nos planos ativos
+      const receitaMensal = empresasAtivas * 497; // Assumindo plano Professional
+
+      const estatisticas: AdminMetrics = {
+        totalEmpresas,
+        empresasAtivas,
+        empresasInativas,
+        empresasTrial,
+        tokensTotais,
+        receitaMensal
+      };
+
+      return { empresas: empresasReais, estatisticas };
+
+    } catch (error) {
+      console.error("Erro ao carregar dados administrativos:", error);
+      
+      // Em caso de erro, retornar dados vazios
+      const estatisticasVazias: AdminMetrics = {
+        totalEmpresas: 0,
+        empresasAtivas: 0,
+        empresasInativas: 0,
+        empresasTrial: 0,
+        tokensTotais: 0,
+        receitaMensal: 0
+      };
+
+      return { empresas: [], estatisticas: estatisticasVazias };
+    }
   }
 };

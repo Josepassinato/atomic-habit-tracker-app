@@ -18,22 +18,16 @@ import { AdminMetrics, AdminSettings as AdminSettingsType } from "@/types/admin"
 import { getCurrentUser } from "@/utils/permissions";
 import { openAIService } from "@/services/openai-service";
 import { supabaseService } from "@/services/supabase";
+import { useAdminData } from "@/hooks/useAdminData";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("analytics");
-
-  // Admin metrics
-  const [metrics, setMetrics] = useState<AdminMetrics>({
-    totalEmpresas: 0,
-    empresasAtivas: 0, 
-    empresasInativas: 0,
-    empresasTrial: 0,
-    tokensTotais: 0,
-    receitaMensal: 0
-  });
+  
+  // Usar o hook para dados reais
+  const { empresas, estatisticas, loading: dadosLoading, error } = useAdminData();
 
   // Admin settings
   const [settings, setSettings] = useState<AdminSettingsType>({
@@ -64,8 +58,8 @@ const AdminDashboard = () => {
         toast.error("Você não tem permissão para acessar esta página");
         navigate("/dashboard");
       } else {
-        // Load admin data if user is admin
-        await fetchAdminData();
+        // Load admin settings
+        await fetchAdminSettings();
       }
       
       setLoading(false);
@@ -74,21 +68,8 @@ const AdminDashboard = () => {
     checkAdminAccess();
   }, [navigate]);
 
-  // Fetch admin data
-  const fetchAdminData = async () => {
-    // In a real app, this would fetch from Supabase
-    // For now, using mock data
-    
-    // Mock metrics
-    setMetrics({
-      totalEmpresas: 12,
-      empresasAtivas: 8,
-      empresasInativas: 2,
-      empresasTrial: 2,
-      tokensTotais: 456000,
-      receitaMensal: 3988
-    });
-
+  // Fetch admin settings (não dados fictícios)
+  const fetchAdminSettings = async () => {
     // Carregar configurações de APIs de forma síncrona
     const openAIKey = openAIService.getApiKeySync() || "";
     const supabaseKey = supabaseService.getApiKey() || "";
@@ -150,7 +131,7 @@ const AdminDashboard = () => {
     }
   };
 
-  if (loading) {
+  if (loading || dadosLoading) {
     return <div className="flex items-center justify-center h-screen">Carregando...</div>;
   }
 
@@ -158,10 +139,26 @@ const AdminDashboard = () => {
     return null; // Component will be unmounted when navigate is called
   }
 
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar dados</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
       <div className="flex items-center justify-between space-y-2">
         <h2 className="text-3xl font-bold tracking-tight">Painel de Administração</h2>
+        {empresas.length === 0 && (
+          <div className="text-sm text-amber-600">
+            Nenhuma empresa encontrada no banco de dados
+          </div>
+        )}
       </div>
       
       <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
@@ -173,7 +170,7 @@ const AdminDashboard = () => {
         </TabsList>
         
         <TabsContent value="analytics" className="space-y-4">
-          <AdminAnalytics metrics={metrics} />
+          <AdminAnalytics metrics={estatisticas} />
         </TabsContent>
         
         <TabsContent value="users" className="space-y-4">

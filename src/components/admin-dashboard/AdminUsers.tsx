@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import {
   Card,
@@ -35,127 +36,65 @@ const AdminUsers = () => {
     setLoading(true);
     
     try {
-      // Mock data with proper types
-      const mockCompanies: Company[] = [
-        {
-          id: "1",
-          name: "TechSolutions Ltd",
-          segment: "Technology",
-          plan: "Enterprise" as PlanType,
-          registration_date: "2025-02-15",
-          status: "active" as StatusType,
-          contact_email: "contact@techsolutions.com"
-        },
-        {
-          id: "2",
-          name: "Global Sales Corp",
-          segment: "Retail",
-          plan: "Professional" as PlanType,
-          registration_date: "2025-03-21",
-          status: "active" as StatusType,
-          contact_email: "admin@globalsales.com"
-        },
-        {
-          id: "3",
-          name: "Digital Marketing Express",
-          segment: "Marketing",
-          plan: "Starter" as PlanType,
-          registration_date: "2025-04-05",
-          status: "trial" as StatusType,
-          contact_email: "info@digitalmarketing.com"
-        },
-        {
-          id: "4",
-          name: "Nexus Consulting",
-          segment: "Consulting",
-          plan: "Professional" as PlanType,
-          registration_date: "2025-03-10",
-          status: "active" as StatusType,
-          contact_email: "contact@nexus.com"
-        },
-        {
-          id: "5",
-          name: "Future Real Estate",
-          segment: "Real Estate",
-          plan: "Starter" as PlanType,
-          registration_date: "2025-02-28",
-          status: "inactive" as StatusType,
-          contact_email: "sales@futurerealestate.com"
-        }
-      ];
-      
       if (supabase) {
-        // Fetch data from Supabase
-        const { data, error } = await supabase
+        // Buscar dados reais do Supabase
+        const { data: companiesData, error: companiesError } = await supabase
           .from('companies')
           .select('*');
         
-        if (error) {
-          console.error("Error fetching companies:", error);
-          throw error;
+        if (companiesError) {
+          console.error("Erro ao buscar empresas:", companiesError);
+          throw companiesError;
         }
         
-        if (data && data.length > 0) {
-          // Map Supabase data to expected format with proper types
-          const mappedData: Company[] = data.map(company => ({
-            id: company.id,
-            name: company.name,
-            segment: company.segment || 'Unknown',
-            plan: 'Professional' as PlanType,
-            registration_date: new Date(company.created_at).toISOString().split('T')[0],
-            status: 'active' as StatusType,
-            contact_email: `contact@${company.name.toLowerCase().replace(/\s+/g, '')}.com`
-          }));
+        // Buscar dados de profiles para obter emails
+        const { data: profilesData, error: profilesError } = await supabase
+          .from('user_profiles')
+          .select('*');
+        
+        if (profilesError) {
+          console.error("Erro ao buscar profiles:", profilesError);
+        }
+        
+        if (companiesData && companiesData.length > 0) {
+          // Mapear dados reais do Supabase para o formato esperado
+          const mappedData: Company[] = companiesData.map(company => {
+            // Encontrar o profile relacionado à empresa (se houver)
+            const relatedProfile = profilesData?.find(profile => profile.company_id === company.id);
+            
+            return {
+              id: company.id,
+              name: company.name || 'Empresa sem nome',
+              segment: company.segment || 'Não definido',
+              plan: 'Professional' as PlanType, // Por enquanto, usar um plano padrão
+              registration_date: new Date(company.created_at).toISOString().split('T')[0],
+              status: 'active' as StatusType, // Por enquanto, considerar todas ativas
+              contact_email: relatedProfile?.email || `contato@${company.name?.toLowerCase().replace(/\s+/g, '') || 'empresa'}.com`
+            };
+          });
+          
           setCompanies(mappedData);
         } else {
-          // If no data in Supabase, use mock data
-          setCompanies(mockCompanies);
+          // Se não há dados no Supabase, mostrar lista vazia
+          setCompanies([]);
+          console.log("Nenhuma empresa encontrada no banco de dados");
         }
       } else {
-        // Fallback to local data
-        const savedCompanies = localStorage.getItem('admin_companies');
-        if (savedCompanies) {
-          setCompanies(JSON.parse(savedCompanies));
-        } else {
-          setCompanies(mockCompanies);
-          localStorage.setItem('admin_companies', JSON.stringify(mockCompanies));
-        }
+        // Se não há conexão com Supabase, usar dados vazios
+        setCompanies([]);
+        toast.info("Conecte-se ao Supabase para ver dados reais");
       }
     } catch (error) {
-      console.error("Error loading companies:", error);
-      toast.error("Unable to load company list");
-      
-      // Fallback to mock data in case of error
-      const mockCompanies: Company[] = [
-        {
-          id: "1",
-          name: "TechSolutions Ltd",
-          segment: "Technology",
-          plan: "Enterprise" as PlanType,
-          registration_date: "2025-02-15",
-          status: "active" as StatusType,
-          contact_email: "contact@techsolutions.com"
-        },
-        {
-          id: "2",
-          name: "Global Sales Corp",
-          segment: "Retail",
-          plan: "Professional" as PlanType,
-          registration_date: "2025-03-21",
-          status: "active" as StatusType,
-          contact_email: "admin@globalsales.com"
-        }
-      ];
-      
-      setCompanies(mockCompanies);
+      console.error("Erro ao carregar empresas:", error);
+      toast.error("Erro ao carregar lista de empresas");
+      setCompanies([]);
     } finally {
       setLoading(false);
     }
   };
   
   const handleAddCompany = () => {
-    // Future implementation for adding companies
-    toast.info("Add company functionality in development");
+    toast.info("Funcionalidade de adicionar empresa em desenvolvimento");
   };
   
   const filteredCompanies = companies.filter(company => 
@@ -167,40 +106,40 @@ const AdminUsers = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Company Management</CardTitle>
+        <CardTitle>Gerenciamento de Empresas</CardTitle>
         <CardDescription>
-          Manage all companies registered on the platform.
+          Gerencie todas as empresas cadastradas na plataforma.
         </CardDescription>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Search companies..."
+              placeholder="Buscar empresas..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button onClick={handleAddCompany}>Add Company</Button>
+          <Button onClick={handleAddCompany}>Adicionar Empresa</Button>
         </div>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex justify-center p-4">
             <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-            <span className="ml-2">Loading...</span>
+            <span className="ml-2">Carregando...</span>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Name</TableHead>
-                <TableHead>Segment</TableHead>
+                <TableHead>Nome</TableHead>
+                <TableHead>Segmento</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Plan</TableHead>
+                <TableHead>Plano</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Registration Date</TableHead>
+                <TableHead>Data de Cadastro</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -220,21 +159,28 @@ const AdminUsers = () => {
                             : "bg-red-100 text-red-800"
                       }`}>
                         {company.status === "active" 
-                          ? "Active" 
+                          ? "Ativo" 
                           : company.status === "trial" 
                             ? "Trial" 
-                            : "Inactive"}
+                            : "Inativo"}
                       </span>
                     </TableCell>
                     <TableCell>
-                      {new Date(company.registration_date).toLocaleDateString("en-US")}
+                      {new Date(company.registration_date).toLocaleDateString("pt-BR")}
                     </TableCell>
                   </TableRow>
                 ))
               ) : (
                 <TableRow>
-                  <TableCell colSpan={6} className="text-center">
-                    No companies found
+                  <TableCell colSpan={6} className="text-center py-8">
+                    <div className="text-muted-foreground">
+                      {searchTerm ? "Nenhuma empresa encontrada com os critérios de busca" : "Nenhuma empresa cadastrada no sistema"}
+                    </div>
+                    {!searchTerm && (
+                      <div className="mt-2 text-sm text-muted-foreground">
+                        As empresas aparecerão aqui quando forem cadastradas através do processo de onboarding
+                      </div>
+                    )}
                   </TableCell>
                 </TableRow>
               )}
