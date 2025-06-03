@@ -3,24 +3,38 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, AlertCircle, Loader2, Key, Database } from "lucide-react";
+import { Check, X, AlertCircle, Loader2, Key, Database, RefreshCw } from "lucide-react";
 import { openAIService } from "@/services/openai-service";
 import { toast } from "sonner";
 
 const OpenAIStatusChecker: React.FC = () => {
   const [isConfigured, setIsConfigured] = useState(false);
   const [isTestingConnection, setIsTestingConnection] = useState(false);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
   const [lastTestTime, setLastTestTime] = useState<Date | null>(null);
 
   // Verifica se a chave está configurada ao carregar o componente
-  useEffect(() => {
-    const checkApiKey = async () => {
+  const checkApiKey = async () => {
+    setIsRefreshing(true);
+    try {
       const apiKey = await openAIService.getApiKey();
       setIsConfigured(!!apiKey);
-    };
-    
+      console.log("API Key check:", !!apiKey ? "Configurada" : "Não configurada");
+    } catch (error) {
+      console.error("Erro ao verificar chave da API:", error);
+    } finally {
+      setIsRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
     checkApiKey();
+    
+    // Verifica a cada 5 segundos se houve mudanças
+    const interval = setInterval(checkApiKey, 5000);
+    
+    return () => clearInterval(interval);
   }, []);
 
   const testConnection = async () => {
@@ -47,7 +61,20 @@ const OpenAIStatusChecker: React.FC = () => {
     }
   };
 
+  const refreshStatus = async () => {
+    await checkApiKey();
+    setConnectionStatus("unknown");
+    toast.info("Status atualizado!");
+  };
+
   const getStatusBadge = () => {
+    if (isRefreshing) {
+      return <Badge variant="secondary" className="flex items-center gap-1">
+        <Loader2 size={12} className="animate-spin" />
+        Verificando...
+      </Badge>;
+    }
+
     if (!isConfigured) {
       return <Badge variant="destructive" className="flex items-center gap-1">
         <X size={12} />
@@ -75,6 +102,10 @@ const OpenAIStatusChecker: React.FC = () => {
   };
 
   const getStatusMessage = () => {
+    if (isRefreshing) {
+      return "Verificando configuração da chave da API...";
+    }
+
     if (!isConfigured) {
       return "A chave da API da OpenAI não está configurada no sistema.";
     }
@@ -104,7 +135,18 @@ const OpenAIStatusChecker: React.FC = () => {
       <CardContent className="space-y-4">
         <div className="flex items-center justify-between">
           <span className="text-sm font-medium">Status da Configuração:</span>
-          {getStatusBadge()}
+          <div className="flex items-center gap-2">
+            {getStatusBadge()}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={refreshStatus}
+              disabled={isRefreshing}
+              className="h-8 w-8 p-0"
+            >
+              <RefreshCw className={`h-4 w-4 ${isRefreshing ? 'animate-spin' : ''}`} />
+            </Button>
+          </div>
         </div>
 
         <div className="p-3 bg-muted rounded-md">

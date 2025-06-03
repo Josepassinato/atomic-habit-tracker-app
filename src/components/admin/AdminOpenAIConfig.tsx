@@ -12,6 +12,7 @@ const AdminOpenAIConfig: React.FC = () => {
   const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
+  const [isConfigured, setIsConfigured] = useState(false);
   
   // Carrega a chave da API ao montar o componente
   useEffect(() => {
@@ -19,6 +20,7 @@ const AdminOpenAIConfig: React.FC = () => {
       const savedKey = await openAIService.getApiKey();
       if (savedKey) {
         setApiKey(savedKey);
+        setIsConfigured(true);
       }
     };
     
@@ -38,7 +40,11 @@ const AdminOpenAIConfig: React.FC = () => {
       
       if (success) {
         setConnectionStatus("unknown");
+        setIsConfigured(true);
         toast.success("Chave da API salva com sucesso no banco de dados!");
+        
+        // Dispara um evento personalizado para notificar outros componentes
+        window.dispatchEvent(new CustomEvent('openai-key-updated'));
       } else {
         toast.error("Erro ao salvar a chave API no banco de dados.");
       }
@@ -84,6 +90,12 @@ const AdminOpenAIConfig: React.FC = () => {
           <Key className="h-5 w-5" />
           Configuração da API OpenAI
           <Database className="h-4 w-4 text-green-600" />
+          {isConfigured && (
+            <Badge variant="default" className="bg-green-600 flex items-center gap-1 ml-2">
+              <Check size={12} />
+              Configurada
+            </Badge>
+          )}
         </CardTitle>
         <CardDescription>
           Configure aqui a chave da API da OpenAI que será usada por todos os clientes do SaaS.
