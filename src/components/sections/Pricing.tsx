@@ -138,7 +138,7 @@ const Pricing = () => {
           <Card>
             <CardHeader>
               <CardTitle>{t('startupPlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">R${currentPrices.starter}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">${currentPrices.starter}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('startupDesc')}
               </CardDescription>
@@ -164,7 +164,7 @@ const Pricing = () => {
                 {t('popular')}
               </div>
               <CardTitle>{t('businessPlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">R${currentPrices.business}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">${currentPrices.business}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('businessDesc')}
               </CardDescription>
@@ -187,7 +187,7 @@ const Pricing = () => {
           <Card>
             <CardHeader>
               <CardTitle>{t('enterprisePlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">R${currentPrices.enterprise}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">${currentPrices.enterprise}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('enterpriseDesc')}
               </CardDescription>

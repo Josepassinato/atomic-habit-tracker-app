@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 import { PlanType, PlansConfiguration, PlanLimits, PlanFeatures } from "@/types/admin";
 import { storageService } from "./storage-service";
@@ -23,7 +22,7 @@ class PlansLimitService {
       starter: {
         tokensLimit: 50000,
         usersLimit: 5,
-        price: 197,
+        price: 79,
         features: {
           aiConsulting: false,
           crmIntegrations: 1,
@@ -35,7 +34,7 @@ class PlansLimitService {
       professional: {
         tokensLimit: 100000,
         usersLimit: 15,
-        price: 497,
+        price: 149,
         features: {
           aiConsulting: true,
           crmIntegrations: 3,
@@ -47,7 +46,7 @@ class PlansLimitService {
       enterprise: {
         tokensLimit: 500000,
         usersLimit: 50,
-        price: 997,
+        price: 249,
         features: {
           aiConsulting: true,
           crmIntegrations: 10,
