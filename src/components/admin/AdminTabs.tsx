@@ -4,18 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AdminCompaniesTable from "./AdminCompaniesTable";
 import AdminTokenUsage from "./AdminTokenUsage";
 import AdminPlansDistribution from "./AdminPlansDistribution";
-
-// Tipo para os dados do painel administrativo
-type EmpresaAdmin = {
-  id: string;
-  nome: string;
-  segmento: string;
-  plano: string;
-  data_cadastro: string;
-  tokens_consumidos: number;
-  tokens_limite: number;
-  status: "ativo" | "inativo" | "trial";
-};
+import { EmpresaAdmin } from "@/services/admin-data-service";
 
 interface AdminTabsProps {
   empresas: EmpresaAdmin[];

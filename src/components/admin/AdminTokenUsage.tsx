@@ -1,15 +1,7 @@
 
 import React from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-
-// Tipo para os dados do painel administrativo
-type EmpresaAdmin = {
-  id: string;
-  nome: string;
-  tokens_consumidos: number;
-  tokens_limite: number;
-  status: "ativo" | "inativo" | "trial";
-};
+import { EmpresaAdmin } from "@/services/admin-data-service";
 
 interface AdminTokenUsageProps {
   empresas: EmpresaAdmin[];
