@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { AdminMetrics } from "@/types/admin";
 import AdminMetricsCards from "@/components/admin/AdminMetricsCards";
 import AdminOpenAIConfig from "@/components/admin/AdminOpenAIConfig";
+import OpenAIStatusChecker from "@/components/admin/OpenAIStatusChecker";
 import AdminTabs from "@/components/admin/AdminTabs";
 import { getCurrentUser } from "@/utils/permissions";
 
@@ -173,6 +174,11 @@ const Admin = () => {
 
         {/* Card para configurar chave da API OpenAI */}
         <AdminOpenAIConfig />
+
+        {/* Card para verificar status da OpenAI */}
+        <div className="mb-6">
+          <OpenAIStatusChecker />
+        </div>
 
         {/* Tabs para diferentes visualizações */}
         <AdminTabs empresas={empresas} />
