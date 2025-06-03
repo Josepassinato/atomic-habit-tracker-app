@@ -22,10 +22,19 @@ const Onboarding = () => {
     habitosSelecionados,
     metaMensal,
     metaDiaria,
+    teamDialogOpen,
+    setTeamDialogOpen,
+    editingTeamId,
+    setEditingTeamId,
+    form,
     setCurrentTeam,
     handleHabitoToggle,
     setMetaMensal,
     setMetaDiaria,
+    onTeamSubmit,
+    deleteTeam,
+    editTeam,
+    selectTeam,
     handleFinish
   } = useOnboarding();
 
@@ -77,6 +86,24 @@ const Onboarding = () => {
       metaDiaria,
       setMetaDiaria
     };
+
+    // Add specific props for TeamsTab
+    if (currentTab === "teams") {
+      return (
+        <Component 
+          {...commonProps}
+          teamDialogOpen={teamDialogOpen}
+          setTeamDialogOpen={setTeamDialogOpen}
+          editingTeamId={editingTeamId}
+          setEditingTeamId={setEditingTeamId}
+          form={form}
+          onTeamSubmit={onTeamSubmit}
+          deleteTeam={deleteTeam}
+          editTeam={editTeam}
+          selectTeam={selectTeam}
+        />
+      );
+    }
 
     return <Component {...commonProps} />;
   };
