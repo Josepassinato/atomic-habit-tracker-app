@@ -6,6 +6,7 @@ import HabitosTracker from "@/components/HabitosTracker";
 import MetasVendas from "@/components/MetasVendas";
 import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
+import PageNavigation from "@/components/PageNavigation";
 import { Toaster } from "sonner";
 import { NotificacoesBadge, useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 import { useLanguage } from "@/i18n";
@@ -35,6 +36,7 @@ const Index = () => {
     <div className="flex min-h-screen flex-col bg-background">
       <Toaster richColors closeButton position="top-right" />
       <Header />
+      <PageNavigation showLogout={false} />
       <main className="container flex-1 py-6">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-3xl font-bold">{t('dashboard')}</h1>

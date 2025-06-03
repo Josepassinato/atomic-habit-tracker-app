@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -19,6 +18,7 @@ import { getCurrentUser } from "@/utils/permissions";
 import { openAIService } from "@/services/openai-service";
 import { supabaseService } from "@/services/supabase";
 import { useAdminData } from "@/hooks/useAdminData";
+import PageNavigation from "@/components/PageNavigation";
 
 const AdminDashboard = () => {
   const navigate = useNavigate();
@@ -132,7 +132,12 @@ const AdminDashboard = () => {
   };
 
   if (loading || dadosLoading) {
-    return <div className="flex items-center justify-center h-screen">Carregando...</div>;
+    return (
+      <div className="min-h-screen bg-background">
+        <PageNavigation />
+        <div className="flex items-center justify-center h-screen">Carregando...</div>
+      </div>
+    );
   }
 
   if (!isAdmin) {
@@ -141,50 +146,56 @@ const AdminDashboard = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar dados</h2>
-          <p className="text-gray-600">{error}</p>
+      <div className="min-h-screen bg-background">
+        <PageNavigation />
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-red-600 mb-2">Erro ao carregar dados</h2>
+            <p className="text-gray-600">{error}</p>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
-      <div className="flex items-center justify-between space-y-2">
-        <h2 className="text-3xl font-bold tracking-tight">Painel de Administração</h2>
-        {empresas.length === 0 && (
-          <div className="text-sm text-amber-600">
-            Nenhuma empresa encontrada no banco de dados
-          </div>
-        )}
+    <div className="min-h-screen bg-background">
+      <PageNavigation />
+      <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+        <div className="flex items-center justify-between space-y-2">
+          <h2 className="text-3xl font-bold tracking-tight">Painel de Administração</h2>
+          {empresas.length === 0 && (
+            <div className="text-sm text-amber-600">
+              Nenhuma empresa encontrada no banco de dados
+            </div>
+          )}
+        </div>
+        
+        <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
+          <TabsList>
+            <TabsTrigger value="analytics">Analytics</TabsTrigger>
+            <TabsTrigger value="users">Usuários</TabsTrigger>
+            <TabsTrigger value="plans">Planos</TabsTrigger>
+            <TabsTrigger value="settings">Configurações</TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="analytics" className="space-y-4">
+            <AdminAnalytics metrics={estatisticas} />
+          </TabsContent>
+          
+          <TabsContent value="users" className="space-y-4">
+            <AdminUsers />
+          </TabsContent>
+          
+          <TabsContent value="plans" className="space-y-4">
+            <AdminPlans />
+          </TabsContent>
+          
+          <TabsContent value="settings" className="space-y-4">
+            <AdminSettings settings={settings} onSaveSettings={saveSettings} />
+          </TabsContent>
+        </Tabs>
       </div>
-      
-      <Tabs defaultValue={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList>
-          <TabsTrigger value="analytics">Analytics</TabsTrigger>
-          <TabsTrigger value="users">Usuários</TabsTrigger>
-          <TabsTrigger value="plans">Planos</TabsTrigger>
-          <TabsTrigger value="settings">Configurações</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="analytics" className="space-y-4">
-          <AdminAnalytics metrics={estatisticas} />
-        </TabsContent>
-        
-        <TabsContent value="users" className="space-y-4">
-          <AdminUsers />
-        </TabsContent>
-        
-        <TabsContent value="plans" className="space-y-4">
-          <AdminPlans />
-        </TabsContent>
-        
-        <TabsContent value="settings" className="space-y-4">
-          <AdminSettings settings={settings} onSaveSettings={saveSettings} />
-        </TabsContent>
-      </Tabs>
     </div>
   );
 };

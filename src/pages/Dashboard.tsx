@@ -8,6 +8,7 @@ import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import TeamsDashboardAvancado from "@/components/dashboard/TeamsDashboardAvancado";
+import PageNavigation from "@/components/PageNavigation";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 import { useLanguage } from "@/i18n";
 import { getCurrentUser } from "@/utils/permissions";
@@ -51,7 +52,8 @@ const Dashboard = () => {
   }, [navigate, adicionarNotificacao, t]);
 
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-screen flex-col bg-background">
+      <PageNavigation />
       <main className="container flex-1 py-6">
         <DashboardPersonalizavel>
           <DashboardSummary />

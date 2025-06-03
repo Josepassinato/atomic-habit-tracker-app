@@ -5,6 +5,7 @@ import { KeyRound, Bell, Shield } from "lucide-react";
 import APIConfigTab from "@/components/configuracoes/APIConfigTab";
 import NotificationsTab from "@/components/configuracoes/NotificationsTab";
 import PrivacyTab from "@/components/configuracoes/PrivacyTab";
+import PageNavigation from "@/components/PageNavigation";
 import { useLanguage } from "@/i18n";
 
 const Configuracoes = () => {
@@ -25,7 +26,8 @@ const Configuracoes = () => {
   };
   
   return (
-    <>
+    <div className="min-h-screen bg-background">
+      <PageNavigation />
       <main className="container py-6">
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-3xl font-bold">{t('settings')}</h1>
@@ -65,7 +67,7 @@ const Configuracoes = () => {
           Habitus © 2025 - {getFooterTagline()}
         </div>
       </footer>
-    </>
+    </div>
   );
 };
 
