@@ -1,21 +1,14 @@
 
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, ArrowRight } from "lucide-react";
-import { toast } from "sonner";
-import TeamsTab from "./onboarding/TeamsTab";
-import HabitsTab from "./onboarding/HabitsTab";
-import GoalsTab from "./onboarding/GoalsTab";
-import IntegrationsTab from "./onboarding/IntegrationsTab";
-import RewardsTab from "./onboarding/RewardsTab";
+import OnboardingHeader from "./onboarding/OnboardingHeader";
+import OnboardingContainer from "./onboarding/OnboardingContainer";
 import { useOnboarding } from "./onboarding/useOnboarding";
 
 const Onboarding = () => {
   const navigate = useNavigate();
   const [currentTab, setCurrentTab] = useState("teams");
+  
   const { 
     teams, 
     currentTeam, 
@@ -55,11 +48,11 @@ const Onboarding = () => {
   };
 
   const tabs = [
-    { id: "teams", label: "Teams", component: TeamsTab },
-    { id: "habits", label: "Habits", component: HabitsTab },
-    { id: "goals", label: "Goals", component: GoalsTab },
-    { id: "integrations", label: "Integrations", component: IntegrationsTab },
-    { id: "rewards", label: "Rewards", component: RewardsTab }
+    { id: "teams", label: "Teams" },
+    { id: "habits", label: "Habits" },
+    { id: "goals", label: "Goals" },
+    { id: "integrations", label: "Integrations" },
+    { id: "rewards", label: "Rewards" }
   ];
 
   const currentTabIndex = tabs.findIndex(tab => tab.id === currentTab);
@@ -82,124 +75,48 @@ const Onboarding = () => {
     }
   };
 
-  const renderCurrentTab = () => {
-    switch (currentTab) {
-      case "teams":
-        return (
-          <TeamsTab 
-            currentTeam={currentTeam}
-            teams={teams}
-            teamDialogOpen={teamDialogOpen}
-            setTeamDialogOpen={setTeamDialogOpen}
-            editingTeamId={editingTeamId}
-            setEditingTeamId={setEditingTeamId}
-            form={form}
-            onTeamSubmit={onTeamSubmit}
-            deleteTeam={deleteTeam}
-            editTeam={editTeam}
-            selectTeam={selectTeam}
-          />
-        );
-      case "habits":
-        return (
-          <HabitsTab 
-            currentTeam={currentTeam}
-            habitosSelecionados={habitosSelecionados}
-            handleHabitoToggle={handleHabitoToggle}
-          />
-        );
-      case "goals":
-        return (
-          <GoalsTab 
-            currentTeam={currentTeam}
-            metaMensal={metaMensal}
-            setMetaMensal={setMetaMensal}
-            metaDiaria={metaDiaria}
-            setMetaDiaria={setMetaDiaria}
-          />
-        );
-      case "integrations":
-        return (
-          <IntegrationsTab 
-            currentTeam={currentTeam}
-          />
-        );
-      case "rewards":
-        return (
-          <RewardsTab 
-            currentTeam={currentTeam}
-            recompensaTipo={recompensaTipo}
-            setRecompensaTipo={setRecompensaTipo}
-            recompensaDescricao={recompensaDescricao}
-            setRecompensaDescricao={setRecompensaDescricao}
-            recompensasMetas={recompensasMetas}
-            adicionarRecompensa={adicionarRecompensa}
-            removerRecompensa={removerRecompensa}
-            comissaoBase={comissaoBase}
-            setComissaoBase={setComissaoBase}
-            comissaoHabitos={comissaoHabitos}
-            setComissaoHabitos={setComissaoHabitos}
-            isComissaoAberta={isComissaoAberta}
-            setIsComissaoAberta={setIsComissaoAberta}
-          />
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100">
-      <div className="p-4">
-        <Button variant="ghost" size="sm" onClick={handleBack} className="flex items-center gap-2">
-          <ArrowLeft size={16} />
-          Voltar
-        </Button>
-      </div>
-
-      <div className="container mx-auto px-4 py-8">
-        <Card className="max-w-4xl mx-auto">
-          <CardHeader className="text-center">
-            <CardTitle className="text-3xl">Welcome to Habitus</CardTitle>
-            <p className="text-muted-foreground">
-              Let's set up your sales performance system
-            </p>
-          </CardHeader>
-          <CardContent>
-            <Tabs value={currentTab} onValueChange={setCurrentTab}>
-              <TabsList className="grid w-full grid-cols-5">
-                {tabs.map((tab) => (
-                  <TabsTrigger key={tab.id} value={tab.id}>
-                    {tab.label}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-
-              {tabs.map((tab) => (
-                <TabsContent key={tab.id} value={tab.id} className="mt-6">
-                  {renderCurrentTab()}
-                </TabsContent>
-              ))}
-            </Tabs>
-
-            <div className="flex justify-between mt-8">
-              <Button 
-                variant="outline" 
-                onClick={handlePrevious}
-                disabled={isFirstTab}
-              >
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Previous
-              </Button>
-              
-              <Button onClick={handleNext}>
-                {isLastTab ? "Finish Setup" : "Next"}
-                {!isLastTab && <ArrowRight className="ml-2 h-4 w-4" />}
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <OnboardingHeader onBack={handleBack} />
+      
+      <OnboardingContainer
+        currentTab={currentTab}
+        setCurrentTab={setCurrentTab}
+        currentTeam={currentTeam}
+        teams={teams}
+        habitosSelecionados={habitosSelecionados}
+        metaMensal={metaMensal}
+        metaDiaria={metaDiaria}
+        teamDialogOpen={teamDialogOpen}
+        setTeamDialogOpen={setTeamDialogOpen}
+        editingTeamId={editingTeamId}
+        setEditingTeamId={setEditingTeamId}
+        form={form}
+        onTeamSubmit={onTeamSubmit}
+        deleteTeam={deleteTeam}
+        editTeam={editTeam}
+        selectTeam={selectTeam}
+        handleHabitoToggle={handleHabitoToggle}
+        setMetaMensal={setMetaMensal}
+        setMetaDiaria={setMetaDiaria}
+        recompensaTipo={recompensaTipo}
+        setRecompensaTipo={setRecompensaTipo}
+        recompensaDescricao={recompensaDescricao}
+        setRecompensaDescricao={setRecompensaDescricao}
+        recompensasMetas={recompensasMetas}
+        adicionarRecompensa={adicionarRecompensa}
+        removerRecompensa={removerRecompensa}
+        comissaoBase={comissaoBase}
+        setComissaoBase={setComissaoBase}
+        comissaoHabitos={comissaoHabitos}
+        setComissaoHabitos={setComissaoHabitos}
+        isComissaoAberta={isComissaoAberta}
+        setIsComissaoAberta={setIsComissaoAberta}
+        onNext={handleNext}
+        onPrevious={handlePrevious}
+        isFirstTab={isFirstTab}
+        isLastTab={isLastTab}
+      />
     </div>
   );
 };
