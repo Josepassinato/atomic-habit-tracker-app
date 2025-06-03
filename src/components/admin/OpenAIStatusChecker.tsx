@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Check, X, AlertCircle, Loader2, Key } from "lucide-react";
+import { Check, X, AlertCircle, Loader2, Key, Database } from "lucide-react";
 import { openAIService } from "@/services/openai-service";
 import { toast } from "sonner";
 
@@ -15,8 +15,12 @@ const OpenAIStatusChecker: React.FC = () => {
 
   // Verifica se a chave está configurada ao carregar o componente
   useEffect(() => {
-    const apiKey = openAIService.getApiKey();
-    setIsConfigured(!!apiKey);
+    const checkApiKey = async () => {
+      const apiKey = await openAIService.getApiKey();
+      setIsConfigured(!!apiKey);
+    };
+    
+    checkApiKey();
   }, []);
 
   const testConnection = async () => {
@@ -81,7 +85,7 @@ const OpenAIStatusChecker: React.FC = () => {
       case "failed":
         return "A chave está configurada, mas a conexão falhou. Verifique se a chave é válida.";
       default:
-        return "Chave configurada. Clique em 'Testar Conexão' para verificar se está operacional.";
+        return "Chave configurada no banco de dados. Clique em 'Testar Conexão' para verificar se está operacional.";
     }
   };
 
@@ -91,9 +95,10 @@ const OpenAIStatusChecker: React.FC = () => {
         <CardTitle className="flex items-center gap-2">
           <Key className="h-5 w-5" />
           Status da OpenAI API
+          <Database className="h-4 w-4 text-green-600" />
         </CardTitle>
         <CardDescription>
-          Verificação do status e operacionalidade da chave da OpenAI
+          Verificação do status e operacionalidade da chave da OpenAI armazenada no banco de dados
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -142,6 +147,18 @@ const OpenAIStatusChecker: React.FC = () => {
           <div className="p-3 bg-amber-50 border border-amber-200 rounded-md">
             <p className="text-sm text-amber-800">
               Para configurar a chave da OpenAI, acesse a seção "Configuração da API OpenAI" acima.
+            </p>
+          </div>
+        )}
+
+        {isConfigured && (
+          <div className="p-3 bg-green-50 border border-green-200 rounded-md">
+            <div className="flex items-center gap-2 text-green-700">
+              <Database className="h-4 w-4" />
+              <span className="text-sm font-medium">Armazenamento Persistente</span>
+            </div>
+            <p className="text-xs text-green-600 mt-1">
+              A chave da API está armazenada de forma segura no banco de dados e não será perdida.
             </p>
           </div>
         )}

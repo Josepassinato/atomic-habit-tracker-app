@@ -1,129 +1,150 @@
 
-import { toast } from "sonner";
-import { storageService } from "./storage-service";
-import { supabaseService } from "./supabase";
-
-// Define o tipo para as respostas da OpenAI
-interface OpenAIResponse {
-  choices: {
-    message: {
-      content: string;
-    };
-  }[];
-}
+import { supabase } from "@/integrations/supabase/client";
 
 class OpenAIService {
-  private apiKeyCache: string | null = null;
+  private apiKey: string | null = null;
+  private readonly ADMIN_SETTINGS_ID = '00000000-0000-0000-0000-000000000001';
 
   constructor() {
-    // Tenta recuperar a chave da API do storage service
-    this.apiKeyCache = storageService.getItem<string>("admin-openai-api-key");
+    // Load API key from Supabase on initialization
+    this.loadApiKeyFromDatabase();
   }
 
-  setApiKey(apiKey: string) {
-    this.apiKeyCache = apiKey;
-    storageService.setItem("admin-openai-api-key", apiKey);
-    
-    // Tenta salvar a configuração no banco se o Supabase estiver configurado
-    if (supabaseService.isConfigured()) {
-      supabaseService.saveConfigToDatabase();
-    }
-  }
-
-  getApiKey() {
-    // Sempre verifique o storage primeiro, caso tenha sido atualizado em outra aba
-    if (!this.apiKeyCache) {
-      this.apiKeyCache = storageService.getItem<string>("admin-openai-api-key");
-    }
-    return this.apiKeyCache;
-  }
-
-  async testConnection(): Promise<boolean> {
-    if (!this.getApiKey()) {
-      toast.error("API da OpenAI não configurada");
-      return false;
-    }
-
+  // Load API key from Supabase database
+  private async loadApiKeyFromDatabase(): Promise<void> {
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.getApiKey()}`,
-        },
-        body: JSON.stringify({
-          model: "gpt-4o-mini",
-          messages: [
-            {
-              role: "system",
-              content: "You are a test assistant. Respond with 'Conexão bem-sucedida' only.",
-            },
-            {
-              role: "user",
-              content: "Test connection",
-            },
-          ],
-          max_tokens: 20,
-        }),
-      });
+      const { data, error } = await supabase
+        .from('admin_settings')
+        .select('openai_api_key')
+        .eq('id', this.ADMIN_SETTINGS_ID)
+        .single();
 
-      if (!response.ok) {
-        const error = await response.json();
-        console.error("Erro na conexão com OpenAI:", error);
+      if (error) {
+        console.error('Erro ao carregar chave da API do banco:', error);
+        return;
+      }
+
+      if (data?.openai_api_key) {
+        this.apiKey = data.openai_api_key;
+        console.log('Chave da API OpenAI carregada do banco de dados');
+      }
+    } catch (error) {
+      console.error('Erro ao conectar com o banco:', error);
+    }
+  }
+
+  // Save API key to Supabase database
+  async setApiKey(apiKey: string): Promise<boolean> {
+    try {
+      const { error } = await supabase
+        .from('admin_settings')
+        .update({ 
+          openai_api_key: apiKey,
+          updated_at: new Date().toISOString()
+        })
+        .eq('id', this.ADMIN_SETTINGS_ID);
+
+      if (error) {
+        console.error('Erro ao salvar chave da API no banco:', error);
         return false;
       }
 
-      const data: OpenAIResponse = await response.json();
-      return data.choices[0].message.content.includes("Conexão bem-sucedida");
+      this.apiKey = apiKey;
+      console.log('Chave da API OpenAI salva no banco de dados');
+      return true;
     } catch (error) {
-      console.error("Erro ao testar conexão com OpenAI:", error);
+      console.error('Erro ao conectar com o banco:', error);
       return false;
     }
   }
 
-  async generateText(prompt: string, systemPrompt: string = "Você é um assistente especializado em vendas e produtividade para equipes comerciais."): Promise<string> {
-    if (!this.getApiKey()) {
-      toast.error("API da OpenAI não configurada pelo administrador");
-      return "O administrador do sistema precisa configurar a chave da API da OpenAI para habilitar esta funcionalidade.";
+  // Get API key (reload from database if not cached)
+  async getApiKey(): Promise<string | null> {
+    if (!this.apiKey) {
+      await this.loadApiKeyFromDatabase();
+    }
+    return this.apiKey;
+  }
+
+  // Get API key synchronously (returns cached value)
+  getApiKeySync(): string | null {
+    return this.apiKey;
+  }
+
+  // Test connection with OpenAI API
+  async testConnection(): Promise<boolean> {
+    const apiKey = await this.getApiKey();
+    
+    if (!apiKey) {
+      console.log('API key não configurada');
+      return false;
     }
 
     try {
-      const response = await fetch("https://api.openai.com/v1/chat/completions", {
-        method: "POST",
+      const response = await fetch('https://api.openai.com/v1/models', {
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${this.getApiKey()}`,
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        console.log('Conexão com OpenAI estabelecida com sucesso');
+        return true;
+      } else {
+        console.error('Falha na conexão com OpenAI:', response.status, response.statusText);
+        return false;
+      }
+    } catch (error) {
+      console.error('Erro ao testar conexão com OpenAI:', error);
+      return false;
+    }
+  }
+
+  // Generate AI feedback for habits
+  async generateHabitFeedback(habitData: any): Promise<string> {
+    const apiKey = await this.getApiKey();
+    
+    if (!apiKey) {
+      return "Para receber feedback personalizado de IA, configure a chave da API da OpenAI no painel administrativo.";
+    }
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: "gpt-4o",
+          model: 'gpt-4o-mini',
           messages: [
             {
-              role: "system",
-              content: systemPrompt,
+              role: 'system',
+              content: 'Você é um coach de vendas especializado em hábitos produtivos. Forneça feedback construtivo e motivacional sobre os hábitos do usuário.'
             },
             {
-              role: "user",
-              content: prompt,
-            },
+              role: 'user',
+              content: `Analise este hábito: ${JSON.stringify(habitData)}`
+            }
           ],
+          max_tokens: 200,
           temperature: 0.7,
         }),
       });
 
       if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.error?.message || "Erro ao conectar com a OpenAI");
+        throw new Error(`Erro na API: ${response.status}`);
       }
 
-      const data: OpenAIResponse = await response.json();
-      return data.choices[0].message.content;
+      const data = await response.json();
+      return data.choices[0]?.message?.content || 'Não foi possível gerar feedback no momento.';
     } catch (error) {
-      console.error("Erro ao gerar texto com OpenAI:", error);
-      toast.error("Falha ao conectar com a API da OpenAI");
-      return "Não foi possível obter uma resposta. Por favor, contate o administrador do sistema.";
+      console.error('Erro ao gerar feedback de IA:', error);
+      return 'Erro ao conectar com o serviço de IA. Verifique sua configuração.';
     }
   }
 }
 
-// Exporta uma instância única do serviço
 export const openAIService = new OpenAIService();

@@ -3,33 +3,50 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Key, Shield, Check, X } from "lucide-react";
+import { Key, Shield, Check, X, Database } from "lucide-react";
 import { toast } from "sonner";
 import { openAIService } from "@/services/openai-service";
 
 const AdminOpenAIConfig: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>("");
+  const [isSaving, setIsSaving] = useState(false);
   const [isTesting, setIsTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
   
   // Carrega a chave da API ao montar o componente
   useEffect(() => {
-    const savedKey = openAIService.getApiKey() || "";
-    setApiKey(savedKey);
+    const loadApiKey = async () => {
+      const savedKey = await openAIService.getApiKey();
+      if (savedKey) {
+        setApiKey(savedKey);
+      }
+    };
+    
+    loadApiKey();
   }, []);
 
-  const salvarApiKey = () => {
+  const salvarApiKey = async () => {
+    if (!apiKey.trim()) {
+      toast.error("Por favor, insira uma chave API válida.");
+      return;
+    }
+
+    setIsSaving(true);
+    
     try {
-      if (apiKey.trim()) {
-        openAIService.setApiKey(apiKey);
+      const success = await openAIService.setApiKey(apiKey);
+      
+      if (success) {
         setConnectionStatus("unknown");
-        toast.success("Chave da API salva com sucesso!");
+        toast.success("Chave da API salva com sucesso no banco de dados!");
       } else {
-        toast.error("Por favor, insira uma chave API válida.");
+        toast.error("Erro ao salvar a chave API no banco de dados.");
       }
     } catch (error) {
       console.error("Erro ao salvar a chave API:", error);
       toast.error("Erro ao salvar a chave API.");
+    } finally {
+      setIsSaving(false);
     }
   };
   
@@ -66,9 +83,11 @@ const AdminOpenAIConfig: React.FC = () => {
         <CardTitle className="flex items-center gap-2">
           <Key className="h-5 w-5" />
           Configuração da API OpenAI
+          <Database className="h-4 w-4 text-green-600" />
         </CardTitle>
         <CardDescription>
-          Configure aqui a chave da API da OpenAI que será usada por todos os clientes do SaaS
+          Configure aqui a chave da API da OpenAI que será usada por todos os clientes do SaaS.
+          A chave é armazenada de forma segura no banco de dados Supabase.
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -101,12 +120,22 @@ const AdminOpenAIConfig: React.FC = () => {
               )}
             </div>
           )}
+          
+          <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+            <div className="flex items-center gap-2 text-blue-700">
+              <Database className="h-4 w-4" />
+              <span className="text-sm font-medium">Armazenamento Seguro</span>
+            </div>
+            <p className="text-xs text-blue-600 mt-1">
+              A chave da API é armazenada de forma segura no banco de dados Supabase e não será perdida entre sessões.
+            </p>
+          </div>
         </div>
       </CardContent>
       <CardFooter className="flex gap-3">
-        <Button onClick={salvarApiKey}>
+        <Button onClick={salvarApiKey} disabled={isSaving}>
           <Shield className="mr-2 h-4 w-4" />
-          Salvar Chave da API
+          {isSaving ? "Salvando..." : "Salvar Chave da API"}
         </Button>
         
         <Button 
