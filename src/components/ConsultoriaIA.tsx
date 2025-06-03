@@ -18,7 +18,7 @@ const ConsultoriaIA = () => {
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     { 
       role: 'assistant', 
-      content: 'Olá! Sou o assistente IA do Habitus. Como posso ajudar você hoje? Posso auxiliar com definição de metas, sugestão de hábitos atômicos ou análise do seu desempenho atual.' 
+      content: 'Hello! I am the Habitus AI assistant. How can I help you today? I can assist with goal setting, atomic habits suggestions, or analyzing your current performance.' 
     }
   ]);
   const [inputMensagem, setInputMensagem] = useState("");
@@ -50,7 +50,7 @@ const ConsultoriaIA = () => {
           .limit(50);
         
         if (error) {
-          console.error("Erro ao buscar histórico de chat:", error);
+          console.error("Error fetching chat history:", error);
           return;
         }
         
@@ -71,7 +71,7 @@ const ConsultoriaIA = () => {
         }
       }
     } catch (error) {
-      console.error("Erro ao processar histórico de chat:", error);
+      console.error("Error processing chat history:", error);
     } finally {
       setHistoricoBuscado(true);
     }
@@ -93,16 +93,16 @@ const ConsultoriaIA = () => {
       // Criar contexto com histórico de conversa para a API
       const historico = mensagens
         .slice(-5) // Limitar contexto para as últimas 5 mensagens
-        .map(msg => `${msg.role === 'user' ? 'Usuário' : 'Assistente'}: ${msg.content}`)
+        .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
         .join('\n\n');
         
       const prompt = `
-        Histórico da conversa:
+        Conversation history:
         ${historico}
         
-        Usuário: ${inputMensagem}
+        User: ${inputMensagem}
         
-        Responda como um assistente de vendas especializado em hábitos atômicos e produtividade para equipes comerciais.
+        Respond as a sales assistant specialized in atomic habits and productivity for sales teams.
       `;
       
       const respostaIA = await openAIService.generateText(prompt);
@@ -136,8 +136,8 @@ const ConsultoriaIA = () => {
         localStorage.setItem('chat_history', JSON.stringify(mensagensParaSalvar));
       }
     } catch (error) {
-      console.error("Erro ao obter resposta do assistente:", error);
-      toast.error("Erro ao obter resposta do assistente.");
+      console.error("Error getting assistant response:", error);
+      toast.error("Error getting assistant response.");
     } finally {
       setCarregando(false);
     }
@@ -146,9 +146,9 @@ const ConsultoriaIA = () => {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle>Consultoria IA</CardTitle>
+        <CardTitle>AI Consulting</CardTitle>
         <CardDescription>
-          Receba recomendações personalizadas para suas metas e hábitos
+          Get personalized recommendations for your goals and habits
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -160,7 +160,7 @@ const ConsultoriaIA = () => {
                 msg.role === 'assistant' ? 'bg-muted' : 'bg-primary/10 text-right'
               }`}
             >
-              <p className="font-medium">{msg.role === 'assistant' ? 'Assistente Habitus:' : 'Você:'}</p>
+              <p className="font-medium">{msg.role === 'assistant' ? 'Habitus Assistant:' : 'You:'}</p>
               <p className="mt-1 text-sm">{msg.content}</p>
             </div>
           ))}
@@ -178,7 +178,7 @@ const ConsultoriaIA = () => {
         <div className="flex w-full items-center space-x-2">
           <Input 
             className="flex-1" 
-            placeholder="Digite sua pergunta para a IA..." 
+            placeholder="Ask the AI a question..." 
             value={inputMensagem}
             onChange={(e) => setInputMensagem(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && enviarMensagem()}
@@ -187,7 +187,7 @@ const ConsultoriaIA = () => {
             onClick={enviarMensagem}
             disabled={carregando || !inputMensagem.trim()}
           >
-            {carregando ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Enviar'}
+            {carregando ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Send'}
           </Button>
         </div>
       </CardFooter>
