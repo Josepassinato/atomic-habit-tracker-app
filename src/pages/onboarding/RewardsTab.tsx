@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -11,30 +12,37 @@ import { Team } from "./types";
 
 interface RewardsTabProps {
   currentTeam: Team | null;
+  recompensaTipo: string;
+  setRecompensaTipo: (tipo: string) => void;
+  recompensaDescricao: string;
+  setRecompensaDescricao: (descricao: string) => void;
+  recompensasMetas: {descricao: string; tipo: string}[];
+  adicionarRecompensa: () => void;
+  removerRecompensa: (index: number) => void;
+  comissaoBase: string;
+  setComissaoBase: (comissao: string) => void;
+  comissaoHabitos: string;
+  setComissaoHabitos: (comissao: string) => void;
+  isComissaoAberta: boolean;
+  setIsComissaoAberta: (aberta: boolean) => void;
 }
 
 const RewardsTab: React.FC<RewardsTabProps> = ({
-  currentTeam
+  currentTeam,
+  recompensaTipo,
+  setRecompensaTipo,
+  recompensaDescricao,
+  setRecompensaDescricao,
+  recompensasMetas,
+  adicionarRecompensa,
+  removerRecompensa,
+  comissaoBase,
+  setComissaoBase,
+  comissaoHabitos,
+  setComissaoHabitos,
+  isComissaoAberta,
+  setIsComissaoAberta
 }) => {
-  // Local state for rewards functionality
-  const [recompensaTipo, setRecompensaTipo] = React.useState("individual");
-  const [recompensaDescricao, setRecompensaDescricao] = React.useState("");
-  const [recompensasMetas, setRecompensasMetas] = React.useState<{descricao: string; tipo: string}[]>([]);
-  const [comissaoBase, setComissaoBase] = React.useState("");
-  const [comissaoHabitos, setComissaoHabitos] = React.useState("");
-  const [isComissaoAberta, setIsComissaoAberta] = React.useState(false);
-
-  const adicionarRecompensa = () => {
-    if (recompensaDescricao.trim()) {
-      setRecompensasMetas([...recompensasMetas, { descricao: recompensaDescricao, tipo: recompensaTipo }]);
-      setRecompensaDescricao("");
-    }
-  };
-
-  const removerRecompensa = (index: number) => {
-    setRecompensasMetas(recompensasMetas.filter((_, i) => i !== index));
-  };
-
   if (!currentTeam) return null;
 
   return (

@@ -27,7 +27,6 @@ const Onboarding = () => {
     editingTeamId,
     setEditingTeamId,
     form,
-    setCurrentTeam,
     handleHabitoToggle,
     setMetaMensal,
     setMetaDiaria,
@@ -35,7 +34,20 @@ const Onboarding = () => {
     deleteTeam,
     editTeam,
     selectTeam,
-    handleFinish
+    handleFinish,
+    recompensaTipo,
+    setRecompensaTipo,
+    recompensaDescricao,
+    setRecompensaDescricao,
+    recompensasMetas,
+    adicionarRecompensa,
+    removerRecompensa,
+    comissaoBase,
+    setComissaoBase,
+    comissaoHabitos,
+    setComissaoHabitos,
+    isComissaoAberta,
+    setIsComissaoAberta
   } = useOnboarding();
 
   const handleBack = () => {
@@ -116,6 +128,19 @@ const Onboarding = () => {
         return (
           <RewardsTab 
             currentTeam={currentTeam}
+            recompensaTipo={recompensaTipo}
+            setRecompensaTipo={setRecompensaTipo}
+            recompensaDescricao={recompensaDescricao}
+            setRecompensaDescricao={setRecompensaDescricao}
+            recompensasMetas={recompensasMetas}
+            adicionarRecompensa={adicionarRecompensa}
+            removerRecompensa={removerRecompensa}
+            comissaoBase={comissaoBase}
+            setComissaoBase={setComissaoBase}
+            comissaoHabitos={comissaoHabitos}
+            setComissaoHabitos={setComissaoHabitos}
+            isComissaoAberta={isComissaoAberta}
+            setIsComissaoAberta={setIsComissaoAberta}
           />
         );
       default:
