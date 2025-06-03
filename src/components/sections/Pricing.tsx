@@ -11,13 +11,16 @@ import { PlansConfiguration } from "@/types/admin";
 const Pricing = () => {
   const navigate = useNavigate();
   const { t, language } = useLanguage();
-  const [plansConfig, setPlansConfig] = useState<PlansConfiguration>(
-    plansLimitService.getPlansConfig()
-  );
+  const [plansConfig, setPlansConfig] = useState<PlansConfiguration>(() => {
+    // Force reload from service to get updated prices
+    return plansLimitService.getPlansConfig();
+  });
 
   // Carrega configurações de planos do serviço
   useEffect(() => {
-    setPlansConfig(plansLimitService.getPlansConfig());
+    // Clear any cached config and reload
+    const freshConfig = plansLimitService.getPlansConfig();
+    setPlansConfig(freshConfig);
   }, []);
 
   // Pricing features by language
@@ -87,30 +90,11 @@ const Pricing = () => {
 
   const pricingFeatures = generatePricingFeatures(language);
 
-  // Price displays
-  const priceDisplay = {
-    en: {
-      starter: plansConfig.starter.price.toString(),
-      business: plansConfig.professional.price.toString(),
-      enterprise: plansConfig.enterprise.price.toString()
-    },
-    es: {
-      starter: plansConfig.starter.price.toString(),
-      business: plansConfig.professional.price.toString(),
-      enterprise: plansConfig.enterprise.price.toString()
-    },
-    pt: {
-      starter: plansConfig.starter.price.toString(),
-      business: plansConfig.professional.price.toString(),
-      enterprise: plansConfig.enterprise.price.toString()
-    }
-  };
-
   // Button texts
   const buttonTexts = {
     en: {
       starter: "Start now",
-      business: "Choose Business",
+      business: "Choose Business", 
       enterprise: "Talk to sales"
     },
     es: {
@@ -126,7 +110,6 @@ const Pricing = () => {
   };
 
   const currentFeatures = pricingFeatures;
-  const currentPrices = priceDisplay[language];
   const currentButtons = buttonTexts[language];
 
   return (
@@ -138,7 +121,7 @@ const Pricing = () => {
           <Card>
             <CardHeader>
               <CardTitle>{t('startupPlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">${currentPrices.starter}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">${plansConfig.starter.price}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('startupDesc')}
               </CardDescription>
@@ -164,7 +147,7 @@ const Pricing = () => {
                 {t('popular')}
               </div>
               <CardTitle>{t('businessPlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">${currentPrices.business}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">${plansConfig.professional.price}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('businessDesc')}
               </CardDescription>
@@ -187,7 +170,7 @@ const Pricing = () => {
           <Card>
             <CardHeader>
               <CardTitle>{t('enterprisePlan')}</CardTitle>
-              <div className="mt-4 text-4xl font-bold">${currentPrices.enterprise}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
+              <div className="mt-4 text-4xl font-bold">${plansConfig.enterprise.price}<span className="text-lg font-normal text-muted-foreground">{t('month')}</span></div>
               <CardDescription className="mt-2">
                 {t('enterpriseDesc')}
               </CardDescription>
