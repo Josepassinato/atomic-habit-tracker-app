@@ -1,5 +1,5 @@
 
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
@@ -17,6 +17,7 @@ const Dashboard = () => {
   const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
   const { t } = useLanguage();
+  const notificationShown = useRef(false);
   
   useEffect(() => {
     // Check if user is authenticated
@@ -30,19 +31,23 @@ const Dashboard = () => {
     
     console.log("Dashboard loaded for user:", user);
     
-    // Add welcome notification
-    const timer = setTimeout(() => {
-      const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
-      const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
+    // Only add welcome notification once per component mount
+    if (!notificationShown.current) {
+      const timer = setTimeout(() => {
+        const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
+        const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
+        
+        adicionarNotificacao({
+          titulo: welcomeMessage,
+          mensagem: habitsMessage,
+          tipo: "info"
+        });
+        
+        notificationShown.current = true;
+      }, 1000);
       
-      adicionarNotificacao({
-        titulo: welcomeMessage,
-        mensagem: habitsMessage,
-        tipo: "info"
-      });
-    }, 1000);
-    
-    return () => clearTimeout(timer);
+      return () => clearTimeout(timer);
+    }
   }, [navigate, adicionarNotificacao, t]);
 
   return (
