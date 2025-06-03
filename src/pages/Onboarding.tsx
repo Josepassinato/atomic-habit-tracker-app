@@ -70,53 +70,58 @@ const Onboarding = () => {
     }
   };
 
-  const getCurrentTabComponent = () => {
-    const currentTabData = tabs.find(tab => tab.id === currentTab);
-    if (!currentTabData) return null;
-
-    const Component = currentTabData.component;
-    
-    // Base props that most components need
-    const baseProps = {
-      currentTeam,
-      teams,
-      setCurrentTeam
-    };
-
-    // Add specific props based on the current tab
-    if (currentTab === "teams") {
-      return (
-        <Component 
-          {...baseProps}
-          teamDialogOpen={teamDialogOpen}
-          setTeamDialogOpen={setTeamDialogOpen}
-          editingTeamId={editingTeamId}
-          setEditingTeamId={setEditingTeamId}
-          form={form}
-          onTeamSubmit={onTeamSubmit}
-          deleteTeam={deleteTeam}
-          editTeam={editTeam}
-          selectTeam={selectTeam}
-        />
-      );
+  const renderCurrentTab = () => {
+    switch (currentTab) {
+      case "teams":
+        return (
+          <TeamsTab 
+            currentTeam={currentTeam}
+            teams={teams}
+            setCurrentTeam={setCurrentTeam}
+            teamDialogOpen={teamDialogOpen}
+            setTeamDialogOpen={setTeamDialogOpen}
+            editingTeamId={editingTeamId}
+            setEditingTeamId={setEditingTeamId}
+            form={form}
+            onTeamSubmit={onTeamSubmit}
+            deleteTeam={deleteTeam}
+            editTeam={editTeam}
+            selectTeam={selectTeam}
+          />
+        );
+      case "habits":
+        return (
+          <HabitsTab 
+            currentTeam={currentTeam}
+            habitosSelecionados={habitosSelecionados}
+            handleHabitoToggle={handleHabitoToggle}
+          />
+        );
+      case "goals":
+        return (
+          <GoalsTab 
+            currentTeam={currentTeam}
+            metaMensal={metaMensal}
+            setMetaMensal={setMetaMensal}
+            metaDiaria={metaDiaria}
+            setMetaDiaria={setMetaDiaria}
+          />
+        );
+      case "integrations":
+        return (
+          <IntegrationsTab 
+            currentTeam={currentTeam}
+          />
+        );
+      case "rewards":
+        return (
+          <RewardsTab 
+            currentTeam={currentTeam}
+          />
+        );
+      default:
+        return null;
     }
-
-    if (currentTab === "habits" || currentTab === "goals") {
-      return (
-        <Component 
-          {...baseProps}
-          habitosSelecionados={habitosSelecionados}
-          handleHabitoToggle={handleHabitoToggle}
-          metaMensal={metaMensal}
-          setMetaMensal={setMetaMensal}
-          metaDiaria={metaDiaria}
-          setMetaDiaria={setMetaDiaria}
-        />
-      );
-    }
-
-    // For integrations and rewards tabs, only pass base props
-    return <Component {...baseProps} />;
   };
 
   return (
@@ -148,7 +153,7 @@ const Onboarding = () => {
 
               {tabs.map((tab) => (
                 <TabsContent key={tab.id} value={tab.id} className="mt-6">
-                  {getCurrentTabComponent()}
+                  {renderCurrentTab()}
                 </TabsContent>
               ))}
             </Tabs>
