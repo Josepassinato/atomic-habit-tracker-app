@@ -5,13 +5,18 @@ import AdminOpenAIConfig from "@/components/admin/AdminOpenAIConfig";
 import OpenAIStatusChecker from "@/components/admin/OpenAIStatusChecker";
 import AdminTabs from "@/components/admin/AdminTabs";
 import AdminHeader from "@/components/admin/AdminHeader";
+import AppLayout from "@/components/layout/AppLayout";
 import { useAdminData } from "@/hooks/useAdminData";
 
 const Admin = () => {
   const { isAdmin, empresas, estatisticas, loading } = useAdminData();
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Carregando...</div>;
+    return (
+      <AppLayout>
+        <div className="flex items-center justify-center h-screen">Carregando...</div>
+      </AppLayout>
+    );
   }
 
   if (!isAdmin) {
@@ -19,8 +24,8 @@ const Admin = () => {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <main className="container flex-1 py-6">
+    <AppLayout>
+      <div className="container py-6">
         <AdminHeader />
 
         {/* Cards com métricas principais */}
@@ -36,8 +41,8 @@ const Admin = () => {
 
         {/* Tabs para diferentes visualizações */}
         <AdminTabs empresas={empresas} />
-      </main>
-    </div>
+      </div>
+    </AppLayout>
   );
 };
 
