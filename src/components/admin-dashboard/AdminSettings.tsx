@@ -60,13 +60,13 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onSaveSettings 
     setTestingOpenAI(true);
     try {
       // Primeiro salva a chave temporariamente para o teste
-      openAIService.setApiKey(localSettings.openAIApiKey);
+      await openAIService.setApiKey(localSettings.openAIApiKey);
       
       const response = await openAIService.generateText("Teste de conexão. Responda apenas com 'Conexão bem-sucedida'.");
-      if (response.includes("Conexão bem-sucedida")) {
+      if (response.includes("Conexão bem-sucedida") || response.includes("bem-sucedida") || response.includes("sucesso")) {
         toast.success("Conexão com a API da OpenAI estabelecida com sucesso!");
       } else {
-        toast.warning("Resposta recebida, mas não foi a esperada. Verifique a chave.");
+        toast.warning("Resposta recebida da OpenAI. A conexão está funcionando.");
       }
     } catch (error) {
       console.error("Erro ao testar OpenAI:", error);

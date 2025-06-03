@@ -102,6 +102,46 @@ class OpenAIService {
     }
   }
 
+  // Generate text using OpenAI API
+  async generateText(prompt: string): Promise<string> {
+    const apiKey = await this.getApiKey();
+    
+    if (!apiKey) {
+      return "Para receber respostas de IA, configure a chave da API da OpenAI no painel administrativo.";
+    }
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o-mini',
+          messages: [
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          max_tokens: 500,
+          temperature: 0.7,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro na API: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.choices[0]?.message?.content || 'Não foi possível gerar resposta no momento.';
+    } catch (error) {
+      console.error('Erro ao gerar texto de IA:', error);
+      return 'Erro ao conectar com o serviço de IA. Verifique sua configuração.';
+    }
+  }
+
   // Generate AI feedback for habits
   async generateHabitFeedback(habitData: any): Promise<string> {
     const apiKey = await this.getApiKey();

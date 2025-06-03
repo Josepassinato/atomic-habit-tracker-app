@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -88,8 +89,8 @@ const AdminDashboard = () => {
       receitaMensal: 3988
     });
 
-    // Carregar configurações de APIs
-    const openAIKey = openAIService.getApiKey() || "";
+    // Carregar configurações de APIs de forma síncrona
+    const openAIKey = openAIService.getApiKeySync() || "";
     const supabaseKey = supabaseService.getApiKey() || "";
     const supabaseUrl = supabaseService.getUrl() || "";
 
@@ -98,7 +99,7 @@ const AdminDashboard = () => {
       try {
         await supabaseService.loadConfigFromDatabase();
         // Após carregar do banco, atualizamos as variáveis locais novamente
-        const refreshedOpenAIKey = openAIService.getApiKey() || "";
+        const refreshedOpenAIKey = openAIService.getApiKeySync() || "";
         const refreshedSupabaseKey = supabaseService.getApiKey() || "";
         const refreshedSupabaseUrl = supabaseService.getUrl() || "";
         
