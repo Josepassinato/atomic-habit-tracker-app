@@ -1,5 +1,5 @@
 
-export type UserRole = 'admin' | 'gerente' | 'vendedor';
+export type UserRole = 'admin' | 'gerente' | 'vendedor' | 'salesperson';
 
 export interface UserAuth {
   id: string;

@@ -15,13 +15,18 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const user = getCurrentUser();
   const isAuthenticated = user !== null;
-  const hasAccess = isAuthenticated && hasPermission(user, requiredRole);
+  
+  console.log("ProtectedRoute check:", { user, isAuthenticated, requiredRole });
   
   if (!isAuthenticated) {
+    console.log("User not authenticated, redirecting to login");
     return <Navigate to="/login" replace />;
   }
   
+  const hasAccess = hasPermission(user, requiredRole);
+  
   if (isAuthenticated && !hasAccess) {
+    console.log("User authenticated but no access, redirecting to dashboard");
     return <Navigate to="/dashboard" replace />;
   }
   

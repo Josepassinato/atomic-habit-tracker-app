@@ -11,16 +11,25 @@ import { storageService } from "@/services/storage-service";
 export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): boolean => {
   if (!user) return false;
   
+  // Normalize roles to handle both English and Portuguese
+  const normalizeRole = (role: string): string => {
+    if (role === 'salesperson') return 'vendedor';
+    return role;
+  };
+  
+  const userRole = normalizeRole(user.role);
+  const normalizedRequiredRole = normalizeRole(requiredRole);
+  
   // Admins têm acesso a tudo
-  if (user.role === 'admin') return true;
+  if (userRole === 'admin') return true;
   
   // Gerentes têm acesso a gerente e vendedor
-  if (user.role === 'gerente' && (requiredRole === 'gerente' || requiredRole === 'vendedor')) {
+  if (userRole === 'gerente' && (normalizedRequiredRole === 'gerente' || normalizedRequiredRole === 'vendedor')) {
     return true;
   }
   
   // Vendedores só têm acesso a funções de vendedor
-  if (user.role === 'vendedor' && requiredRole === 'vendedor') {
+  if (userRole === 'vendedor' && normalizedRequiredRole === 'vendedor') {
     return true;
   }
   

@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
@@ -10,56 +10,40 @@ import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonaliza
 import TeamsDashboardAvancado from "@/components/dashboard/TeamsDashboardAvancado";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 import { useLanguage } from "@/i18n";
+import { getCurrentUser } from "@/utils/permissions";
+import { storageService } from "@/services/storage-service";
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
   const { t } = useLanguage();
-  const notificacaoExibida = useRef(false);
-  const [carregado, setCarregado] = useState(false);
   
   useEffect(() => {
-    // Simple authentication check
-    const user = localStorage.getItem("user");
+    // Check if user is authenticated
+    const user = getCurrentUser();
+    
     if (!user) {
-      // For development purposes, create a temporary user with English role
-      localStorage.setItem("user", JSON.stringify({ 
-        id: 1, 
-        nome: "Test User",
-        role: "salesperson" // Changed from "vendedor" to "salesperson"
-      }));
-    } else {
-      // Update existing user data to use English role
-      const userData = JSON.parse(user);
-      if (userData.role === "vendedor") {
-        userData.role = "salesperson";
-        localStorage.setItem("user", JSON.stringify(userData));
-      }
+      // If no user found, redirect to login
+      navigate("/login");
+      return;
     }
     
-    // Control if page has been loaded to show notification only once
-    if (!carregado) {
-      setCarregado(true);
+    console.log("Dashboard loaded for user:", user);
+    
+    // Add welcome notification
+    const timer = setTimeout(() => {
+      const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
+      const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
       
-      // Only add notification if not already shown
-      if (!notificacaoExibida.current) {
-        // Small delay to avoid multiple notifications
-        const timer = setTimeout(() => {
-          const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
-          const habitsMessage = t('atomicHabits') + " - " + (t('dailyCompletion') || "You have 3 habits to complete today.");
-          
-          adicionarNotificacao({
-            titulo: welcomeMessage,
-            mensagem: habitsMessage,
-            tipo: "info"
-          });
-          notificacaoExibida.current = true;
-        }, 1000);
-        
-        return () => clearTimeout(timer);
-      }
-    }
-  }, [navigate, adicionarNotificacao, carregado, t]);
+      adicionarNotificacao({
+        titulo: welcomeMessage,
+        mensagem: habitsMessage,
+        tipo: "info"
+      });
+    }, 1000);
+    
+    return () => clearTimeout(timer);
+  }, [navigate, adicionarNotificacao, t]);
 
   return (
     <div className="flex min-h-screen flex-col">
