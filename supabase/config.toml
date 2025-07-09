@@ -2,3 +2,12 @@ project_id = "dasuzjpdzqxrbuxlmemw"
 
 [functions.crm-sync]
 verify_jwt = false
+
+[functions.habits-verification]
+verify_jwt = true
+
+[functions.sales-analysis]
+verify_jwt = true
+
+[functions.ai-consultant]
+verify_jwt = true
