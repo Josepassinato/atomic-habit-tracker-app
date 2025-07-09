@@ -128,10 +128,22 @@ export const useLanguage = () => {
         'aiManagedBySaas': 'AI features are managed by our SaaS platform and require no additional configuration.',
         'aiHabitsFeedback': 'Great progress on your habits! Keep maintaining consistency to achieve your sales goals.',
         
-        // Landing page
-        'heroTitle': 'Transform Your Sales Performance with',
-        'heroTitleHighlight': 'Smart AI',
-        'heroDescription': 'Automate goals, track atomic habits, and receive intelligent rewards based on real performance',
+        // Landing page - Updated with our original concepts
+        'heroTitle': 'Construa Excelência em Vendas com',
+        'heroTitleHighlight': 'Micro-Melhorias Diárias',
+        'heroDescription': 'Transforme pequenas ações consistentes em resultados extraordinários. Sistema baseado na ciência comportamental para alta performance comercial.',
+        'heroSubtitle': 'Pequenas melhorias diárias geram grandes resultados',
+        'microImprovementsDaily': 'Micro-melhorias diárias',
+        'transformSmallActions': 'Transforme pequenas ações em grandes resultados',
+        'consistentGrowth': 'Crescimento consistente',
+        'exponentialResults': 'Resultados exponenciais',
+        'identityBasedHabits': 'Hábitos baseados em identidade',
+        'becomeWhoYouWant': 'Torne-se quem você quer ser',
+        'systemsOverGoals': 'Foque no sistema, não apenas nas metas',
+        'compoundEffect': 'Efeito cumulativo',
+        'onePercentBetter': '1% melhor a cada dia',
+        'buildingConsistentHabits': 'Construindo hábitos consistentes',
+        'performanceMultiplier': 'Multiplicador de performance',
         'startNow': 'Start Now',
         'scheduleDemo': 'Schedule Demo',
         'ctaTitle': 'Ready to revolutionize your sales?',
@@ -156,6 +168,16 @@ export const useLanguage = () => {
         'signInToTrack': 'Sign in to track your habits and goals',
         'createFreeAccount': 'Create free account',
         'forgotPassword': 'Forgot your password?',
+        
+        // Additional Hero concepts
+        'whyItWorks': 'Por que Funciona',
+        'scientificApproach': 'Nossa abordagem é baseada em décadas de pesquisa em psicologia comportamental e neurociência aplicada ao desempenho comercial.',
+        'identityFirst': 'Identidade em Primeiro Lugar',
+        'identityFirstDesc': 'Construa hábitos baseados em quem você quer se tornar, não apenas no que quer alcançar.',
+        'compoundGrowth': 'Crescimento Exponencial', 
+        'compoundGrowthDesc': 'Pequenas melhorias diárias se acumulam em resultados extraordinários ao longo do tempo.',
+        'environmentDesign': 'Design do Ambiente',
+        'environmentDesignDesc': 'Criamos um ambiente digital que facilita bons hábitos e remove barreiras para o sucesso.',
         
         // Testimonials
         'testimonialsTitle': 'What our customers say',
