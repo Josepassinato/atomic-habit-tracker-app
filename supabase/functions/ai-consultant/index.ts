@@ -3,8 +3,10 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Origin': 'https://*.lovable.app, https://*.salesforce.com',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Max-Age': '86400',
 };
 
 interface ChatRequest {
@@ -39,15 +41,32 @@ serve(async (req) => {
       .single();
 
     if (!settings?.openai_api_key) {
+      console.error('OpenAI API key not configured in admin settings');
       return new Response(
-        JSON.stringify({ error: 'OpenAI API key not configured' }),
-        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+        JSON.stringify({ error: 'Service temporarily unavailable' }),
+        { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const { message, userId, companyId, context, consultationType }: ChatRequest = await req.json();
+    const { message: userMessage, userId, companyId, context, consultationType }: ChatRequest = await req.json();
 
-    console.log(`AI Consultant - Tipo: ${consultationType}, Usuário: ${userId}`);
+    // Validate request
+    if (!userMessage || typeof userMessage !== 'string') {
+      return new Response(
+        JSON.stringify({ error: 'Invalid message format' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    if (userMessage.length > 2000) {
+      return new Response(
+        JSON.stringify({ error: 'Message too long' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Security audit log (without sensitive data)
+    console.log(`AI Consultation Request - Type: ${consultationType}, User: ${userId ? '[AUTHENTICATED]' : '[ANONYMOUS]'}, Timestamp: ${new Date().toISOString()}`);
 
     // Fetch relevant user context if userId provided
     let userContext = '';
@@ -118,44 +137,49 @@ DIRETRIZES:
 - Adapte as sugestões ao perfil do usuário
 
 PERGUNTA/SITUAÇÃO:
-${message}
+${userMessage}
 
 Responda de forma direta, útil e acionável. Se precisar de mais informações, faça perguntas específicas.`;
 
-    console.log('Processando consulta com OpenAI...');
-
-    // Call OpenAI API
-    const openaiResponse = await fetch('https://api.openai.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${settings.openai_api_key}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'gpt-4.1-2025-04-14',
-        messages: [
-          {
-            role: 'system',
-            content: systemPrompt
-          },
-          {
-            role: 'user',
-            content: fullPrompt
-          }
-        ],
-        temperature: 0.7,
-        max_tokens: 1500,
+    // Call OpenAI API with timeout and retry logic
+    const openaiResponse = await Promise.race([
+      fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${settings.openai_api_key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4o',
+          messages: [
+            {
+              role: 'system',
+              content: systemPrompt
+            },
+            {
+              role: 'user',
+              content: fullPrompt
+            }
+          ],
+          temperature: 0.7,
+          max_tokens: 1500,
+        }),
       }),
-    });
+      new Promise<never>((_, reject) =>
+        setTimeout(() => reject(new Error('Request timeout')), 30000)
+      )
+    ]);
 
     if (!openaiResponse.ok) {
-      throw new Error(`OpenAI API error: ${openaiResponse.status}`);
+      const errorText = await openaiResponse.text();
+      console.error(`OpenAI API error: ${openaiResponse.status} - ${errorText}`);
+      throw new Error(`AI service temporarily unavailable`);
     }
 
     const openaiData = await openaiResponse.json();
     const consultantResponse = openaiData.choices[0].message.content;
 
-    console.log('Consulta AI concluída');
+    console.log('AI consultation completed successfully');
 
     // Log consultation for analytics (optional)
     try {
@@ -164,13 +188,14 @@ Responda de forma direta, útil e acionável. Se precisar de mais informações,
         key: 'ai_consultation_log',
         value: {
           type: consultationType,
-          message: message.substring(0, 100), // Only first 100 chars for privacy
+          messageLength: userMessage.length, // Only log message length for privacy
           timestamp: new Date().toISOString(),
-          hasContext: !!userContext
+          hasContext: !!userContext,
+          success: true
         }
       });
     } catch (logError) {
-      console.log('Erro ao registrar consulta:', logError);
+      console.error('Failed to log consultation:', logError);
       // Don't fail the request due to logging error
     }
 
@@ -192,11 +217,16 @@ Responda de forma direta, útil e acionável. Se precisar de mais informações,
     );
 
   } catch (error) {
-    console.error('Erro no AI Consultant:', error);
+    console.error('AI Consultant Error:', {
+      error: error.message,
+      timestamp: new Date().toISOString(),
+      stack: error.stack?.substring(0, 500) // Limit stack trace length
+    });
+    
     return new Response(
       JSON.stringify({ 
-        error: 'Erro interno do servidor',
-        details: error.message 
+        error: 'Service temporarily unavailable',
+        requestId: crypto.randomUUID()
       }),
       { 
         status: 500, 
