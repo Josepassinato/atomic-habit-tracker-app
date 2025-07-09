@@ -35,6 +35,14 @@ const defaultWidgets: Widget[] = [
     tamanho: "pequeno",
     ativo: true,
     ordem: 4
+  },
+  {
+    id: "5",
+    titulo: "Real-time Updates",
+    tipo: "realtime", 
+    tamanho: "medio",
+    ativo: true,
+    ordem: 5
   }
 ];
 
@@ -74,7 +82,8 @@ export const useDashboardWidgets = () => {
       'Hábitos Atômicos': 'Atomic Habits',
       'Metas de Vendas': 'Sales Goals', 
       'Consultoria IA': 'AI Consulting',
-      'Integrações CRM': 'CRM Integrations'
+      'Integrações CRM': 'CRM Integrations',
+      'Real-time Updates': 'Real-time Updates'
     };
     return translations[titulo] || titulo;
   };

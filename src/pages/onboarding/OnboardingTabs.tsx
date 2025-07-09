@@ -6,6 +6,7 @@ import HabitsTab from "./HabitsTab";
 import GoalsTab from "./GoalsTab";
 import IntegrationsTab from "./IntegrationsTab";
 import RewardsTab from "./RewardsTab";
+import OnboardingTemplateSelector from "@/components/onboarding/OnboardingTemplateSelector";
 import { Team } from "./types";
 import { UseFormReturn } from "react-hook-form";
 import { TeamFormInput } from "./types";
@@ -82,6 +83,7 @@ const OnboardingTabs: React.FC<OnboardingTabsProps> = (props) => {
   } = props;
 
   const tabs = [
+    { id: "template", label: "Template" },
     { id: "teams", label: "Teams" },
     { id: "habits", label: "Habits" },
     { id: "goals", label: "Goals" },
@@ -91,13 +93,26 @@ const OnboardingTabs: React.FC<OnboardingTabsProps> = (props) => {
 
   return (
     <Tabs value={currentTab} onValueChange={onTabChange}>
-      <TabsList className="grid w-full grid-cols-5">
+      <TabsList className="grid w-full grid-cols-6">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.id} value={tab.id}>
             {tab.label}
           </TabsTrigger>
         ))}
       </TabsList>
+
+      <TabsContent value="template" className="mt-6">
+        <OnboardingTemplateSelector 
+          onTemplateSelect={(template) => {
+            console.log('Template selecionado:', template);
+            // Aplicar template automaticamente
+            if (template.id !== 'custom') {
+              // Aqui implementaríamos a lógica para aplicar o template
+              // Por exemplo, pré-popular hábitos e metas
+            }
+          }}
+        />
+      </TabsContent>
 
       <TabsContent value="teams" className="mt-6">
         <TeamsTab 

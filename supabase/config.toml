@@ -1,1 +1,4 @@
 project_id = "dasuzjpdzqxrbuxlmemw"
+
+[functions.crm-sync]
+verify_jwt = false

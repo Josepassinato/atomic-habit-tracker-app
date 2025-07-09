@@ -3,6 +3,12 @@ import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Widget } from "./types/widget.types";
 import { useLanguage } from "@/i18n";
+import DashboardSummary from "@/components/DashboardSummary";
+import HabitosTracker from "@/components/HabitosTracker";
+import MetasVendas from "@/components/MetasVendas";
+import IntegracoesCRM from "@/components/IntegracoesCRM";
+import RealtimeNotifications from "@/components/dashboard/RealtimeNotifications";
+import ConsultoriaIA from "@/components/ConsultoriaIA";
 
 interface DashboardWidgetGridProps {
   widgetsAtivos: Widget[];
@@ -21,10 +27,34 @@ export const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({ widget
       'habitos': 'Atomic Habits',
       'metas': 'Sales Goals',
       'consultoria': 'AI Consulting',
-      'crm': 'CRM Integrations'
+      'crm': 'CRM Integrations',
+      'realtime': 'Real-time Updates'
     };
     
     return translations[titulo] || titulo;
+  };
+  
+  const renderWidgetContent = (widget: Widget) => {
+    switch (widget.tipo) {
+      case 'habits':
+        return <HabitosTracker />;
+      case 'goals':
+        return <MetasVendas />;
+      case 'ai':
+        return <ConsultoriaIA />;
+      case 'crm':
+        return <IntegracoesCRM />;
+      case 'realtime':
+        return <RealtimeNotifications />;
+      case 'summary':
+        return <DashboardSummary />;
+      default:
+        return (
+          <div className="h-40 flex items-center justify-center border border-dashed rounded-md">
+            <span className="text-muted-foreground">Widget content {widget.tipo}</span>
+          </div>
+        );
+    }
   };
   
   return (
@@ -41,10 +71,8 @@ export const DashboardWidgetGrid: React.FC<DashboardWidgetGridProps> = ({ widget
               <CardHeader className="pb-2">
                 <CardTitle>{translateWidgetTitle(widget.titulo)}</CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="h-40 flex items-center justify-center border border-dashed rounded-md">
-                  <span className="text-muted-foreground">Widget content {widget.tipo}</span>
-                </div>
+              <CardContent className="p-0">
+                {renderWidgetContent(widget)}
               </CardContent>
             </Card>
           </div>

@@ -5,7 +5,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Team } from "./types";
 
 export const useOnboardingNavigation = () => {
-  const [activeStep, setActiveStep] = useState("teams");
+  const [activeStep, setActiveStep] = useState("template");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -28,12 +28,16 @@ export const useOnboardingNavigation = () => {
     const updatedTeam = getCurrentTeamData();
     if (!updatedTeam) return;
 
-    if (activeStep === "goals") {
+    if (activeStep === "template") {
+      setActiveStep("teams");
+    } else if (activeStep === "teams") {
       setActiveStep("habits");
     } else if (activeStep === "habits") {
-      setActiveStep("rewards");
-    } else if (activeStep === "rewards") {
+      setActiveStep("goals");
+    } else if (activeStep === "goals") {
       setActiveStep("integrations");
+    } else if (activeStep === "integrations") {
+      setActiveStep("rewards");
     } else {
       handleFinish(currentTeam.id, updateTeam);
       return;
@@ -44,12 +48,16 @@ export const useOnboardingNavigation = () => {
   };
 
   const handlePrevious = () => {
-    if (activeStep === "habits") {
-      setActiveStep("goals");
-    } else if (activeStep === "rewards") {
+    if (activeStep === "teams") {
+      setActiveStep("template");
+    } else if (activeStep === "habits") {
+      setActiveStep("teams");
+    } else if (activeStep === "goals") {
       setActiveStep("habits");
     } else if (activeStep === "integrations") {
-      setActiveStep("rewards");
+      setActiveStep("goals");
+    } else if (activeStep === "rewards") {
+      setActiveStep("integrations");
     }
   };
   
