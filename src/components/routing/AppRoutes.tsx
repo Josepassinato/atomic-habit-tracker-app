@@ -20,6 +20,7 @@ import Configuracoes from "@/pages/Configuracoes";
 import Index from "@/pages/Index";
 import NotFound from "@/pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
+import { AuthPage } from "@/components/auth/AuthPage";
 import AppLayout from "@/components/layout/AppLayout";
 
 const AppRoutes: React.FC = () => {
@@ -27,6 +28,7 @@ const AppRoutes: React.FC = () => {
     <Routes>
       {/* Rotas públicas */}
       <Route path="/" element={<LandingPage />} />
+      <Route path="/auth" element={<AuthPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/registro" element={<Registro />} />
       <Route path="/recuperar-senha" element={<RecuperarSenha />} />

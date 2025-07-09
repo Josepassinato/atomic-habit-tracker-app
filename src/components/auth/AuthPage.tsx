@@ -20,7 +20,7 @@ export const AuthPage: React.FC = () => {
   const [companies, setCompanies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
-  const { signIn, signUp, user } = useAuth();
+  const { signIn, signUp, user, userProfile } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already authenticated
@@ -57,7 +57,33 @@ export const AuthPage: React.FC = () => {
           }
         } else {
           toast.success('Login realizado com sucesso!');
-          navigate('/dashboard');
+          
+          // Check if user needs onboarding
+          // For new users or users without teams/habits, redirect to onboarding
+          setTimeout(async () => {
+            try {
+              const { data: userTeams } = await supabase
+                .from('teams')
+                .select('id')
+                .eq('company_id', userProfile?.empresa_id)
+                .limit(1);
+              
+              const { data: userHabits } = await supabase
+                .from('habits')
+                .select('id')
+                .eq('user_id', userProfile?.id)
+                .limit(1);
+              
+              if (!userTeams?.length && !userHabits?.length) {
+                navigate('/onboarding');
+              } else {
+                navigate('/dashboard');
+              }
+            } catch (error) {
+              console.error('Error checking onboarding status:', error);
+              navigate('/dashboard');
+            }
+          }, 1000);
         }
       } else {
         if (!name || !companyId) {
