@@ -128,22 +128,22 @@ export const useLanguage = () => {
         'aiManagedBySaas': 'AI features are managed by our SaaS platform and require no additional configuration.',
         'aiHabitsFeedback': 'Great progress on your habits! Keep maintaining consistency to achieve your sales goals.',
         
-        // Landing page - Updated with our original concepts
-        'heroTitle': 'Construa Excelência em Vendas com',
-        'heroTitleHighlight': 'Micro-Melhorias Diárias',
-        'heroDescription': 'Transforme pequenas ações consistentes em resultados extraordinários. Sistema baseado na ciência comportamental para alta performance comercial.',
-        'heroSubtitle': 'Pequenas melhorias diárias geram grandes resultados',
-        'microImprovementsDaily': 'Micro-melhorias diárias',
-        'transformSmallActions': 'Transforme pequenas ações em grandes resultados',
-        'consistentGrowth': 'Crescimento consistente',
-        'exponentialResults': 'Resultados exponenciais',
-        'identityBasedHabits': 'Hábitos baseados em identidade',
-        'becomeWhoYouWant': 'Torne-se quem você quer ser',
-        'systemsOverGoals': 'Foque no sistema, não apenas nas metas',
-        'compoundEffect': 'Efeito cumulativo',
-        'onePercentBetter': '1% melhor a cada dia',
-        'buildingConsistentHabits': 'Construindo hábitos consistentes',
-        'performanceMultiplier': 'Multiplicador de performance',
+        // Landing page - All in English as primary language
+        'heroTitle': 'Build Sales Excellence with',
+        'heroTitleHighlight': 'Daily Micro-Improvements',
+        'heroDescription': 'Transform consistent small actions into extraordinary results. System based on behavioral science for high commercial performance.',
+        'heroSubtitle': 'Small daily improvements generate big results',
+        'microImprovementsDaily': 'Daily micro-improvements',
+        'transformSmallActions': 'Transform small actions into big results',
+        'consistentGrowth': 'Consistent growth',
+        'exponentialResults': 'Exponential results',
+        'identityBasedHabits': 'Identity-based habits',
+        'becomeWhoYouWant': 'Become who you want to be',
+        'systemsOverGoals': 'Focus on the system, not just the goals',
+        'compoundEffect': 'Compound effect',
+        'onePercentBetter': '1% better every day',
+        'buildingConsistentHabits': 'Building consistent habits',
+        'performanceMultiplier': 'Performance multiplier',
         'startNow': 'Start Now',
         'scheduleDemo': 'Schedule Demo',
         'ctaTitle': 'Ready to revolutionize your sales?',
@@ -169,15 +169,15 @@ export const useLanguage = () => {
         'createFreeAccount': 'Create free account',
         'forgotPassword': 'Forgot your password?',
         
-        // Additional Hero concepts
-        'whyItWorks': 'Por que Funciona',
-        'scientificApproach': 'Nossa abordagem é baseada em décadas de pesquisa em psicologia comportamental e neurociência aplicada ao desempenho comercial.',
-        'identityFirst': 'Identidade em Primeiro Lugar',
-        'identityFirstDesc': 'Construa hábitos baseados em quem você quer se tornar, não apenas no que quer alcançar.',
-        'compoundGrowth': 'Crescimento Exponencial', 
-        'compoundGrowthDesc': 'Pequenas melhorias diárias se acumulam em resultados extraordinários ao longo do tempo.',
-        'environmentDesign': 'Design do Ambiente',
-        'environmentDesignDesc': 'Criamos um ambiente digital que facilita bons hábitos e remove barreiras para o sucesso.',
+        // Additional Hero concepts - All in English
+        'whyItWorks': 'Why It Works',
+        'scientificApproach': 'Our approach is based on decades of research in behavioral psychology and neuroscience applied to commercial performance.',
+        'identityFirst': 'Identity First',
+        'identityFirstDesc': 'Build habits based on who you want to become, not just what you want to achieve.',
+        'compoundGrowth': 'Exponential Growth', 
+        'compoundGrowthDesc': 'Small daily improvements accumulate into extraordinary results over time.',
+        'environmentDesign': 'Environment Design',
+        'environmentDesignDesc': 'We create a digital environment that facilitates good habits and removes barriers to success.',
         
         // Testimonials
         'testimonialsTitle': 'What our customers say',
@@ -192,7 +192,10 @@ export const useLanguage = () => {
         'businessDesc': 'Ideal for growing teams that need advanced features',
         'enterpriseDesc': 'Complete solution for large organizations',
         'month': '/month',
-        'popular': 'Most Popular'
+        'popular': 'Most Popular',
+        
+        // Footer
+        'salesAutomationFuture': 'The future of sales automation and performance'
       };
       
       let translation = translations[key] || key;
