@@ -67,7 +67,7 @@ const Hero = () => {
               <Button size="lg" className="hover-scale" onClick={() => navigate("/auth")}>
                 {t('startNow')}
               </Button>
-              <Button variant="outline" size="lg" className="hover-scale">
+              <Button variant="outline" size="lg" className="hover-scale" onClick={() => navigate("/auth")}>
                 {t('scheduleDemo')}
               </Button>
             </div>
