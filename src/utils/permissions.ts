@@ -1,6 +1,6 @@
 
 import { UserAuth, UserRole } from "@/types/auth";
-import { storageService } from "@/services/storage-service";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Verifica se o usuário possui a permissão necessária
@@ -37,17 +37,73 @@ export const hasPermission = (user: UserAuth | null, requiredRole: UserRole): bo
 };
 
 /**
- * Obtém o usuário atual do armazenamento persistente
+ * Verifica se o usuário pode acessar dados de uma empresa específica
  */
-export const getCurrentUser = (): UserAuth | null => {
+export const canAccessCompanyData = async (companyId: string): Promise<boolean> => {
   try {
-    const user = storageService.getItem<UserAuth>("user");
-    console.log("Current user from storage:", user);
-    return user;
+    const { data } = await supabase.rpc('user_belongs_to_company', { 
+      target_company_id: companyId 
+    });
+    return data || false;
   } catch (error) {
-    console.error("Erro ao obter usuário:", error);
+    console.error("Erro ao verificar acesso à empresa:", error);
+    return false;
+  }
+};
+
+/**
+ * Verifica se o usuário pode acessar dados de uma equipe específica
+ */
+export const canAccessTeamData = async (teamId: string): Promise<boolean> => {
+  try {
+    const { data } = await supabase.rpc('user_can_access_team', { 
+      target_team_id: teamId 
+    });
+    return data || false;
+  } catch (error) {
+    console.error("Erro ao verificar acesso à equipe:", error);
+    return false;
+  }
+};
+
+/**
+ * Obtém o perfil do usuário atual do Supabase
+ */
+export const getCurrentUserProfile = async (): Promise<UserAuth | null> => {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return null;
+
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('user_id', user.id)
+      .single();
+
+    if (!profile) return null;
+
+    return {
+      id: profile.user_id,
+      email: profile.email,
+      nome: profile.name,
+      role: profile.role as UserRole,
+      empresa_id: profile.company_id,
+      equipe_id: profile.team_ids?.[0] || null
+    };
+  } catch (error) {
+    console.error("Erro ao obter perfil do usuário:", error);
     return null;
   }
+};
+
+/**
+ * Obtém o usuário atual (compatibilidade com código legado)
+ * @deprecated Use getCurrentUserProfile() ou useAuth() hook instead
+ */
+export const getCurrentUser = (): UserAuth | null => {
+  // Fallback para compatibilidade, mas deveria usar getCurrentUserProfile
+  console.warn("getCurrentUser() is deprecated. Use getCurrentUserProfile() or useAuth() hook instead.");
+  return null;
 };
 
 /**

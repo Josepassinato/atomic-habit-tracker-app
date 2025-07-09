@@ -1,7 +1,8 @@
 
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { getCurrentUser, hasPermission } from "@/utils/permissions";
+import { useAuth } from "@/components/auth/AuthProvider";
+import { hasPermission } from "@/utils/permissions";
 import { UserRole } from "@/types/auth";
 
 interface ProtectedRouteProps {
@@ -13,20 +14,23 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   requiredRole = 'vendedor' 
 }) => {
-  const user = getCurrentUser();
-  const isAuthenticated = user !== null;
+  const { user, userProfile, loading } = useAuth();
   
-  console.log("ProtectedRoute check:", { user, isAuthenticated, requiredRole });
-  
-  if (!isAuthenticated) {
-    console.log("User not authenticated, redirecting to login");
-    return <Navigate to="/login" replace />;
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
   
-  const hasAccess = hasPermission(user, requiredRole);
+  if (!user || !userProfile) {
+    return <Navigate to="/auth" replace />;
+  }
   
-  if (isAuthenticated && !hasAccess) {
-    console.log("User authenticated but no access, redirecting to dashboard");
+  const hasAccess = hasPermission(userProfile, requiredRole);
+  
+  if (!hasAccess) {
     return <Navigate to="/dashboard" replace />;
   }
   

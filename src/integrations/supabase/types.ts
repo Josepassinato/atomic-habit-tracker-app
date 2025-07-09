@@ -390,6 +390,7 @@ export type Database = {
           id: string
           name: string | null
           role: string | null
+          team_ids: Json | null
           teams: Json | null
           updated_at: string
           user_id: string
@@ -401,6 +402,7 @@ export type Database = {
           id?: string
           name?: string | null
           role?: string | null
+          team_ids?: Json | null
           teams?: Json | null
           updated_at?: string
           user_id: string
@@ -412,6 +414,7 @@ export type Database = {
           id?: string
           name?: string | null
           role?: string | null
+          team_ids?: Json | null
           teams?: Json | null
           updated_at?: string
           user_id?: string
@@ -431,7 +434,23 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_current_user_profile: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          user_id: string
+          company_id: string
+          role: string
+          team_ids: Json
+        }[]
+      }
+      user_belongs_to_company: {
+        Args: { target_company_id: string }
+        Returns: boolean
+      }
+      user_can_access_team: {
+        Args: { target_team_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
