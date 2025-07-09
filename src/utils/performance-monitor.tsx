@@ -85,8 +85,8 @@ class PerformanceMonitor {
       
       if (navigation) {
         this.recordMetric('TTFB', navigation.responseStart - navigation.requestStart);
-        this.recordMetric('DOM_LOAD', navigation.domContentLoadedEventEnd - navigation.navigationStart);
-        this.recordMetric('FULL_LOAD', navigation.loadEventEnd - navigation.navigationStart);
+        this.recordMetric('DOM_LOAD', navigation.domContentLoadedEventEnd - navigation.fetchStart);
+        this.recordMetric('FULL_LOAD', navigation.loadEventEnd - navigation.fetchStart);
       }
     });
   }
@@ -215,8 +215,8 @@ export const withPerformanceTracking = (
         const endTime = performance.now();
         const renderTime = endTime - startTime;
         
-        if (renderTime > 16) { // Components taking more than 16ms (60fps threshold)
-          performanceMonitor?.recordMetric(`COMPONENT_RENDER_${componentName}`, renderTime);
+        if (renderTime > 16 && performanceMonitor) { // Components taking more than 16ms (60fps threshold)
+          (performanceMonitor as any).recordMetric(`COMPONENT_RENDER_${componentName}`, renderTime);
         }
       };
     });

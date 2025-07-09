@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { render, waitFor } from '@testing-library/react';
+import { render } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { BrowserRouter } from 'react-router-dom';
 import { AuthProvider } from '@/components/auth/AuthProvider';
@@ -91,9 +91,8 @@ describe('End-to-End Integration Tests', () => {
     expect(container).toBeInTheDocument();
     
     // Wait for any async operations
-    await waitFor(() => {
-      expect(container.firstChild).toBeInTheDocument();
-    });
+    await new Promise(resolve => setTimeout(resolve, 10));
+    expect(container.firstChild).toBeInTheDocument();
   });
 
   it('handles authentication flow correctly', async () => {
@@ -101,10 +100,9 @@ describe('End-to-End Integration Tests', () => {
     
     // Mock auth state change to simulate login
     let authCallback: any = null;
-    mockSupabase.auth.onAuthStateChange.mockImplementation((callback) => {
-      authCallback = callback;
-      return { data: { subscription: { unsubscribe: vi.fn() } } };
-    });
+    mockSupabase.auth.onAuthStateChange.mockImplementation(() => ({ 
+      data: { subscription: { unsubscribe: vi.fn() } } 
+    }));
 
     const { getByRole, queryByText } = render(
       <MockRouter>
@@ -123,9 +121,8 @@ describe('End-to-End Integration Tests', () => {
     }
 
     // Wait for auth state to update
-    await waitFor(() => {
-      expect(mockSupabase.from).toHaveBeenCalled();
-    });
+    await new Promise(resolve => setTimeout(resolve, 10));
+    expect(mockSupabase.from).toHaveBeenCalled();
   });
 
   it('handles error boundary correctly', async () => {
@@ -171,9 +168,8 @@ describe('End-to-End Integration Tests', () => {
     );
 
     // Wait for app to load
-    await waitFor(() => {
-      expect(container.firstChild).toBeInTheDocument();
-    });
+    await new Promise(resolve => setTimeout(resolve, 10));
+    expect(container.firstChild).toBeInTheDocument();
 
     // Navigation should work without errors
     expect(container).toBeInTheDocument();
@@ -257,10 +253,10 @@ describe('End-to-End Integration Tests', () => {
       channel: vi.fn(() => mockChannel)
     };
 
-    vi.mocked(mockSupabase).channel = mockSupabaseWithRealtime.channel;
+    (mockSupabase as any).channel = mockSupabaseWithRealtime.channel;
 
     // Test realtime connection
-    const channel = mockSupabase.channel('test-channel');
+    const channel = (mockSupabase as any).channel('test-channel');
     expect(channel.on).toBeDefined();
     expect(channel.subscribe).toBeDefined();
   });
