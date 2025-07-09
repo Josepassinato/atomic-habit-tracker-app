@@ -2,8 +2,6 @@
 import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "@/pages/LandingPage";
-import Login from "@/pages/Login";
-import Registro from "@/pages/Registro";
 import RecuperarSenha from "@/pages/RecuperarSenha";
 import Onboarding from "@/pages/Onboarding";
 import Dashboard from "@/pages/Dashboard";
@@ -29,8 +27,8 @@ const AppRoutes: React.FC = () => {
       {/* Rotas públicas */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth" element={<AuthPage />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/registro" element={<Registro />} />
+      <Route path="/login" element={<Navigate to="/auth" replace />} />
+      <Route path="/registro" element={<Navigate to="/auth" replace />} />
       <Route path="/recuperar-senha" element={<RecuperarSenha />} />
       
       {/* Rotas protegidas */}

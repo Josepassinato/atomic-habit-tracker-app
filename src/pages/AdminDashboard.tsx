@@ -47,7 +47,7 @@ const AdminDashboard = () => {
       
       if (!user) {
         toast.error("Você precisa estar logado para acessar esta página");
-        navigate("/login");
+        navigate("/auth");
         return;
       }
       

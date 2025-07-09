@@ -24,7 +24,7 @@ const Hero = () => {
               {t('heroDescription')}
             </p>
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-              <Button size="lg" onClick={() => navigate("/registro")}>
+              <Button size="lg" onClick={() => navigate("/auth")}>
                 {t('startNow')}
               </Button>
               <Button variant="outline" size="lg">
@@ -79,7 +79,7 @@ const Hero = () => {
                   <Button 
                     className="w-full" 
                     size="lg"
-                    onClick={() => navigate("/login")}
+                    onClick={() => navigate("/auth")}
                   >
                     {t('signIn')}
                   </Button>
@@ -87,7 +87,7 @@ const Hero = () => {
                     variant="outline" 
                     className="w-full" 
                     size="lg"
-                    onClick={() => navigate("/registro")}
+                    onClick={() => navigate("/auth")}
                   >
                     {t('createFreeAccount')}
                   </Button>

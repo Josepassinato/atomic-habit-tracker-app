@@ -15,7 +15,7 @@ const CTA = () => {
         <p className="mx-auto mb-10 max-w-2xl text-xl text-muted-foreground">
           {t('ctaDesc')}
         </p>
-        <Button size="lg" onClick={() => navigate("/registro")}>
+        <Button size="lg" onClick={() => navigate("/auth")}>
           {t('createAccount')}
         </Button>
       </div>

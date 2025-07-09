@@ -135,7 +135,7 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full" onClick={() => navigate("/registro")}>
+              <Button className="w-full" onClick={() => navigate("/auth")}>
                 {currentButtons.starter}
               </Button>
             </CardContent>
@@ -161,7 +161,7 @@ const Pricing = () => {
                   </li>
                 ))}
               </ul>
-              <Button className="w-full" onClick={() => navigate("/registro")}>
+              <Button className="w-full" onClick={() => navigate("/auth")}>
                 {currentButtons.business}
               </Button>
             </CardContent>

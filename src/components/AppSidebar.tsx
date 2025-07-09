@@ -50,8 +50,8 @@ const AppSidebar = () => {
     };
     toast.success(logoutMessages[language]);
     
-    // Navigate to login page
-    navigate("/login");
+    // Navigate to auth page
+    navigate("/auth");
   };
 
   const NavItem = ({ to, icon: Icon, children }: { 

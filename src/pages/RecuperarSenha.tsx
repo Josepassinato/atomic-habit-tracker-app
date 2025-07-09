@@ -89,7 +89,7 @@ const RecuperarSenha = () => {
             )}
             
             <div className="mt-6 text-center">
-              <Link to="/login" className="text-sm text-primary hover:underline">
+              <Link to="/auth" className="text-sm text-primary hover:underline">
                 Back to login
               </Link>
             </div>

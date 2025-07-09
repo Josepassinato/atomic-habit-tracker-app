@@ -29,7 +29,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
   };
   
   const handleLogout = () => {
-    performLogout('/login');
+    performLogout('/auth');
   };
   
   return (

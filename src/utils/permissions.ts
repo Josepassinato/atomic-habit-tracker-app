@@ -116,7 +116,7 @@ export const canAccessRoute = (path: string): boolean => {
   console.log("Checking access for path:", path, "User:", user);
   
   // Rotas públicas
-  if (path === '/' || path === '/login' || path === '/registro') {
+  if (path === '/' || path === '/auth') {
     return true;
   }
   

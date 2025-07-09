@@ -25,8 +25,8 @@ const Dashboard = () => {
     const user = getCurrentUser();
     
     if (!user) {
-      // If no user found, redirect to login
-      navigate("/login");
+      // If no user found, redirect to auth
+      navigate("/auth");
       return;
     }
     

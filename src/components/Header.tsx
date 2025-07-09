@@ -79,7 +79,7 @@ const Header: React.FC = () => {
             <Button 
               variant="default" 
               className="hidden md:block"
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/auth")}
             >
               {t('signIn')}
             </Button>
