@@ -1,73 +1,213 @@
-# Welcome to your Lovable project
+# Habitus - Sales Performance & Habits Platform
 
-## Project info
+[![Salesforce AppExchange](https://img.shields.io/badge/Salesforce-AppExchange%20Ready-blue)](https://appexchange.salesforce.com)
+[![Security](https://img.shields.io/badge/Security-Enterprise%20Grade-green)](docs/security.md)
+[![GDPR](https://img.shields.io/badge/GDPR-Compliant-green)](docs/privacy.md)
+[![Version](https://img.shields.io/badge/Version-1.0.0-blue)](CHANGELOG.md)
 
-**URL**: https://lovable.dev/projects/ee70be81-dc23-444f-8403-224aec6cca87
+## Overview
 
-## How can I edit this code?
+Habitus is an enterprise-grade sales performance and atomic habits platform designed for seamless integration with Salesforce. Built with modern security standards and compliance requirements for the Salesforce AppExchange.
 
-There are several ways of editing your application.
+## 🔐 Security & Compliance
 
-**Use Lovable**
+- **GDPR/LGPD/CCPA Compliant**: Full data protection compliance
+- **Enterprise Security**: End-to-end encryption, audit trails, role-based access
+- **Salesforce Standards**: Meets all AppExchange security requirements
+- **SOC 2 Type II**: Security framework compliance
+- **Rate Limiting**: API protection against abuse
+- **Data Retention**: Configurable data retention policies
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/ee70be81-dc23-444f-8403-224aec6cca87) and start prompting.
+## 🚀 Features
 
-Changes made via Lovable will be committed automatically to this repo.
+### Core Functionality
+- **Atomic Habits Tracking**: Science-based habit formation system
+- **Sales Performance Analytics**: Real-time sales metrics and KPIs
+- **AI-Powered Consulting**: Intelligent recommendations and insights
+- **Team Management**: Multi-team support with role-based permissions
+- **Goal Setting & Tracking**: SMART goals with progress monitoring
 
-**Use your preferred IDE**
+### Enterprise Features
+- **Single Sign-On (SSO)**: Salesforce identity integration
+- **Audit Trail**: Complete action logging for compliance
+- **Data Export**: GDPR-compliant data portability
+- **Privacy Controls**: Granular consent management
+- **Real-time Sync**: Bidirectional Salesforce synchronization
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 📋 System Requirements
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Minimum Requirements
+- Salesforce Professional Edition or higher
+- Modern web browser (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+)
+- Internet connection for real-time features
 
-Follow these steps:
+### Recommended
+- Salesforce Enterprise Edition
+- High-speed internet (10+ Mbps)
+- Desktop or tablet device for optimal experience
+
+## 🛠 Installation
+
+### For Salesforce Administrators
+
+1. **AppExchange Installation**
+   ```
+   1. Visit Salesforce AppExchange
+   2. Search for "Habitus"
+   3. Click "Get It Now"
+   4. Follow installation wizard
+   5. Configure permissions
+   ```
+
+2. **Initial Configuration**
+   - Assign user licenses
+   - Configure security settings
+   - Set up data sharing rules
+   - Initialize company profiles
+
+3. **User Onboarding**
+   - Create user accounts
+   - Assign roles and permissions
+   - Configure team structures
+   - Set initial goals and habits
+
+### For Developers
+
+Follow these steps for local development:
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Step 1: Clone the repository
 git clone <YOUR_GIT_URL>
 
-# Step 2: Navigate to the project directory.
+# Step 2: Navigate to the project directory
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
+# Step 3: Install dependencies
 npm i
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Step 4: Start the development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+## 📖 User Guide
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+### Getting Started
+1. **First Login**: Complete the guided onboarding process
+2. **Profile Setup**: Configure your sales role and company information
+3. **Goal Setting**: Define your sales targets and personal development goals
+4. **Habit Creation**: Set up daily atomic habits for consistent improvement
+5. **Team Integration**: Connect with your sales team and manager
 
-**Use GitHub Codespaces**
+### Daily Workflow
+1. **Morning Check-in**: Review goals and plan daily habits
+2. **Progress Tracking**: Log completed habits and sales activities
+3. **Performance Review**: Analyze daily metrics and insights
+4. **AI Consultation**: Get personalized recommendations
+5. **Evening Reflection**: Review progress and plan tomorrow
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## 🔧 Configuration
 
-## What technologies are used for this project?
+### Admin Settings
+- **Company Profile**: Configure organization details
+- **User Management**: Manage roles and permissions
+- **Integration Settings**: Configure Salesforce sync
+- **Privacy Controls**: Set data retention policies
+- **Audit Settings**: Configure compliance logging
+
+### User Settings
+- **Personal Profile**: Update individual information
+- **Notification Preferences**: Customize alerts and reminders
+- **Privacy Preferences**: Control data sharing and consent
+- **Dashboard Customization**: Personalize widget layout
+- **Goal Configuration**: Set personal and team objectives
+
+## 🔒 Security
+
+### Data Protection
+- **Encryption**: AES-256 encryption at rest and in transit
+- **Access Control**: Role-based permissions with principle of least privilege
+- **Authentication**: Multi-factor authentication support
+- **Session Management**: Secure session handling with automatic timeout
+
+### Privacy Features
+- **Consent Management**: Granular privacy controls
+- **Data Minimization**: Collect only necessary data
+- **Right to Erasure**: Complete data deletion capabilities
+- **Data Portability**: Export personal data in standard formats
+
+### Compliance
+- **Audit Trail**: Immutable action logging
+- **Data Retention**: Configurable retention periods
+- **Breach Notification**: Automated incident response
+- **Regular Assessments**: Continuous security monitoring
+
+## 🛡 Troubleshooting
+
+### Common Issues
+
+**Login Problems**
+- Verify Salesforce credentials
+- Check browser compatibility
+- Clear cache and cookies
+- Contact system administrator
+
+**Sync Issues**
+- Verify Salesforce permissions
+- Check network connectivity
+- Review integration settings
+- Monitor system status
+
+**Performance Issues**
+- Check browser requirements
+- Verify internet speed
+- Close unnecessary tabs
+- Contact technical support
+
+## 📞 Support
+
+### Contact Information
+- **Sales**: [sales@habitus.com](mailto:sales@habitus.com)
+- **Support**: [support@habitus.com](mailto:support@habitus.com)
+- **Security**: [security@habitus.com](mailto:security@habitus.com)
+- **Privacy**: [privacy@habitus.com](mailto:privacy@habitus.com)
+
+### Support Hours
+- **Business Hours**: Monday-Friday, 8 AM - 6 PM (local time)
+- **Emergency Support**: 24/7 for critical issues
+- **Response Time**: Within 4 hours for standard issues
+
+## 📄 Technologies
 
 This project is built with:
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- **Frontend**: React + TypeScript + Vite
+- **UI Framework**: shadcn-ui + Tailwind CSS
+- **Backend**: Supabase (PostgreSQL + Edge Functions)
+- **Authentication**: Supabase Auth
+- **Real-time**: Supabase Realtime
+- **AI Integration**: OpenAI GPT-4
 
-## How can I deploy this project?
+## 📈 Deployment
 
-Simply open [Lovable](https://lovable.dev/projects/ee70be81-dc23-444f-8403-224aec6cca87) and click on Share -> Publish.
+### Lovable Platform
+Simply open [Lovable](https://lovable.dev/projects/ee70be81-dc23-444f-8403-224aec6cca87) and click on Share → Publish.
 
-## Can I connect a custom domain to my Lovable project?
+### Custom Domain
+To connect a domain, navigate to Project → Settings → Domains and click Connect Domain.
 
-Yes, you can!
+## 📄 Legal
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+### Privacy Policy
+Our commitment to protecting your personal data in compliance with global privacy regulations.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+### Terms of Service
+Terms and conditions governing the use of Habitus platform.
+
+### Security Policy
+Detailed information about our security practices and incident response procedures.
+
+---
+
+**© 2025 Habitus. All rights reserved.**
+
+**Project URL**: https://lovable.dev/projects/ee70be81-dc23-444f-8403-224aec6cca87

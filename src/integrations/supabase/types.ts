@@ -35,6 +35,54 @@ export type Database = {
         }
         Relationships: []
       }
+      audit_trail: {
+        Row: {
+          action: string
+          company_id: string | null
+          compliance_flags: Json | null
+          id: string
+          ip_address: unknown | null
+          new_values: Json | null
+          old_values: Json | null
+          resource_id: string | null
+          resource_type: string
+          session_id: string | null
+          timestamp: string
+          user_agent: string | null
+          user_id: string | null
+        }
+        Insert: {
+          action: string
+          company_id?: string | null
+          compliance_flags?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          resource_id?: string | null
+          resource_type: string
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          action?: string
+          company_id?: string | null
+          compliance_flags?: Json | null
+          id?: string
+          ip_address?: unknown | null
+          new_values?: Json | null
+          old_values?: Json | null
+          resource_id?: string | null
+          resource_type?: string
+          session_id?: string | null
+          timestamp?: string
+          user_agent?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
       companies: {
         Row: {
           created_at: string
@@ -204,6 +252,48 @@ export type Database = {
           segment?: string
           suggested_integrations?: Json
           updated_at?: string
+        }
+        Relationships: []
+      }
+      privacy_settings: {
+        Row: {
+          ai_processing_consent: boolean | null
+          analytics_consent: boolean | null
+          consent_version: string | null
+          created_at: string
+          data_retention_days: number | null
+          functional_consent: boolean | null
+          id: string
+          last_updated_ip: unknown | null
+          marketing_consent: boolean | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          ai_processing_consent?: boolean | null
+          analytics_consent?: boolean | null
+          consent_version?: string | null
+          created_at?: string
+          data_retention_days?: number | null
+          functional_consent?: boolean | null
+          id?: string
+          last_updated_ip?: unknown | null
+          marketing_consent?: boolean | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          ai_processing_consent?: boolean | null
+          analytics_consent?: boolean | null
+          consent_version?: string | null
+          created_at?: string
+          data_retention_days?: number | null
+          functional_consent?: boolean | null
+          id?: string
+          last_updated_ip?: unknown | null
+          marketing_consent?: boolean | null
+          updated_at?: string
+          user_id?: string
         }
         Relationships: []
       }
@@ -434,6 +524,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      cleanup_expired_data: {
+        Args: Record<PropertyKey, never>
+        Returns: undefined
+      }
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -450,6 +544,17 @@ export type Database = {
       is_admin: {
         Args: Record<PropertyKey, never>
         Returns: boolean
+      }
+      log_user_action: {
+        Args: {
+          p_action: string
+          p_resource_type: string
+          p_resource_id?: string
+          p_old_values?: Json
+          p_new_values?: Json
+          p_company_id?: string
+        }
+        Returns: string
       }
       user_belongs_to_company: {
         Args: { target_company_id: string }
