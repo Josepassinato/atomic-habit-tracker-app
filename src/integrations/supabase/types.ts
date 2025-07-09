@@ -443,6 +443,14 @@ export type Database = {
           team_ids: Json
         }[]
       }
+      get_current_user_role: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      is_admin: {
+        Args: Record<PropertyKey, never>
+        Returns: boolean
+      }
       user_belongs_to_company: {
         Args: { target_company_id: string }
         Returns: boolean

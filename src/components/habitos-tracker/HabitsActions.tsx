@@ -2,12 +2,12 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import { Loader } from "lucide-react";
-import { HabitsActionsProps } from "./types";
+import { HabitosActionsProps } from "./types";
 
-const HabitsActions: React.FC<HabitsActionsProps> = ({ 
-  onRestart, 
-  onRequestFeedback, 
-  loadingFeedback 
+const HabitsActions: React.FC<HabitosActionsProps> = ({ 
+  onReiniciar: onRestart, 
+  onSolicitarFeedback: onRequestFeedback, 
+  carregandoFeedback: loadingFeedback 
 }) => {
   return (
     <div className="flex justify-between">

@@ -1,29 +1,51 @@
 
-import React from "react";
+import React, { Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
-import LandingPage from "@/pages/LandingPage";
-import RecuperarSenha from "@/pages/RecuperarSenha";
-import Onboarding from "@/pages/Onboarding";
-import Dashboard from "@/pages/Dashboard";
-import Admin from "@/pages/Admin";
-import AdminDashboard from "@/pages/AdminDashboard";
-import Habitos from "@/pages/Habitos";
-import Metas from "@/pages/Metas";
-import GerenciarMetas from "@/pages/GerenciarMetas";
-import Vendedores from "@/pages/Vendedores";
-import Premiacoes from "@/pages/Premiacoes";
-import Relatorios from "@/pages/Relatorios";
-import Tutorial from "@/pages/Tutorial";
-import Configuracoes from "@/pages/Configuracoes";
-import Index from "@/pages/Index";
-import NotFound from "@/pages/NotFound";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import ProtectedRoute from "./ProtectedRoute";
 import { AuthPage } from "@/components/auth/AuthPage";
 import AppLayout from "@/components/layout/AppLayout";
 
+// Lazy load components for better performance
+const LandingPage = React.lazy(() => import("@/pages/LandingPage"));
+const RecuperarSenha = React.lazy(() => import("@/pages/RecuperarSenha"));
+const Onboarding = React.lazy(() => import("@/pages/Onboarding"));
+const Dashboard = React.lazy(() => import("@/pages/Dashboard"));
+const Admin = React.lazy(() => import("@/pages/Admin"));
+const AdminDashboard = React.lazy(() => import("@/pages/AdminDashboard"));
+const Habitos = React.lazy(() => import("@/pages/Habitos"));
+const Metas = React.lazy(() => import("@/pages/Metas"));
+const GerenciarMetas = React.lazy(() => import("@/pages/GerenciarMetas"));
+const Vendedores = React.lazy(() => import("@/pages/Vendedores"));
+const Premiacoes = React.lazy(() => import("@/pages/Premiacoes"));
+const Relatorios = React.lazy(() => import("@/pages/Relatorios"));
+const Tutorial = React.lazy(() => import("@/pages/Tutorial"));
+const Configuracoes = React.lazy(() => import("@/pages/Configuracoes"));
+const Index = React.lazy(() => import("@/pages/Index"));
+const NotFound = React.lazy(() => import("@/pages/NotFound"));
+
+// Loading component
+const PageLoader = () => (
+  <div className="min-h-screen flex items-center justify-center">
+    <Card className="w-full max-w-md">
+      <CardContent className="p-6 space-y-4">
+        <Skeleton className="h-8 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-2/3" />
+        <div className="flex gap-2">
+          <Skeleton className="h-10 flex-1" />
+          <Skeleton className="h-10 flex-1" />
+        </div>
+      </CardContent>
+    </Card>
+  </div>
+);
+
 const AppRoutes: React.FC = () => {
   return (
-    <Routes>
+    <Suspense fallback={<PageLoader />}>
+      <Routes>
       {/* Rotas públicas */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/auth" element={<AuthPage />} />
@@ -164,6 +186,7 @@ const AppRoutes: React.FC = () => {
       {/* Rota para páginas não encontradas */}
       <Route path="*" element={<NotFound />} />
     </Routes>
+  </Suspense>
   );
 };
 

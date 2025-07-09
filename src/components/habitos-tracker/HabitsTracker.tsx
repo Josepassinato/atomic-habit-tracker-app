@@ -7,9 +7,9 @@ import HabitsStats from "./HabitsStats";
 import HabitosList from "./HabitosList";
 import HabitsActions from "./HabitsActions";
 import { useHabitosTracker } from "./useHabitosTracker";
-import { HabitsTrackerProps } from "./types";
+import { HabitosTrackerProps } from "./types";
 
-const HabitsTracker: React.FC<HabitsTrackerProps> = ({ className }) => {
+const HabitsTracker: React.FC<HabitosTrackerProps> = ({ className }) => {
   const {
     habitos: habits,
     feedback,
@@ -69,9 +69,9 @@ const HabitsTracker: React.FC<HabitsTrackerProps> = ({ className }) => {
       </CardContent>
       <CardFooter>
         <HabitsActions 
-          onRestart={restartHabits}
-          onRequestFeedback={requestAIFeedback}
-          loadingFeedback={loadingFeedback}
+          onReiniciar={restartHabits}
+          onSolicitarFeedback={requestAIFeedback}
+          carregandoFeedback={loadingFeedback}
         />
       </CardFooter>
     </Card>
