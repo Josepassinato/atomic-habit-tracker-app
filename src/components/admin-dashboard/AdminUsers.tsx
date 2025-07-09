@@ -43,50 +43,50 @@ const AdminUsers = () => {
           .select('*');
         
         if (companiesError) {
-          console.error("Erro ao buscar empresas:", companiesError);
+          console.error("Error fetching companies:", companiesError);
           throw companiesError;
         }
         
-        // Buscar dados de profiles para obter emails
+        // Fetch profile data to get emails
         const { data: profilesData, error: profilesError } = await supabase
           .from('user_profiles')
           .select('*');
         
         if (profilesError) {
-          console.error("Erro ao buscar profiles:", profilesError);
+          console.error("Error fetching profiles:", profilesError);
         }
         
         if (companiesData && companiesData.length > 0) {
-          // Mapear dados reais do Supabase para o formato esperado
+          // Map real Supabase data to expected format
           const mappedData: Company[] = companiesData.map(company => {
-            // Encontrar o profile relacionado à empresa (se houver)
+            // Find profile related to company (if any)
             const relatedProfile = profilesData?.find(profile => profile.company_id === company.id);
             
             return {
               id: company.id,
-              name: company.name || 'Empresa sem nome',
-              segment: company.segment || 'Não definido',
-              plan: 'Professional' as PlanType, // Por enquanto, usar um plano padrão
+              name: company.name || 'Company without name',
+              segment: company.segment || 'Not defined',
+              plan: 'Professional' as PlanType, // For now, use default plan
               registration_date: new Date(company.created_at).toISOString().split('T')[0],
-              status: 'active' as StatusType, // Por enquanto, considerar todas ativas
-              contact_email: relatedProfile?.email || `contato@${company.name?.toLowerCase().replace(/\s+/g, '') || 'empresa'}.com`
+              status: 'active' as StatusType, // For now, consider all active
+              contact_email: relatedProfile?.email || `contact@${company.name?.toLowerCase().replace(/\s+/g, '') || 'company'}.com`
             };
           });
           
           setCompanies(mappedData);
         } else {
-          // Se não há dados no Supabase, mostrar lista vazia
+          // If no data in Supabase, show empty list
           setCompanies([]);
-          console.log("Nenhuma empresa encontrada no banco de dados");
+          console.log("No companies found in database");
         }
       } else {
-        // Se não há conexão com Supabase, usar dados vazios
+        // If no Supabase connection, use empty data
         setCompanies([]);
-        toast.info("Conecte-se ao Supabase para ver dados reais");
+        toast.info("Connect to Supabase to see real data");
       }
     } catch (error) {
-      console.error("Erro ao carregar empresas:", error);
-      toast.error("Erro ao carregar lista de empresas");
+      console.error("Error loading companies:", error);
+      toast.error("Error loading company list");
       setCompanies([]);
     } finally {
       setLoading(false);
@@ -94,7 +94,7 @@ const AdminUsers = () => {
   };
   
   const handleAddCompany = () => {
-    toast.info("Funcionalidade de adicionar empresa em desenvolvimento");
+    toast.info("Add company functionality in development");
   };
   
   const filteredCompanies = companies.filter(company => 
@@ -106,40 +106,40 @@ const AdminUsers = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Gerenciamento de Empresas</CardTitle>
+        <CardTitle>Company Management</CardTitle>
         <CardDescription>
-          Gerencie todas as empresas cadastradas na plataforma.
+          Manage all companies registered on the platform.
         </CardDescription>
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
             <Input
               type="search"
-              placeholder="Buscar empresas..."
+              placeholder="Search companies..."
               className="pl-8"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
           </div>
-          <Button onClick={handleAddCompany}>Adicionar Empresa</Button>
+          <Button onClick={handleAddCompany}>Add Company</Button>
         </div>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex justify-center p-4">
             <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
-            <span className="ml-2">Carregando...</span>
+            <span className="ml-2">Loading...</span>
           </div>
         ) : (
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Nome</TableHead>
-                <TableHead>Segmento</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Segment</TableHead>
                 <TableHead>Email</TableHead>
-                <TableHead>Plano</TableHead>
+                <TableHead>Plan</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Data de Cadastro</TableHead>
+                <TableHead>Registration Date</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -159,14 +159,14 @@ const AdminUsers = () => {
                             : "bg-red-100 text-red-800"
                       }`}>
                         {company.status === "active" 
-                          ? "Ativo" 
+                          ? "Active" 
                           : company.status === "trial" 
                             ? "Trial" 
-                            : "Inativo"}
+                            : "Inactive"}
                       </span>
                     </TableCell>
                     <TableCell>
-                      {new Date(company.registration_date).toLocaleDateString("pt-BR")}
+                      {new Date(company.registration_date).toLocaleDateString("en-US")}
                     </TableCell>
                   </TableRow>
                 ))
@@ -174,11 +174,11 @@ const AdminUsers = () => {
                 <TableRow>
                   <TableCell colSpan={6} className="text-center py-8">
                     <div className="text-muted-foreground">
-                      {searchTerm ? "Nenhuma empresa encontrada com os critérios de busca" : "Nenhuma empresa cadastrada no sistema"}
+                      {searchTerm ? "No companies found with search criteria" : "No companies registered in the system"}
                     </div>
                     {!searchTerm && (
                       <div className="mt-2 text-sm text-muted-foreground">
-                        As empresas aparecerão aqui quando forem cadastradas através do processo de onboarding
+                        Companies will appear here when registered through the onboarding process
                       </div>
                     )}
                   </TableCell>

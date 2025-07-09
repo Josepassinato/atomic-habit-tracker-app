@@ -110,7 +110,7 @@ const AppSidebar = () => {
                 Admin
               </NavItem>
               <NavItem to="/admin-dashboard" icon={Shield}>
-                Painel Administrativo
+                Admin Dashboard
               </NavItem>
             </>
           )}
@@ -134,8 +134,8 @@ const AppSidebar = () => {
                   {user?.nome?.[0]?.toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <p className="font-medium">{user?.nome || 'Usuário'}</p>
-                  <p className="text-xs text-muted-foreground">{user?.role || 'Papel'}</p>
+                  <p className="font-medium">{user?.nome || 'User'}</p>
+                  <p className="text-xs text-muted-foreground">{user?.role || 'Role'}</p>
                 </div>
               </div>
             </CollapsibleTrigger>

@@ -36,7 +36,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
     <div className="flex justify-between items-center mb-4 p-4">
       <Button variant="ghost" size="sm" onClick={handleBack} className="flex items-center gap-2">
         <ArrowLeft size={16} />
-        {backText || t('back') || 'Voltar'}
+        {backText || t('back') || 'Back'}
       </Button>
       {showLogout && (
         <Button 
@@ -46,7 +46,7 @@ const PageNavigation: React.FC<PageNavigationProps> = ({
           className="text-destructive hover:bg-destructive/10 hover:text-destructive"
         >
           <LogOut size={16} className="mr-2" />
-          {t('logout') || 'Sair'}
+          {t('logout') || 'Sign Out'}
         </Button>
       )}
     </div>

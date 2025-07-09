@@ -25,14 +25,14 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ metrics }) => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Total de Empresas
+            Total Companies
           </CardTitle>
           <Users className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{metrics.totalEmpresas}</div>
           <p className="text-xs text-muted-foreground">
-            {metrics.empresasAtivas} ativas, {metrics.empresasTrial} em trial, {metrics.empresasInativas} inativas
+            {metrics.empresasAtivas} active, {metrics.empresasTrial} on trial, {metrics.empresasInativas} inactive
           </p>
         </CardContent>
       </Card>
@@ -40,14 +40,14 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ metrics }) => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Receita Mensal Recorrente
+            Monthly Recurring Revenue
           </CardTitle>
           <BarChart className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{formatCurrency(metrics.receitaMensal)}</div>
           <p className="text-xs text-muted-foreground">
-            +5% do mês anterior
+            +5% from previous month
           </p>
         </CardContent>
       </Card>
@@ -55,14 +55,14 @@ const AdminAnalytics: React.FC<AdminAnalyticsProps> = ({ metrics }) => {
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">
-            Tokens Consumidos
+            Tokens Consumed
           </CardTitle>
           <PieChart className="h-4 w-4 text-muted-foreground" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{metrics.tokensTotais.toLocaleString()}</div>
           <p className="text-xs text-muted-foreground">
-            Aproximadamente {Math.round(metrics.tokensTotais / 1000)} mil tokens
+            Approximately {Math.round(metrics.tokensTotais / 1000)} thousand tokens
           </p>
         </CardContent>
       </Card>

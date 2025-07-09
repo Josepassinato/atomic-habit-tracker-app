@@ -51,12 +51,12 @@ export const AuthPage: React.FC = () => {
         const { error } = await signIn(email, password);
         if (error) {
           if (error.message.includes('Invalid login credentials')) {
-            toast.error('Email ou senha incorretos');
+            toast.error('Incorrect email or password');
           } else {
-            toast.error('Erro ao fazer login: ' + error.message);
+            toast.error('Login error: ' + error.message);
           }
         } else {
-          toast.success('Login realizado com sucesso!');
+          toast.success('Login successful!');
           
           // Check if user needs onboarding
           // For new users or users without teams/habits, redirect to onboarding
@@ -87,7 +87,7 @@ export const AuthPage: React.FC = () => {
         }
       } else {
         if (!name || !companyId) {
-          toast.error('Preencha todos os campos obrigatórios');
+          toast.error('Please fill in all required fields');
           return;
         }
 
@@ -99,17 +99,17 @@ export const AuthPage: React.FC = () => {
 
         if (error) {
           if (error.message.includes('already registered')) {
-            toast.error('Este email já está cadastrado');
+            toast.error('This email is already registered');
           } else {
-            toast.error('Erro ao criar conta: ' + error.message);
+            toast.error('Account creation error: ' + error.message);
           }
         } else {
-          toast.success('Conta criada com sucesso! Verifique seu email.');
+          toast.success('Account created successfully! Check your email.');
           setIsLogin(true);
         }
       }
     } catch (error) {
-      toast.error('Erro inesperado');
+      toast.error('Unexpected error');
     } finally {
       setLoading(false);
     }
@@ -121,14 +121,14 @@ export const AuthPage: React.FC = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Habitus</CardTitle>
           <CardDescription>
-            Sistema de gestão de vendas e hábitos atômicos
+            Sales management and atomic habits system
           </CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs value={isLogin ? 'login' : 'signup'} onValueChange={(value) => setIsLogin(value === 'login')}>
             <TabsList className="grid w-full grid-cols-2">
               <TabsTrigger value="login">Login</TabsTrigger>
-              <TabsTrigger value="signup">Cadastro</TabsTrigger>
+              <TabsTrigger value="signup">Sign Up</TabsTrigger>
             </TabsList>
             
             <TabsContent value="login">
@@ -145,7 +145,7 @@ export const AuthPage: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="password">Senha</Label>
+                  <Label htmlFor="password">Password</Label>
                   <Input
                     id="password"
                     type="password"
@@ -156,7 +156,7 @@ export const AuthPage: React.FC = () => {
                   />
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Entrando...' : 'Entrar'}
+                  {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
               </form>
             </TabsContent>
@@ -164,13 +164,13 @@ export const AuthPage: React.FC = () => {
             <TabsContent value="signup">
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="signup-name">Nome completo</Label>
+                  <Label htmlFor="signup-name">Full name</Label>
                   <Input
                     id="signup-name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
                     required
-                    placeholder="Seu nome completo"
+                    placeholder="Your full name"
                   />
                 </div>
                 <div className="space-y-2">
@@ -185,7 +185,7 @@ export const AuthPage: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="signup-password">Senha</Label>
+                  <Label htmlFor="signup-password">Password</Label>
                   <Input
                     id="signup-password"
                     type="password"
@@ -197,10 +197,10 @@ export const AuthPage: React.FC = () => {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="company">Empresa</Label>
+                  <Label htmlFor="company">Company</Label>
                   <Select value={companyId} onValueChange={setCompanyId} required>
                     <SelectTrigger>
-                      <SelectValue placeholder="Selecione uma empresa" />
+                      <SelectValue placeholder="Select a company" />
                     </SelectTrigger>
                     <SelectContent>
                       {companies.map((company) => (
@@ -212,20 +212,20 @@ export const AuthPage: React.FC = () => {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="role">Função</Label>
+                  <Label htmlFor="role">Role</Label>
                   <Select value={role} onValueChange={setRole}>
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="vendedor">Vendedor</SelectItem>
-                      <SelectItem value="gerente">Gerente</SelectItem>
-                      <SelectItem value="admin">Administrador</SelectItem>
+                      <SelectItem value="vendedor">Salesperson</SelectItem>
+                      <SelectItem value="gerente">Manager</SelectItem>
+                      <SelectItem value="admin">Administrator</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <Button type="submit" className="w-full" disabled={loading}>
-                  {loading ? 'Criando conta...' : 'Criar conta'}
+                  {loading ? 'Creating account...' : 'Create Account'}
                 </Button>
               </form>
             </TabsContent>
