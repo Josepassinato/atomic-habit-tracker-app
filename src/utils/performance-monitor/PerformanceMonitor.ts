@@ -1,20 +1,6 @@
-import { useEffect } from 'react';
+import type { PerformanceMetric, WebVitalsConfig, PerformanceEntryCallback } from './types';
 
-interface PerformanceMetric {
-  name: string;
-  value: number;
-  timestamp: number;
-  url: string;
-  userAgent: string;
-}
-
-interface WebVitalsConfig {
-  enabled: boolean;
-  endpoint?: string;
-  sampleRate?: number;
-}
-
-class PerformanceMonitor {
+export class PerformanceMonitor {
   private config: WebVitalsConfig;
   private metrics: PerformanceMetric[] = [];
 
@@ -56,7 +42,7 @@ class PerformanceMonitor {
     });
   }
 
-  private observePerformanceEntries(entryType: string, callback: (entry: any) => void) {
+  private observePerformanceEntries(entryType: string, callback: PerformanceEntryCallback) {
     try {
       const observer = new PerformanceObserver((list) => {
         list.getEntries().forEach(callback);
@@ -104,7 +90,7 @@ class PerformanceMonitor {
     });
   }
 
-  private recordMetric(name: string, value: number, metadata?: any) {
+  public recordMetric(name: string, value: number, metadata?: any) {
     // Sample rate check
     if (Math.random() > (this.config.sampleRate || 1.0)) return;
 
@@ -170,57 +156,3 @@ class PerformanceMonitor {
     this.config = { ...this.config, ...newConfig };
   }
 }
-
-// Singleton instance
-let performanceMonitor: PerformanceMonitor | null = null;
-
-export const initializePerformanceMonitoring = (config?: WebVitalsConfig) => {
-  if (typeof window === 'undefined') return;
-  
-  performanceMonitor = new PerformanceMonitor(config);
-  return performanceMonitor;
-};
-
-export const getPerformanceMonitor = () => performanceMonitor;
-
-// React hook for performance monitoring
-export const usePerformanceMonitoring = (config?: WebVitalsConfig) => {
-  useEffect(() => {
-    const monitor = initializePerformanceMonitoring(config);
-    
-    return () => {
-      // Cleanup if needed
-      monitor?.clearMetrics();
-    };
-  }, [config]);
-
-  return {
-    getMetrics: () => performanceMonitor?.getMetrics() || [],
-    clearMetrics: () => performanceMonitor?.clearMetrics(),
-    updateConfig: (newConfig: Partial<WebVitalsConfig>) => 
-      performanceMonitor?.updateConfig(newConfig)
-  };
-};
-
-// Component performance tracker
-export const withPerformanceTracking = (
-  Component: React.ComponentType<any>,
-  componentName: string
-) => {
-  return (props: any) => {
-    useEffect(() => {
-      const startTime = performance.now();
-      
-      return () => {
-        const endTime = performance.now();
-        const renderTime = endTime - startTime;
-        
-        if (renderTime > 16 && performanceMonitor) { // Components taking more than 16ms (60fps threshold)
-          (performanceMonitor as any).recordMetric(`COMPONENT_RENDER_${componentName}`, renderTime);
-        }
-      };
-    });
-
-    return <Component {...props} />;
-  };
-};
