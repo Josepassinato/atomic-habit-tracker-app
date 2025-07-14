@@ -3,11 +3,98 @@ import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
 const corsHeaders = {
-  'Access-Control-Allow-Origin': 'https://*.lovable.app, https://*.salesforce.com',
+  'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Max-Age': '86400',
 };
+
+// Advanced caching system
+const cache = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const MAX_CACHE_SIZE = 1000;
+
+// Rate limiting
+const rateLimitMap = new Map();
+const RATE_LIMIT_WINDOW = 60 * 1000; // 1 minute
+const RATE_LIMIT_MAX_REQUESTS = 60;
+
+// Performance monitoring
+interface PerformanceMetrics {
+  startTime: number;
+  endTime?: number;
+  cacheHit: boolean;
+  tokensUsed?: number;
+  model: string;
+  success: boolean;
+}
+
+// Simple LRU cache implementation
+function addToCache(key: string, value: any) {
+  if (cache.size >= MAX_CACHE_SIZE) {
+    const firstKey = cache.keys().next().value;
+    cache.delete(firstKey);
+  }
+  
+  cache.set(key, {
+    data: value,
+    timestamp: Date.now()
+  });
+}
+
+function getFromCache(key: string) {
+  const cached = cache.get(key);
+  if (!cached) return null;
+  
+  if (Date.now() - cached.timestamp > CACHE_TTL) {
+    cache.delete(key);
+    return null;
+  }
+  
+  return cached.data;
+}
+
+// Rate limiting function
+function isRateLimited(clientId: string): boolean {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW;
+  
+  let requests = rateLimitMap.get(clientId) || [];
+  requests = requests.filter((time: number) => time > windowStart);
+  
+  if (requests.length >= RATE_LIMIT_MAX_REQUESTS) {
+    return true;
+  }
+  
+  requests.push(now);
+  rateLimitMap.set(clientId, requests);
+  return false;
+}
+
+// Generate cache key
+function generateCacheKey(message: string, consultationType: string, userId?: string): string {
+  return `${consultationType}:${userId || 'anonymous'}:${message.substring(0, 100)}`;
+}
+
+// Log performance metrics
+async function logPerformanceMetrics(supabase: any, metrics: PerformanceMetrics, userId?: string) {
+  try {
+    await supabase.from('settings').insert({
+      user_id: userId || '00000000-0000-0000-0000-000000000000',
+      key: 'ai_performance_log',
+      value: {
+        responseTime: (metrics.endTime || Date.now()) - metrics.startTime,
+        cacheHit: metrics.cacheHit,
+        tokensUsed: metrics.tokensUsed,
+        model: metrics.model,
+        success: metrics.success,
+        timestamp: new Date().toISOString()
+      }
+    });
+  } catch (error) {
+    console.error('Failed to log performance metrics:', error);
+  }
+}
 
 interface ChatRequest {
   message: string;
@@ -26,6 +113,13 @@ serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
+
+  const metrics: PerformanceMetrics = {
+    startTime: Date.now(),
+    cacheHit: false,
+    model: 'gpt-4o',
+    success: false
+  };
 
   try {
     const supabase = createClient(
@@ -50,6 +144,15 @@ serve(async (req) => {
 
     const { message: userMessage, userId, companyId, context, consultationType }: ChatRequest = await req.json();
 
+    // Rate limiting check
+    const clientId = userId || req.headers.get('x-forwarded-for') || 'anonymous';
+    if (isRateLimited(clientId)) {
+      return new Response(
+        JSON.stringify({ error: 'Rate limit exceeded. Please try again later.' }),
+        { status: 429, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
     // Validate request
     if (!userMessage || typeof userMessage !== 'string') {
       return new Response(
@@ -62,6 +165,48 @@ serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'Message too long' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Enhanced input validation and security
+    const suspiciousPatterns = [
+      /system\s*:/i,
+      /ignore\s+previous/i,
+      /forget\s+everything/i,
+      /<script/i,
+      /javascript:/i
+    ];
+
+    if (suspiciousPatterns.some(pattern => pattern.test(userMessage))) {
+      console.log(`Suspicious request blocked from ${clientId}: ${userMessage.substring(0, 100)}`);
+      return new Response(
+        JSON.stringify({ error: 'Request blocked for security reasons' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Check cache first
+    const cacheKey = generateCacheKey(userMessage, consultationType, userId);
+    const cachedResponse = getFromCache(cacheKey);
+    
+    if (cachedResponse) {
+      metrics.cacheHit = true;
+      metrics.success = true;
+      metrics.endTime = Date.now();
+      
+      // Log cache hit
+      console.log(`Cache hit for ${consultationType} consultation`);
+      
+      // Background task: log metrics
+      EdgeRuntime.waitUntil(logPerformanceMetrics(supabase, metrics, userId));
+      
+      return new Response(
+        JSON.stringify({
+          ...cachedResponse,
+          cached: true,
+          cacheTimestamp: new Date().toISOString()
+        }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
@@ -141,7 +286,12 @@ ${userMessage}
 
 Responda de forma direta, útil e acionável. Se precisar de mais informações, faça perguntas específicas.`;
 
-    // Call OpenAI API with timeout and retry logic
+    // Determine optimal model based on message complexity
+    const isComplexQuery = userMessage.length > 500 || consultationType === 'strategy';
+    const selectedModel = isComplexQuery ? 'gpt-4o' : 'gpt-4o-mini';
+    metrics.model = selectedModel;
+
+    // Call OpenAI API with enhanced timeout and retry logic
     const openaiResponse = await Promise.race([
       fetch('https://api.openai.com/v1/chat/completions', {
         method: 'POST',
@@ -150,7 +300,7 @@ Responda de forma direta, útil e acionável. Se precisar de mais informações,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4o',
+          model: selectedModel,
           messages: [
             {
               role: 'system',
@@ -162,7 +312,8 @@ Responda de forma direta, útil e acionável. Se precisar de mais informações,
             }
           ],
           temperature: 0.7,
-          max_tokens: 1500,
+          max_tokens: consultationType === 'strategy' ? 2000 : 1500,
+          stream: false // For now, keeping non-streaming for compatibility
         }),
       }),
       new Promise<never>((_, reject) =>
@@ -178,55 +329,83 @@ Responda de forma direta, útil e acionável. Se precisar de mais informações,
 
     const openaiData = await openaiResponse.json();
     const consultantResponse = openaiData.choices[0].message.content;
+    
+    // Update metrics
+    metrics.success = true;
+    metrics.endTime = Date.now();
+    metrics.tokensUsed = openaiData.usage?.total_tokens || 0;
 
-    console.log('AI consultation completed successfully');
+    console.log(`AI consultation completed successfully - Model: ${selectedModel}, Tokens: ${metrics.tokensUsed}, Time: ${metrics.endTime - metrics.startTime}ms`);
 
-    // Log consultation for analytics (optional)
-    try {
-      await supabase.from('settings').insert({
+    // Prepare response
+    const responseData = {
+      success: true,
+      response: consultantResponse,
+      consultationType,
+      contextUsed: !!userContext,
+      metadata: {
+        timestamp: new Date().toISOString(),
+        userId: userId || null,
+        tokenUsage: openaiData.usage || null,
+        model: selectedModel,
+        responseTime: metrics.endTime - metrics.startTime,
+        cacheHit: false
+      }
+    };
+
+    // Cache the response for future use
+    addToCache(cacheKey, responseData);
+
+    // Background tasks: log consultation and performance metrics
+    EdgeRuntime.waitUntil(Promise.all([
+      // Log consultation for analytics
+      supabase.from('settings').insert({
         user_id: userId || '00000000-0000-0000-0000-000000000000',
         key: 'ai_consultation_log',
         value: {
           type: consultationType,
-          messageLength: userMessage.length, // Only log message length for privacy
+          messageLength: userMessage.length,
           timestamp: new Date().toISOString(),
           hasContext: !!userContext,
-          success: true
+          success: true,
+          model: selectedModel,
+          tokensUsed: metrics.tokensUsed,
+          responseTime: metrics.endTime - metrics.startTime
         }
-      });
-    } catch (logError) {
-      console.error('Failed to log consultation:', logError);
-      // Don't fail the request due to logging error
-    }
+      }).catch(error => console.error('Failed to log consultation:', error)),
+      
+      // Log performance metrics
+      logPerformanceMetrics(supabase, metrics, userId)
+    ]));
 
     return new Response(
-      JSON.stringify({
-        success: true,
-        response: consultantResponse,
-        consultationType,
-        contextUsed: !!userContext,
-        metadata: {
-          timestamp: new Date().toISOString(),
-          userId: userId || null,
-          tokenUsage: openaiData.usage || null
-        }
-      }),
+      JSON.stringify(responseData),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' } 
       }
     );
 
   } catch (error) {
+    // Update metrics for failed request
+    metrics.success = false;
+    metrics.endTime = Date.now();
+    
     console.error('AI Consultant Error:', {
       error: error.message,
       timestamp: new Date().toISOString(),
-      stack: error.stack?.substring(0, 500) // Limit stack trace length
+      responseTime: metrics.endTime - metrics.startTime,
+      model: metrics.model,
+      stack: error.stack?.substring(0, 500)
     });
+    
+    // Background task: log error metrics
+    EdgeRuntime.waitUntil(logPerformanceMetrics(supabase, metrics, req.headers.get('user-id') || undefined));
     
     return new Response(
       JSON.stringify({ 
         error: 'Service temporarily unavailable',
-        requestId: crypto.randomUUID()
+        requestId: crypto.randomUUID(),
+        timestamp: new Date().toISOString()
       }),
       { 
         status: 500, 
