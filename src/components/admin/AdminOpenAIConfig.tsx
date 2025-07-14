@@ -15,6 +15,8 @@ const AdminOpenAIConfig: React.FC = () => {
   const [isTesting, setIsTesting] = useState(false);
   const [connectionStatus, setConnectionStatus] = useState<"unknown" | "success" | "failed">("unknown");
   const [isConfigured, setIsConfigured] = useState(false);
+  const [retryCount, setRetryCount] = useState(0);
+  const [lastTestTime, setLastTestTime] = useState<Date | null>(null);
   
   // Carrega a chave da API ao montar o componente
   useEffect(() => {
@@ -73,34 +75,55 @@ const AdminOpenAIConfig: React.FC = () => {
     }
   };
   
-  const testarConexao = async () => {
+  const testarConexao = async (retryAttempt = 0) => {
     if (!isConfigured) {
       toast.error("Por favor, configure a chave API primeiro.");
       return;
     }
     
     setIsTesting(true);
+    const maxRetries = 3;
     
     try {
-      // Testa a conexão através do serviço de IA
+      // Test connection through AI service with performance monitoring
+      const startTime = performance.now();
+      
       const response = await AIService.consultWithAI({
-        message: "Test connection",
+        message: "Test connection for admin panel",
         consultationType: 'general'
       });
       
+      const endTime = performance.now();
+      const responseTime = endTime - startTime;
+      
       if (response) {
-        toast.success("Conexão com a API da OpenAI estabelecida com sucesso!");
+        toast.success(`✅ Conexão estabelecida! Tempo de resposta: ${responseTime.toFixed(0)}ms`);
         setConnectionStatus("success");
+        setLastTestTime(new Date());
+        setRetryCount(0);
+        
+        // Log performance metrics
+        console.log(`OpenAI API Test - Response time: ${responseTime}ms`);
       } else {
-        toast.error("Falha ao conectar com a API da OpenAI");
-        setConnectionStatus("failed");
+        throw new Error("No response from AI service");
       }
     } catch (error) {
-      toast.error("Erro ao testar conexão com a API da OpenAI");
+      console.error(`AI connection test failed (attempt ${retryAttempt + 1}):`, error);
+      
+      if (retryAttempt < maxRetries) {
+        setRetryCount(retryAttempt + 1);
+        toast.info(`Tentativa ${retryAttempt + 1}/${maxRetries} falhou. Tentando novamente...`);
+        setTimeout(() => testarConexao(retryAttempt + 1), 1000 * (retryAttempt + 1));
+        return;
+      }
+      
+      toast.error("❌ Falha ao conectar após várias tentativas");
       setConnectionStatus("failed");
-      console.error(error);
+      setRetryCount(0);
     } finally {
-      setIsTesting(false);
+      if (retryAttempt === 0) {
+        setIsTesting(false);
+      }
     }
   };
   
@@ -143,12 +166,24 @@ const AdminOpenAIConfig: React.FC = () => {
               {connectionStatus === "success" ? (
                 <>
                   <Check className="h-4 w-4" />
-                  <span>Conectado com sucesso à API</span>
+                  <span>
+                    Conectado com sucesso à API
+                    {lastTestTime && (
+                      <span className="block text-xs opacity-75">
+                        Último teste: {lastTestTime.toLocaleString('pt-BR')}
+                      </span>
+                    )}
+                  </span>
                 </>
               ) : (
                 <>
                   <X className="h-4 w-4" />
                   <span>Falha na conexão</span>
+                  {retryCount > 0 && (
+                    <span className="block text-xs opacity-75">
+                      Tentando novamente... ({retryCount}/3)
+                    </span>
+                  )}
                 </>
               )}
             </div>
@@ -173,10 +208,14 @@ const AdminOpenAIConfig: React.FC = () => {
         
         <Button 
           variant="outline" 
-          onClick={testarConexao}
+          onClick={() => testarConexao()}
           disabled={isTesting || !apiKey}
         >
-          {isTesting ? "Testando..." : "Testar Conexão"}
+          {isTesting ? (
+            retryCount > 0 ? `Tentando (${retryCount}/3)...` : "Testando..."
+          ) : (
+            "Testar Conexão"
+          )}
         </Button>
       </CardFooter>
     </Card>

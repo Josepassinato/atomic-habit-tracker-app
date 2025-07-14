@@ -18,6 +18,11 @@ import { toast } from "sonner";
 import { supabaseService } from "@/services/supabase";
 import { openAIService } from "@/services/openai-service";
 import { KeyRound, Database } from "lucide-react";
+import AdminOpenAIConfig from "@/components/admin/AdminOpenAIConfig";
+import OpenAIStatusChecker from "@/components/admin/OpenAIStatusChecker";
+import PerformanceMonitor from "@/components/admin/PerformanceMonitor";
+import AIAnalyticsDashboard from "@/components/admin/AIAnalyticsDashboard";
+import RateLimitMonitor from "@/components/admin/RateLimitMonitor";
 
 interface AdminSettingsProps {
   settings: AdminSettingsType;
@@ -107,6 +112,8 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onSaveSettings 
       <TabsList>
         <TabsTrigger value="general">Geral</TabsTrigger>
         <TabsTrigger value="api">API</TabsTrigger>
+        <TabsTrigger value="monitoring">Monitoramento</TabsTrigger>
+        <TabsTrigger value="ai-analytics">Analytics IA</TabsTrigger>
         <TabsTrigger value="email">Email</TabsTrigger>
       </TabsList>
       
@@ -159,11 +166,15 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onSaveSettings 
       </TabsContent>
       
       <TabsContent value="api" className="space-y-4">
+        {/* New AI Configuration Components */}
+        <AdminOpenAIConfig />
+        <OpenAIStatusChecker />
+        
         <Card>
           <CardHeader>
-            <CardTitle>Configuração de API</CardTitle>
+            <CardTitle>Configuração de API (Legacy)</CardTitle>
             <CardDescription>
-              Configure as chaves de API utilizadas pela plataforma
+              Configure as chaves de API utilizadas pela plataforma (configuração legada)
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -248,6 +259,15 @@ const AdminSettings: React.FC<AdminSettingsProps> = ({ settings, onSaveSettings 
             <Button onClick={handleSave}>Salvar configurações</Button>
           </CardFooter>
         </Card>
+      </TabsContent>
+      
+      <TabsContent value="monitoring" className="space-y-4">
+        <PerformanceMonitor />
+        <RateLimitMonitor />
+      </TabsContent>
+      
+      <TabsContent value="ai-analytics" className="space-y-4">
+        <AIAnalyticsDashboard />
       </TabsContent>
       
       <TabsContent value="email" className="space-y-4">
