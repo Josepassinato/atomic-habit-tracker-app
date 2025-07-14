@@ -82,6 +82,8 @@ export const useHabitosTracker = () => {
         description: "The assistant analyzed your habits and provided recommendations."
       });
     } catch (error) {
+      console.error('Error requesting AI feedback:', error);
+      setFeedback('Unable to generate feedback at the moment. Please try again later.');
       toast.error("Error generating feedback", {
         description: "Please try again in a few moments."
       });
@@ -114,6 +116,8 @@ export const useHabitosTracker = () => {
         description: `${habitosPersonalizados.length} new habits were suggested for your profile.`
       });
     } catch (error) {
+      console.error('Error generating habit suggestions:', error);
+      setHabitosSugeridos([]);
       toast.error("Error generating suggestions", {
         description: "Please try again in a few moments."
       });

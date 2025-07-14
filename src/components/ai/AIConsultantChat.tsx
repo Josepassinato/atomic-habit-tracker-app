@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { AIService } from '@/services/ai-service';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { 
   Brain, 
@@ -66,26 +66,18 @@ export const AIConsultantChat: React.FC = () => {
     setLoading(true);
 
     try {
-      const { data, error } = await supabase.functions.invoke('ai-consultant', {
-        body: {
-          message: inputMessage,
-          userId: userProfile?.id,
-          companyId: userProfile?.empresa_id,
-          consultationType,
-          context: {
-            sessionHistory: messages.slice(-5) // Last 5 messages for context
-          }
+      const response = await AIService.consultWithAI({
+        message: inputMessage,
+        consultationType,
+        context: {
+          sessionHistory: messages.slice(-5) // Last 5 messages for context
         }
       });
-
-      if (error) {
-        throw error;
-      }
 
       const assistantMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         type: 'assistant',
-        content: data.response,
+        content: response.response || 'Desculpe, não consegui processar sua solicitação.',
         timestamp: new Date(),
         consultationType
       };
