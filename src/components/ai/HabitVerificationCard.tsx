@@ -4,7 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { AIService } from '@/services/ai-service';
 import { Brain, CheckCircle, XCircle, AlertTriangle, Loader2 } from 'lucide-react';
 
 interface HabitVerificationProps {
@@ -36,34 +36,26 @@ export const HabitVerificationCard: React.FC<HabitVerificationProps> = ({
 
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('habits-verification', {
-        body: {
-          habitId: habit.id,
-          habitTitle: habit.title,
-          habitDescription: habit.description,
-          evidence: {
-            type: 'text',
-            content: evidence,
-            metadata: {
-              timestamp: new Date().toISOString(),
-              source: 'manual_input'
-            }
-          },
-          schedule: habit.schedule,
-          expectedOutcome: 'Execução completa e efetiva do hábito'
+      const response = await AIService.verifyHabit({
+        habitId: habit.id,
+        habitTitle: habit.title,
+        habitDescription: habit.description,
+        evidence: {
+          type: 'text',
+          content: evidence,
+          metadata: {
+            timestamp: new Date().toISOString(),
+            source: 'manual_input'
+          }
         }
       });
 
-      if (error) {
-        throw error;
-      }
+      setVerificationResult(response.verification);
+      onVerificationComplete?.(response);
 
-      setVerificationResult(data.verification);
-      onVerificationComplete?.(data);
-
-      if (data.autoApproved) {
+      if (response.autoApproved) {
         toast.success('Hábito verificado e aprovado automaticamente! 🎉');
-      } else if (data.verification.verified) {
+      } else if (response.verification.verified) {
         toast.success('Hábito verificado com sucesso! ✅');
       } else {
         toast.warning('Evidência insuficiente. Tente novamente com mais detalhes.');

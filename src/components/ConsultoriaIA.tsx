@@ -3,10 +3,11 @@ import React, { useState, useRef, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { openAIService } from "@/services/openai-service";
+import { AIService } from "@/services/ai-service";
 import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 interface Mensagem {
   role: 'user' | 'assistant';
@@ -15,6 +16,7 @@ interface Mensagem {
 
 const ConsultoriaIA = () => {
   const { supabase } = useSupabase();
+  const { userProfile } = useAuth();
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     { 
       role: 'assistant', 
@@ -90,22 +92,18 @@ const ConsultoriaIA = () => {
     setCarregando(true);
     
     try {
-      // Criar contexto com histórico de conversa para a API
-      const historico = mensagens
-        .slice(-5) // Limitar contexto para as últimas 5 mensagens
-        .map(msg => `${msg.role === 'user' ? 'User' : 'Assistant'}: ${msg.content}`)
-        .join('\n\n');
-        
-      const prompt = `
-        Conversation history:
-        ${historico}
-        
-        User: ${inputMensagem}
-        
-        Respond as a sales assistant specialized in atomic habits and productivity for sales teams.
-      `;
+      // Usar o novo AIService
+      const respostaData = await AIService.consultWithAI({
+        message: inputMensagem,
+        consultationType: 'general',
+        context: {
+          sessionHistory: mensagens.slice(-5), // Últimas 5 mensagens para contexto
+          userId: userProfile?.id,
+          companyId: userProfile?.empresa_id
+        }
+      });
       
-      const respostaIA = await openAIService.generateText(prompt);
+      const respostaIA = respostaData.response;
       
       const respostaMensagem: Mensagem = { 
         role: 'assistant', 

@@ -5,7 +5,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
+import { AIService } from '@/services/ai-service';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { 
   TrendingUp, 
@@ -53,19 +53,13 @@ export const SalesAnalyticsDashboard: React.FC = () => {
   const runAnalysis = async () => {
     setLoading(true);
     try {
-      const { data, error } = await supabase.functions.invoke('sales-analysis', {
-        body: {
-          companyId: userProfile?.empresa_id,
-          period,
-          analysisType
-        }
+      const response = await AIService.analyzeSales({
+        companyId: userProfile?.empresa_id,
+        period,
+        analysisType
       });
 
-      if (error) {
-        throw error;
-      }
-
-      setAnalysis(data.analysis);
+      setAnalysis(response.analysis);
       toast.success('Análise de vendas concluída! 📊');
     } catch (error) {
       console.error('Erro na análise:', error);

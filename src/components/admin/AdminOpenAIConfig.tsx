@@ -6,7 +6,8 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Key, Shield, Check, X, Database } from "lucide-react";
 import { toast } from "sonner";
-import { openAIService } from "@/services/openai-service";
+import { supabase } from "@/integrations/supabase/client";
+import { AIService } from "@/services/ai-service";
 
 const AdminOpenAIConfig: React.FC = () => {
   const [apiKey, setApiKey] = useState<string>("");
@@ -18,10 +19,18 @@ const AdminOpenAIConfig: React.FC = () => {
   // Carrega a chave da API ao montar o componente
   useEffect(() => {
     const loadApiKey = async () => {
-      const savedKey = await openAIService.getApiKey();
-      if (savedKey) {
-        setApiKey(savedKey);
-        setIsConfigured(true);
+      try {
+        const { data, error } = await supabase
+          .from('admin_settings')
+          .select('openai_api_key')
+          .single();
+          
+        if (data?.openai_api_key) {
+          setApiKey('••••••••••••••••••••••••••••••••••••••••'); // Mascarar para segurança
+          setIsConfigured(true);
+        }
+      } catch (error) {
+        console.error('Erro ao carregar configuração:', error);
       }
     };
     
@@ -29,7 +38,7 @@ const AdminOpenAIConfig: React.FC = () => {
   }, []);
 
   const salvarApiKey = async () => {
-    if (!apiKey.trim()) {
+    if (!apiKey.trim() || apiKey.includes('••••')) {
       toast.error("Por favor, insira uma chave API válida.");
       return;
     }
@@ -37,17 +46,24 @@ const AdminOpenAIConfig: React.FC = () => {
     setIsSaving(true);
     
     try {
-      const success = await openAIService.setApiKey(apiKey);
+      const { error } = await supabase
+        .from('admin_settings')
+        .upsert({ 
+          openai_api_key: apiKey,
+          updated_at: new Date().toISOString()
+        });
       
-      if (success) {
+      if (!error) {
         setConnectionStatus("unknown");
         setIsConfigured(true);
-        toast.success("Chave da API salva com sucesso no banco de dados!");
+        setApiKey('••••••••••••••••••••••••••••••••••••••••'); // Mascarar depois de salvar
+        toast.success("Chave da API salva com sucesso!");
         
         // Dispara um evento personalizado para notificar outros componentes
         window.dispatchEvent(new CustomEvent('openai-key-updated'));
       } else {
-        toast.error("Erro ao salvar a chave API no banco de dados.");
+        toast.error("Erro ao salvar a chave API.");
+        console.error(error);
       }
     } catch (error) {
       console.error("Erro ao salvar a chave API:", error);
@@ -58,17 +74,21 @@ const AdminOpenAIConfig: React.FC = () => {
   };
   
   const testarConexao = async () => {
-    if (!apiKey) {
-      toast.error("Por favor, insira uma chave API válida.");
+    if (!isConfigured) {
+      toast.error("Por favor, configure a chave API primeiro.");
       return;
     }
     
     setIsTesting(true);
     
     try {
-      const resultado = await openAIService.testConnection();
+      // Testa a conexão através do serviço de IA
+      const response = await AIService.consultWithAI({
+        message: "Test connection",
+        consultationType: 'general'
+      });
       
-      if (resultado) {
+      if (response) {
         toast.success("Conexão com a API da OpenAI estabelecida com sucesso!");
         setConnectionStatus("success");
       } else {
