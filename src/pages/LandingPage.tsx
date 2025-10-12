@@ -3,6 +3,7 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import LandingHeader from "@/components/LandingHeader";
 import Hero from "@/components/sections/Hero";
+import ProductHighlight from "@/components/sections/ProductHighlight";
 import { SocialProof } from "@/components/sections/SocialProof";
 import Features from "@/components/sections/Features";
 import Testimonials from "@/components/sections/Testimonials";
@@ -22,6 +23,7 @@ const LandingPage = () => {
       <LandingHeader />
       {showBackButton && <PageNavigation showLogout={false} />}
       <Hero />
+      <ProductHighlight />
       <SocialProof />
       <Features />
       <Testimonials />
