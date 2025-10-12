@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { useLanguage } from "@/i18n";
 import { getCurrentUser } from "@/utils/permissions";
-import { TrendingUp, Target, Zap, Users } from "lucide-react";
+import { TrendingUp, Target, Zap, Users, Check, Star, Award } from "lucide-react";
 
 const Hero = () => {
   const navigate = useNavigate();
@@ -28,20 +28,34 @@ const Hero = () => {
               {t('onePercentBetter')}
             </Badge>
             
-            <h1 className="mb-6 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              {t('heroTitle')}{" "}
+            <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
+              Transforme{" "}
               <span className="text-primary bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                {t('heroTitleHighlight')}
+                Hábitos Diários
               </span>
+              {" "}em Resultados de Vendas
             </h1>
             
-            <p className="mb-6 text-xl text-muted-foreground max-w-2xl">
-              {t('heroDescription')}
+            <p className="mb-6 text-xl text-muted-foreground max-w-2xl font-medium">
+              Sistema completo de gestão que conecta micro-hábitos a metas de vendas. 
+              Acompanhe, gamifique e premie sua equipe automaticamente.
             </p>
             
-            <p className="mb-10 text-lg font-medium text-foreground/80 max-w-2xl">
-              {t('heroSubtitle')}
-            </p>
+            {/* Value proposition highlights */}
+            <div className="mb-8 flex flex-wrap gap-4 text-sm">
+              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
+                <Check className="h-4 w-4 text-primary" />
+                <span className="font-medium">Sem setup complexo</span>
+              </div>
+              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
+                <Check className="h-4 w-4 text-primary" />
+                <span className="font-medium">Resultados em 30 dias</span>
+              </div>
+              <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
+                <Check className="h-4 w-4 text-primary" />
+                <span className="font-medium">Integra com seu CRM</span>
+              </div>
+            </div>
 
             {/* Key concepts grid */}
             <div className="grid grid-cols-2 gap-4 mb-10 max-w-lg mx-auto lg:mx-0">
@@ -73,75 +87,89 @@ const Hero = () => {
             </div>
           </div>
 
-          {/* Login area */}
-          <div className="flex justify-center lg:justify-end animate-scale-in">
-            {user ? (
-              <Card className="w-full max-w-md shadow-lg hover-scale">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">{t('welcomeBack')}</CardTitle>
-                  <CardDescription>
-                    {t('helloUser', { name: user.nome })}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button 
-                    className="w-full" 
-                    size="lg"
-                    onClick={() => navigate("/dashboard")}
-                  >
-                    {t('goToDashboard')}
-                  </Button>
-                  <div className="text-center">
-                    <span className="text-sm text-muted-foreground">
-                      {t('notYou')}{" "}
-                      <button 
-                        onClick={() => {
-                          localStorage.removeItem("habitus-user");
-                          window.location.reload();
-                        }}
-                        className="text-primary hover:underline story-link"
-                      >
-                        {t('logout')}
-                      </button>
-                    </span>
+          {/* Dashboard Preview */}
+          <div className="flex justify-center lg:justify-end">
+            <div className="w-full max-w-md">
+              <Card className="overflow-hidden border-2 shadow-2xl animate-scale-in relative">
+                <div className="bg-gradient-to-br from-primary/5 to-primary/10 p-6">
+                  {/* Header */}
+                  <div className="flex items-center justify-between mb-6">
+                    <div>
+                      <h3 className="text-xl font-bold">Dashboard</h3>
+                      <p className="text-xs text-muted-foreground">Visão em tempo real</p>
+                    </div>
+                    <Badge className="bg-green-500 animate-pulse">Live</Badge>
                   </div>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="w-full max-w-md shadow-lg hover-scale">
-                <CardHeader className="text-center">
-                  <CardTitle className="text-2xl">{t('accessAccount')}</CardTitle>
-                  <CardDescription>
-                    {t('signInToTrack')}
-                  </CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <Button 
-                    className="w-full" 
-                    size="lg"
-                    onClick={() => navigate("/auth")}
-                  >
-                    {t('signIn')}
-                  </Button>
-                  <Button 
-                    variant="outline" 
-                    className="w-full" 
-                    size="lg"
-                    onClick={() => navigate("/auth")}
-                  >
-                    {t('createFreeAccount')}
-                  </Button>
-                  <div className="text-center">
-                    <button 
-                      onClick={() => navigate("/recuperar-senha")}
-                      className="text-sm text-primary hover:underline story-link"
-                    >
-                      {t('forgotPassword')}
-                    </button>
+
+                  {/* Metrics Grid */}
+                  <div className="grid grid-cols-2 gap-3 mb-6">
+                    <div className="bg-card p-3 rounded-lg border">
+                      <div className="flex items-center gap-1 mb-1">
+                        <Target className="h-4 w-4 text-primary" />
+                        <span className="text-xs text-muted-foreground">Meta</span>
+                      </div>
+                      <div className="text-xl font-bold">R$ 45k</div>
+                      <div className="text-xs text-green-500 flex items-center gap-1">
+                        <TrendingUp className="h-3 w-3" />
+                        +12%
+                      </div>
+                    </div>
+
+                    <div className="bg-card p-3 rounded-lg border">
+                      <div className="flex items-center gap-1 mb-1">
+                        <Check className="h-4 w-4 text-primary" />
+                        <span className="text-xs text-muted-foreground">Hábitos</span>
+                      </div>
+                      <div className="text-xl font-bold">8/10</div>
+                      <div className="text-xs text-muted-foreground">80%</div>
+                    </div>
                   </div>
-                </CardContent>
+
+                  {/* Progress bar */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-xs">
+                      <span className="text-muted-foreground">Progresso</span>
+                      <span className="font-medium">73%</span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <div className="h-full bg-gradient-to-r from-primary to-primary/80 w-[73%] rounded-full animate-pulse" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* Habits section */}
+                <div className="p-4 bg-card border-t">
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-xs">10 ligações</span>
+                      </div>
+                      <Badge variant="secondary" className="text-xs h-5">✓</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center gap-2">
+                        <Check className="h-4 w-4 text-green-500" />
+                        <span className="text-xs">Atualizar CRM</span>
+                      </div>
+                      <Badge variant="secondary" className="text-xs h-5">✓</Badge>
+                    </div>
+                    <div className="flex items-center justify-between text-sm opacity-50">
+                      <div className="flex items-center gap-2">
+                        <div className="h-4 w-4 rounded-full border-2" />
+                        <span className="text-xs">5 propostas</span>
+                      </div>
+                      <Badge variant="outline" className="text-xs h-5">...</Badge>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Floating badge */}
+                <div className="absolute -top-3 -right-3 bg-primary rounded-full p-2 shadow-lg animate-bounce">
+                  <Award className="h-5 w-5 text-primary-foreground" />
+                </div>
               </Card>
-            )}
+            </div>
           </div>
         </div>
         
