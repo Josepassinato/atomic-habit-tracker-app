@@ -83,4 +83,14 @@ export const pt = {
   'atomicHabitsDesc': 'Pequenas ações diárias que geram grandes resultados',
   'autoRewardsTitle': 'Recompensas Automáticas',
   'autoRewardsDesc': 'Premiações transparentes baseadas em performance real',
+  
+  // Footer
+  'salesAutomationFuture': 'O futuro da automação de vendas e performance',
+  'aboutUs': 'Sobre Nós',
+  'blog': 'Blog',
+  'contact': 'Contato',
+  'allRightsReserved': 'Todos os direitos reservados',
+  
+  // Common
+  'signOut': 'Sair',
 };

@@ -204,5 +204,9 @@ export const en = {
   'popular': 'Most Popular',
   
   // Footer
-  'salesAutomationFuture': 'The future of sales automation and performance'
+  'salesAutomationFuture': 'The future of sales automation and performance',
+  'aboutUs': 'About Us',
+  'blog': 'Blog',
+  'contact': 'Contact',
+  'allRightsReserved': 'All rights reserved',
 };
