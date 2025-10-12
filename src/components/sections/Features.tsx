@@ -1,11 +1,14 @@
 
 import React from "react";
-import { Check } from "lucide-react";
+import { Check, BookOpen } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useLanguage } from "@/i18n";
+import { Button } from "@/components/ui/button";
+import { useNavigate } from "react-router-dom";
 
 const Features = () => {
   const { t, language } = useLanguage();
+  const navigate = useNavigate();
   
   // Features lists translations
   const featureLists = {
@@ -65,9 +68,23 @@ const Features = () => {
   const currentFeatures = featureLists[language];
   
   return (
-    <section className="py-20">
+    <section id="features" className="py-20 bg-muted/30">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">{t('featuresTitle')}</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">{t('featuresTitle')}</h2>
+          <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
+            Baseado nos princípios de Hábitos Atômicos de James Clear
+          </p>
+          <Button 
+            variant="outline" 
+            size="lg" 
+            onClick={() => navigate("/entenda-produto")}
+            className="gap-2"
+          >
+            <BookOpen className="h-5 w-5" />
+            Entenda como funciona o método
+          </Button>
+        </div>
         
         <div className="grid gap-8 md:grid-cols-3">
           <Card>
