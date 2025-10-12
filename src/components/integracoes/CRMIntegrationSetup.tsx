@@ -4,32 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from '@/integrations/supabase/client';
-import { RefreshCw, CheckCircle2, XCircle, AlertCircle } from 'lucide-react';
+import { RefreshCw, CheckCircle2, XCircle, AlertCircle, Plug } from 'lucide-react';
 
 interface CRMIntegration {
   id: string;
   provider: string;
   status: string;
-  last_sync: string;
-  sync_frequency: string;
+  last_sync: string | null;
+  instance_url: string | null;
 }
 
 export const CRMIntegrationSetup = () => {
-  const [provider, setProvider] = useState('');
+  const [provider, setProvider] = useState<'hubspot' | 'pipedrive' | 'salesforce' | ''>('');
+  const [apiKey, setApiKey] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
   const [connecting, setConnecting] = useState(false);
   const [syncing, setSyncing] = useState(false);
   const [integrations, setIntegrations] = useState<CRMIntegration[]>([]);
-  
-  // HubSpot
-  const [hubspotKey, setHubspotKey] = useState('');
-  
-  // Salesforce
-  const [salesforceUrl, setSalesforceUrl] = useState('');
-  const [salesforceToken, setSalesforceToken] = useState('');
 
   const loadIntegrations = async () => {
     const { data, error } = await supabase
@@ -53,9 +46,17 @@ export const CRMIntegrationSetup = () => {
     loadIntegrations();
   }, []);
 
-  const connectHubSpot = async () => {
-    if (!hubspotKey) {
-      toast({ title: "Error", description: "Please enter your HubSpot API key", variant: "destructive" });
+  const connectCRM = async () => {
+    if (!provider) {
+      toast({ title: "Erro", description: "Selecione um CRM", variant: "destructive" });
+      return;
+    }
+    if (!apiKey) {
+      toast({ title: "Erro", description: "Informe a API Key", variant: "destructive" });
+      return;
+    }
+    if ((provider === 'pipedrive' || provider === 'salesforce') && !apiUrl) {
+      toast({ title: "Erro", description: "Informe a URL da API", variant: "destructive" });
       return;
     }
 
@@ -66,26 +67,30 @@ export const CRMIntegrationSetup = () => {
         .select('company_id')
         .single();
 
-      const { error } = await supabase.functions.invoke('crm-hubspot-sync', {
-        body: {
-          action: 'connect',
-          apiKey: hubspotKey,
-          companyId: profileData?.company_id
-        }
-      });
+      const { error } = await supabase
+        .from('crm_integrations')
+        .insert({
+          company_id: profileData?.company_id,
+          provider,
+          api_key: apiKey,
+          instance_url: apiUrl || null,
+          status: 'active'
+        });
 
       if (error) throw error;
 
       toast({
-        title: "Success!",
-        description: "HubSpot connected successfully"
+        title: "Conectado!",
+        description: `${provider.toUpperCase()} conectado com sucesso`
       });
 
-      setHubspotKey('');
+      setProvider('');
+      setApiKey('');
+      setApiUrl('');
       loadIntegrations();
     } catch (error: any) {
       toast({
-        title: "Connection failed",
+        title: "Erro na conexão",
         description: error.message,
         variant: "destructive"
       });
@@ -94,81 +99,72 @@ export const CRMIntegrationSetup = () => {
     }
   };
 
-  const connectSalesforce = async () => {
-    if (!salesforceUrl || !salesforceToken) {
-      toast({ title: "Error", description: "Please enter all Salesforce credentials", variant: "destructive" });
-      return;
-    }
-
-    setConnecting(true);
-    try {
-      const { data: profileData } = await supabase
-        .from('user_profiles')
-        .select('company_id')
-        .single();
-
-      const { error } = await supabase.functions.invoke('crm-salesforce-sync', {
-        body: {
-          action: 'connect',
-          credentials: { instanceUrl: salesforceUrl, accessToken: salesforceToken },
-          companyId: profileData?.company_id
-        }
-      });
-
-      if (error) throw error;
-
-      toast({
-        title: "Success!",
-        description: "Salesforce connected successfully"
-      });
-
-      setSalesforceUrl('');
-      setSalesforceToken('');
-      loadIntegrations();
-    } catch (error: any) {
-      toast({
-        title: "Connection failed",
-        description: error.message,
-        variant: "destructive"
-      });
-    } finally {
-      setConnecting(false);
-    }
-  };
-
-  const syncCRM = async (provider: string, action: string) => {
+  const syncCRM = async (integrationId: string, crmType: 'hubspot' | 'pipedrive' | 'salesforce') => {
     setSyncing(true);
     try {
-      const { data: profileData } = await supabase
-        .from('user_profiles')
-        .select('company_id')
+      const { data: integration } = await supabase
+        .from('crm_integrations')
+        .select('*')
+        .eq('id', integrationId)
         .single();
 
-      const functionName = provider === 'hubspot' ? 'crm-hubspot-sync' : 'crm-salesforce-sync';
-      
-      const { data, error } = await supabase.functions.invoke(functionName, {
+      if (!integration) throw new Error('Integração não encontrada');
+
+      const { data, error } = await supabase.functions.invoke('crm-sync', {
         body: {
-          action,
-          companyId: profileData?.company_id
+          action: 'import',
+          teamId: integration.company_id,
+          crmType,
+          apiKey: integration.api_key,
+          apiUrl: integration.instance_url || ''
         }
       });
 
       if (error) throw error;
 
+      await supabase
+        .from('crm_integrations')
+        .update({ last_sync: new Date().toISOString() })
+        .eq('id', integrationId);
+
       toast({
-        title: "Sync completed!",
-        description: `Synced ${data.synced || data.pushed || 0} records`
+        title: "Sincronizado!",
+        description: `${data.salesReps?.length || 0} vendedores importados`
       });
 
       loadIntegrations();
     } catch (error: any) {
       toast({
-        title: "Sync failed",
+        title: "Erro na sincronização",
         description: error.message,
         variant: "destructive"
       });
     } finally {
       setSyncing(false);
+    }
+  };
+
+  const disconnectCRM = async (integrationId: string) => {
+    try {
+      const { error } = await supabase
+        .from('crm_integrations')
+        .delete()
+        .eq('id', integrationId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Desconectado",
+        description: "Integração removida com sucesso"
+      });
+
+      loadIntegrations();
+    } catch (error: any) {
+      toast({
+        title: "Erro",
+        description: error.message,
+        variant: "destructive"
+      });
     }
   };
 
@@ -184,83 +180,96 @@ export const CRMIntegrationSetup = () => {
     <div className="space-y-6">
       <Card>
         <CardHeader>
-          <CardTitle>CRM Integrations</CardTitle>
+          <CardTitle className="flex items-center gap-2">
+            <Plug className="h-5 w-5" />
+            Integração CRM
+          </CardTitle>
           <CardDescription>
-            Connect your CRM to automatically sync contacts, deals, and activities
+            Conecte seu CRM de forma simples - apenas API Key e pronto!
           </CardDescription>
         </CardHeader>
-        <CardContent>
-          <Tabs defaultValue="hubspot">
-            <TabsList className="grid w-full grid-cols-2">
-              <TabsTrigger value="hubspot">HubSpot</TabsTrigger>
-              <TabsTrigger value="salesforce">Salesforce</TabsTrigger>
-            </TabsList>
+        <CardContent className="space-y-4">
+          <div className="space-y-2">
+            <Label>Selecione o CRM</Label>
+            <Select value={provider} onValueChange={(v: any) => setProvider(v)}>
+              <SelectTrigger>
+                <SelectValue placeholder="Escolha seu CRM" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="hubspot">HubSpot</SelectItem>
+                <SelectItem value="pipedrive">Pipedrive</SelectItem>
+                <SelectItem value="salesforce">Salesforce</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
 
-            <TabsContent value="hubspot" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="hubspot-key">HubSpot Private App Token</Label>
-                <Input
-                  id="hubspot-key"
-                  type="password"
-                  placeholder="pat-na1-xxxxx-xxxxx"
-                  value={hubspotKey}
-                  onChange={(e) => setHubspotKey(e.target.value)}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Get your token from Settings → Integrations → Private Apps
-                </p>
-              </div>
-              <Button onClick={connectHubSpot} disabled={connecting}>
-                {connecting ? "Connecting..." : "Connect HubSpot"}
-              </Button>
-            </TabsContent>
+          {provider === 'pipedrive' && (
+            <div className="space-y-2">
+              <Label>URL da API</Label>
+              <Input
+                placeholder="https://api.pipedrive.com"
+                value={apiUrl}
+                onChange={(e) => setApiUrl(e.target.value)}
+              />
+            </div>
+          )}
 
-            <TabsContent value="salesforce" className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="sf-url">Salesforce Instance URL</Label>
-                <Input
-                  id="sf-url"
-                  placeholder="https://your-instance.salesforce.com"
-                  value={salesforceUrl}
-                  onChange={(e) => setSalesforceUrl(e.target.value)}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="sf-token">Access Token</Label>
-                <Input
-                  id="sf-token"
-                  type="password"
-                  value={salesforceToken}
-                  onChange={(e) => setSalesforceToken(e.target.value)}
-                />
-              </div>
-              <Button onClick={connectSalesforce} disabled={connecting}>
-                {connecting ? "Connecting..." : "Connect Salesforce"}
-              </Button>
-            </TabsContent>
-          </Tabs>
+          {provider === 'salesforce' && (
+            <div className="space-y-2">
+              <Label>URL da Instância</Label>
+              <Input
+                placeholder="https://sua-instancia.salesforce.com"
+                value={apiUrl}
+                onChange={(e) => setApiUrl(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div className="space-y-2">
+            <Label>API Key / Token</Label>
+            <Input
+              type="password"
+              placeholder={
+                provider === 'hubspot' ? 'pat-na1-xxxxx-xxxxx' :
+                provider === 'salesforce' ? 'Access Token' :
+                'API Token'
+              }
+              value={apiKey}
+              onChange={(e) => setApiKey(e.target.value)}
+            />
+            {provider === 'hubspot' && (
+              <p className="text-sm text-muted-foreground">
+                Settings → Integrations → Private Apps
+              </p>
+            )}
+          </div>
+
+          <Button onClick={connectCRM} disabled={connecting} className="w-full">
+            <Plug className="h-4 w-4 mr-2" />
+            {connecting ? "Conectando..." : "Conectar"}
+          </Button>
         </CardContent>
       </Card>
 
       <Card>
         <CardHeader>
-          <CardTitle>Active Integrations</CardTitle>
+          <CardTitle>Integrações Ativas</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {integrations.length === 0 ? (
               <p className="text-muted-foreground text-center py-8">
-                No integrations configured yet
+                Nenhuma integração configurada
               </p>
             ) : (
               integrations.map((integration) => (
-                <div key={integration.id} className="flex items-center justify-between p-4 border rounded-lg">
+                <div key={integration.id} className="flex items-center justify-between p-4 border rounded-lg bg-card">
                   <div className="flex items-center gap-3">
                     {getStatusIcon(integration.status)}
                     <div>
                       <p className="font-medium capitalize">{integration.provider}</p>
-                      <p className="text-sm text-muted-foreground">
-                        Last sync: {integration.last_sync ? new Date(integration.last_sync).toLocaleString() : 'Never'}
+                      <p className="text-xs text-muted-foreground">
+                        {integration.last_sync ? `Última sync: ${new Date(integration.last_sync).toLocaleString('pt-BR')}` : 'Nunca sincronizado'}
                       </p>
                     </div>
                   </div>
@@ -268,20 +277,18 @@ export const CRMIntegrationSetup = () => {
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => syncCRM(integration.provider, 'sync_contacts')}
+                      onClick={() => syncCRM(integration.id, integration.provider as any)}
                       disabled={syncing}
                     >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Sync Contacts
+                      <RefreshCw className={`h-4 w-4 mr-2 ${syncing ? 'animate-spin' : ''}`} />
+                      Sincronizar
                     </Button>
                     <Button
                       size="sm"
-                      variant="outline"
-                      onClick={() => syncCRM(integration.provider, integration.provider === 'hubspot' ? 'sync_deals' : 'sync_opportunities')}
-                      disabled={syncing}
+                      variant="destructive"
+                      onClick={() => disconnectCRM(integration.id)}
                     >
-                      <RefreshCw className="h-4 w-4 mr-2" />
-                      Sync Deals
+                      Desconectar
                     </Button>
                   </div>
                 </div>
