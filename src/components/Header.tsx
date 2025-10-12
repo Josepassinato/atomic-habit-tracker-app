@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Menu, LogOut } from "lucide-react";
@@ -9,16 +9,48 @@ import ThemeSwitcher from "./ThemeSwitcher";
 import LanguageSelector from "./LanguageSelector";
 import { NotificacoesBadge } from "./notificacoes/NotificacoesProvider";
 import SupabaseSyncButton from "./SupabaseSyncButton";
+import { RealtimeNotificationCenter } from "./realtime/RealtimeNotificationCenter";
+import { RealtimeIndicator } from "./realtime/RealtimeIndicator";
+import { useRealtimeNotifications } from "@/hooks/useRealtimeNotifications";
 import { useSupabase } from "@/hooks/use-supabase";
 import { useLanguage } from "@/i18n";
 import { getCurrentUser } from "@/utils/permissions";
 import { performLogout } from "@/utils/auth-utils";
+import { supabase } from "@/integrations/supabase/client";
+
 
 const Header: React.FC = () => {
   const navigate = useNavigate();
   const { isConfigured } = useSupabase();
   const { t } = useLanguage();
   const user = getCurrentUser();
+  const [isRealtimeConnected, setIsRealtimeConnected] = useState(false);
+  
+  // Get user's team_id from storage or context
+  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+  const teamId = userProfile?.team_ids?.[0];
+  const userId = user?.id;
+  
+  const { notifications, markAsRead, clearAll } = useRealtimeNotifications(userId, teamId);
+  
+  // Monitor Supabase realtime connection status
+  useEffect(() => {
+    const channel = supabase.channel('connection-status');
+    
+    channel
+      .on('system', {}, (payload) => {
+        if (payload.status === 'SUBSCRIBED') {
+          setIsRealtimeConnected(true);
+        }
+      })
+      .subscribe((status) => {
+        setIsRealtimeConnected(status === 'SUBSCRIBED');
+      });
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, []);
   
   const handleLogout = () => {
     performLogout('/');
@@ -48,6 +80,17 @@ const Header: React.FC = () => {
         </div>
         
         <div className="flex items-center justify-end gap-2">
+          {user && isConfigured && (
+            <>
+              <RealtimeIndicator connected={isRealtimeConnected} className="hidden md:flex" />
+              <RealtimeNotificationCenter
+                notifications={notifications}
+                onMarkAsRead={markAsRead}
+                onClearAll={clearAll}
+              />
+            </>
+          )}
+          
           {isConfigured && (
             <SupabaseSyncButton className="hidden md:flex" />
           )}

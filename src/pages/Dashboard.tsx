@@ -9,9 +9,12 @@ import ConsultoriaIA from "@/components/ConsultoriaIA";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import TeamsDashboardAvancado from "@/components/dashboard/TeamsDashboardAvancado";
 import { ROIBusinessDashboard } from "@/components/dashboard/ROIBusinessDashboard";
+import { GamificationDashboard } from "@/components/gamification/GamificationDashboard";
 import PageNavigation from "@/components/PageNavigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
+import { useRealtimeHabits } from "@/hooks/useRealtimeHabits";
+import { useRealtimeGoals } from "@/hooks/useRealtimeGoals";
 import { useLanguage } from "@/i18n";
 import { getCurrentUser } from "@/utils/permissions";
 import { storageService } from "@/services/storage-service";
@@ -21,6 +24,17 @@ const Dashboard = () => {
   const { adicionarNotificacao } = useNotificacoes();
   const { t } = useLanguage();
   const notificationShown = useRef(false);
+  
+  // Get user profile for realtime hooks
+  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
+  const teamId = userProfile?.team_ids?.[0];
+  const userId = userProfile?.user_id;
+  
+  // Enable realtime updates
+  const { habits, loading: habitsLoading } = useRealtimeHabits(teamId, userId);
+  const { goals, loading: goalsLoading } = useRealtimeGoals(teamId, userId);
+  
+  console.log('Realtime habits:', habits.length, 'goals:', goals.length);
   
   useEffect(() => {
     // Check if user is authenticated
@@ -58,9 +72,10 @@ const Dashboard = () => {
       <PageNavigation />
       <main className="container flex-1 py-6">
         <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList>
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="roi">ROI Analytics</TabsTrigger>
+          <TabsList className="grid w-full grid-cols-3 max-w-md">
+            <TabsTrigger value="overview">{t('overview')}</TabsTrigger>
+            <TabsTrigger value="gamification">{t('achievements')}</TabsTrigger>
+            <TabsTrigger value="roi">ROI</TabsTrigger>
           </TabsList>
           
           <TabsContent value="overview">
@@ -92,6 +107,10 @@ const Dashboard = () => {
               
               <TeamsDashboardAvancado />
             </DashboardPersonalizavel>
+          </TabsContent>
+          
+          <TabsContent value="gamification">
+            <GamificationDashboard />
           </TabsContent>
           
           <TabsContent value="roi">
