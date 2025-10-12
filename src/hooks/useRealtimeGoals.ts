@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useLanguage } from '@/i18n';
+import { pushNotificationService } from '@/services/push-notification-service';
+import { usePushNotifications } from './usePushNotifications';
 
 interface Goal {
   id: string;
@@ -19,6 +21,7 @@ interface Goal {
 export const useRealtimeGoals = (teamId?: string, userId?: string) => {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
+  const { preferences } = usePushNotifications(userId);
   const { t } = useLanguage();
 
   useEffect(() => {
@@ -85,6 +88,15 @@ export const useRealtimeGoals = (teamId?: string, userId?: string) => {
               goal.id === newGoal.id ? newGoal : goal
             )
           );
+          
+          // Show push notification if goal is near completion
+          if (preferences.goalProgress && newGoal.percentage >= 75 && newGoal.percentage < 100) {
+            pushNotificationService.showGoalNotification(
+              newGoal.name, 
+              newGoal.percentage,
+              '/metas'
+            );
+          }
           
           // Show notification if goal progress increased significantly
           if (newGoal.percentage >= 100 && oldGoal.percentage < 100) {

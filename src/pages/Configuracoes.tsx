@@ -5,6 +5,7 @@ import { KeyRound, Bell, Shield } from "lucide-react";
 import APIConfigTab from "@/components/configuracoes/APIConfigTab";
 import NotificationsTab from "@/components/configuracoes/NotificationsTab";
 import PrivacyTab from "@/components/configuracoes/PrivacyTab";
+import { NotificationPreferences } from "@/components/notifications/NotificationPreferences";
 import PageNavigation from "@/components/PageNavigation";
 import { useLanguage } from "@/i18n";
 
@@ -54,7 +55,7 @@ const Configuracoes = () => {
           </TabsContent>
           
           <TabsContent value="notificacoes" className="space-y-6">
-            <NotificationsTab />
+            <NotificationPreferences />
           </TabsContent>
           
           <TabsContent value="privacidade" className="space-y-6">
