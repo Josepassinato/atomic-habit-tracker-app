@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -106,6 +106,56 @@ export type Database = {
           team_size?: string | null
         }
         Relationships: []
+      }
+      crm_integrations: {
+        Row: {
+          api_key: string
+          company_id: string
+          config: Json | null
+          created_at: string
+          id: string
+          instance_url: string | null
+          last_sync: string | null
+          provider: string
+          status: string
+          sync_frequency: string | null
+          updated_at: string
+        }
+        Insert: {
+          api_key: string
+          company_id: string
+          config?: Json | null
+          created_at?: string
+          id?: string
+          instance_url?: string | null
+          last_sync?: string | null
+          provider: string
+          status?: string
+          sync_frequency?: string | null
+          updated_at?: string
+        }
+        Update: {
+          api_key?: string
+          company_id?: string
+          config?: Json | null
+          created_at?: string
+          id?: string
+          instance_url?: string | null
+          last_sync?: string | null
+          provider?: string
+          status?: string
+          sync_frequency?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "crm_integrations_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       goals: {
         Row: {
@@ -297,6 +347,79 @@ export type Database = {
         }
         Relationships: []
       }
+      roi_analytics: {
+        Row: {
+          company_id: string
+          conversion_rate: number | null
+          created_at: string
+          habit_completion_rate: number | null
+          habits_completed: number | null
+          habits_target: number | null
+          id: string
+          period_end: string
+          period_start: string
+          revenue_generated: number | null
+          revenue_target: number | null
+          roi_score: number | null
+          sales_rep_id: string | null
+          team_id: string | null
+        }
+        Insert: {
+          company_id: string
+          conversion_rate?: number | null
+          created_at?: string
+          habit_completion_rate?: number | null
+          habits_completed?: number | null
+          habits_target?: number | null
+          id?: string
+          period_end: string
+          period_start: string
+          revenue_generated?: number | null
+          revenue_target?: number | null
+          roi_score?: number | null
+          sales_rep_id?: string | null
+          team_id?: string | null
+        }
+        Update: {
+          company_id?: string
+          conversion_rate?: number | null
+          created_at?: string
+          habit_completion_rate?: number | null
+          habits_completed?: number | null
+          habits_target?: number | null
+          id?: string
+          period_end?: string
+          period_start?: string
+          revenue_generated?: number | null
+          revenue_target?: number | null
+          roi_score?: number | null
+          sales_rep_id?: string | null
+          team_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "roi_analytics_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roi_analytics_sales_rep_id_fkey"
+            columns: ["sales_rep_id"]
+            isOneToOne: false
+            referencedRelation: "sales_reps"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "roi_analytics_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       sales_reps: {
         Row: {
           company_id: string | null
@@ -304,6 +427,8 @@ export type Database = {
           created_at: string
           current_goal: number | null
           email: string
+          external_id: string | null
+          external_source: string | null
           id: string
           name: string
           team_id: string | null
@@ -315,6 +440,8 @@ export type Database = {
           created_at?: string
           current_goal?: number | null
           email: string
+          external_id?: string | null
+          external_source?: string | null
           id?: string
           name: string
           team_id?: string | null
@@ -326,6 +453,8 @@ export type Database = {
           created_at?: string
           current_goal?: number | null
           email?: string
+          external_id?: string | null
+          external_source?: string | null
           id?: string
           name?: string
           team_id?: string | null
@@ -524,6 +653,14 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      calculate_roi_score: {
+        Args: {
+          p_company_id: string
+          p_period_end: string
+          p_period_start: string
+        }
+        Returns: undefined
+      }
       cleanup_expired_data: {
         Args: Record<PropertyKey, never>
         Returns: undefined
@@ -531,10 +668,10 @@ export type Database = {
       get_current_user_profile: {
         Args: Record<PropertyKey, never>
         Returns: {
-          user_id: string
           company_id: string
           role: string
           team_ids: Json
+          user_id: string
         }[]
       }
       get_current_user_role: {
@@ -548,11 +685,11 @@ export type Database = {
       log_user_action: {
         Args: {
           p_action: string
-          p_resource_type: string
-          p_resource_id?: string
-          p_old_values?: Json
-          p_new_values?: Json
           p_company_id?: string
+          p_new_values?: Json
+          p_old_values?: Json
+          p_resource_id?: string
+          p_resource_type: string
         }
         Returns: string
       }

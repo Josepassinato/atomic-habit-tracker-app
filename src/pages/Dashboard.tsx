@@ -8,7 +8,9 @@ import IntegracoesCRM from "@/components/IntegracoesCRM";
 import ConsultoriaIA from "@/components/ConsultoriaIA";
 import DashboardPersonalizavel from "@/components/dashboard/DashboardPersonalizavel";
 import TeamsDashboardAvancado from "@/components/dashboard/TeamsDashboardAvancado";
+import { ROIBusinessDashboard } from "@/components/dashboard/ROIBusinessDashboard";
 import PageNavigation from "@/components/PageNavigation";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
 import { useLanguage } from "@/i18n";
 import { getCurrentUser } from "@/utils/permissions";
@@ -55,34 +57,47 @@ const Dashboard = () => {
     <div className="flex min-h-screen flex-col bg-background">
       <PageNavigation />
       <main className="container flex-1 py-6">
-        <DashboardPersonalizavel>
-          <DashboardSummary />
+        <Tabs defaultValue="overview" className="space-y-6">
+          <TabsList>
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="roi">ROI Analytics</TabsTrigger>
+          </TabsList>
           
-          <div className="mt-8 grid gap-6 lg:grid-cols-3">
-            <div className="lg:col-span-2">
-              <div className="grid gap-6 md:grid-cols-2">
-                <div>
-                  <h2 className="mb-3 text-xl font-semibold">Sales Goals</h2>
-                  <MetasVendas />
+          <TabsContent value="overview">
+            <DashboardPersonalizavel>
+              <DashboardSummary />
+              
+              <div className="mt-8 grid gap-6 lg:grid-cols-3">
+                <div className="lg:col-span-2">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div>
+                      <h2 className="mb-3 text-xl font-semibold">Sales Goals</h2>
+                      <MetasVendas />
+                    </div>
+                    <div>
+                      <h2 className="mb-3 text-xl font-semibold">Atomic Habits</h2>
+                      <HabitosTracker />
+                    </div>
+                  </div>
                 </div>
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">Atomic Habits</h2>
-                  <HabitosTracker />
+                  <h2 className="mb-3 text-xl font-semibold">AI Consulting</h2>
+                  <ConsultoriaIA />
+                  <div className="mt-6">
+                    <h3 className="mb-3 text-lg font-semibold">CRM Integrations</h3>
+                    <IntegracoesCRM />
+                  </div>
                 </div>
               </div>
-            </div>
-            <div>
-              <h2 className="mb-3 text-xl font-semibold">AI Consulting</h2>
-              <ConsultoriaIA />
-              <div className="mt-6">
-                <h3 className="mb-3 text-lg font-semibold">CRM Integrations</h3>
-                <IntegracoesCRM />
-              </div>
-            </div>
-          </div>
+              
+              <TeamsDashboardAvancado />
+            </DashboardPersonalizavel>
+          </TabsContent>
           
-          <TeamsDashboardAvancado />
-        </DashboardPersonalizavel>
+          <TabsContent value="roi">
+            <ROIBusinessDashboard />
+          </TabsContent>
+        </Tabs>
       </main>
     </div>
   );
