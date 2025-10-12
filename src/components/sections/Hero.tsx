@@ -29,31 +29,30 @@ const Hero = () => {
             </Badge>
             
             <h1 className="mb-4 text-4xl font-extrabold tracking-tight sm:text-5xl lg:text-6xl">
-              Transforme{" "}
+              {t('transformHabitsIntoResults')}{" "}
               <span className="text-primary bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
-                Hábitos Diários
+                {t('dailyHabits')}
               </span>
-              {" "}em Resultados de Vendas
+              {" "}{t('intoSalesResults')}
             </h1>
             
             <p className="mb-6 text-xl text-muted-foreground max-w-2xl font-medium">
-              Sistema completo de gestão que conecta micro-hábitos a metas de vendas. 
-              Acompanhe, gamifique e premie sua equipe automaticamente.
+              {t('completeSystemDescription')}
             </p>
             
             {/* Value proposition highlights */}
             <div className="mb-8 flex flex-wrap gap-4 text-sm">
               <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
                 <Check className="h-4 w-4 text-primary" />
-                <span className="font-medium">Sem setup complexo</span>
+                <span className="font-medium">{t('noComplexSetup')}</span>
               </div>
               <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
                 <Check className="h-4 w-4 text-primary" />
-                <span className="font-medium">Resultados em 30 dias</span>
+                <span className="font-medium">{t('resultsIn30Days')}</span>
               </div>
               <div className="flex items-center gap-2 bg-primary/10 px-4 py-2 rounded-full">
                 <Check className="h-4 w-4 text-primary" />
-                <span className="font-medium">Integra com seu CRM</span>
+                <span className="font-medium">{t('integratesWithCRM')}</span>
               </div>
             </div>
 
@@ -95,10 +94,10 @@ const Hero = () => {
                   {/* Header */}
                   <div className="flex items-center justify-between mb-6">
                     <div>
-                      <h3 className="text-xl font-bold">Dashboard</h3>
-                      <p className="text-xs text-muted-foreground">Visão em tempo real</p>
+                      <h3 className="text-xl font-bold">{t('dashboardTitle')}</h3>
+                      <p className="text-xs text-muted-foreground">{t('liveView')}</p>
                     </div>
-                    <Badge className="bg-green-500 animate-pulse">Live</Badge>
+                    <Badge className="bg-green-500 animate-pulse">{t('live')}</Badge>
                   </div>
 
                   {/* Metrics Grid */}
@@ -106,7 +105,7 @@ const Hero = () => {
                     <div className="bg-card p-3 rounded-lg border">
                       <div className="flex items-center gap-1 mb-1">
                         <Target className="h-4 w-4 text-primary" />
-                        <span className="text-xs text-muted-foreground">Meta</span>
+                        <span className="text-xs text-muted-foreground">{t('monthlyGoal')}</span>
                       </div>
                       <div className="text-xl font-bold">R$ 45k</div>
                       <div className="text-xs text-green-500 flex items-center gap-1">
@@ -118,7 +117,7 @@ const Hero = () => {
                     <div className="bg-card p-3 rounded-lg border">
                       <div className="flex items-center gap-1 mb-1">
                         <Check className="h-4 w-4 text-primary" />
-                        <span className="text-xs text-muted-foreground">Hábitos</span>
+                        <span className="text-xs text-muted-foreground">{t('habitsToday')}</span>
                       </div>
                       <div className="text-xl font-bold">8/10</div>
                       <div className="text-xs text-muted-foreground">80%</div>
@@ -128,7 +127,7 @@ const Hero = () => {
                   {/* Progress bar */}
                   <div className="space-y-2">
                     <div className="flex justify-between text-xs">
-                      <span className="text-muted-foreground">Progresso</span>
+                      <span className="text-muted-foreground">{t('progress')}</span>
                       <span className="font-medium">73%</span>
                     </div>
                     <div className="h-2 bg-muted rounded-full overflow-hidden">
@@ -143,21 +142,21 @@ const Hero = () => {
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-green-500" />
-                        <span className="text-xs">10 ligações</span>
+                        <span className="text-xs">10 {t('calls')}</span>
                       </div>
                       <Badge variant="secondary" className="text-xs h-5">✓</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm">
                       <div className="flex items-center gap-2">
                         <Check className="h-4 w-4 text-green-500" />
-                        <span className="text-xs">Atualizar CRM</span>
+                        <span className="text-xs">{t('updateCRM')}</span>
                       </div>
                       <Badge variant="secondary" className="text-xs h-5">✓</Badge>
                     </div>
                     <div className="flex items-center justify-between text-sm opacity-50">
                       <div className="flex items-center gap-2">
                         <div className="h-4 w-4 rounded-full border-2" />
-                        <span className="text-xs">5 propostas</span>
+                        <span className="text-xs">5 {t('proposals')}</span>
                       </div>
                       <Badge variant="outline" className="text-xs h-5">...</Badge>
                     </div>

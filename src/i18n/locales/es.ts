@@ -1,19 +1,86 @@
 export const es = {
-  // Spanish translations - placeholder structure
-  // Add Spanish translations here as needed
-  
-  // Basic navigation
+  // Navegación
   'dashboard': 'Dashboard',
   'habits': 'Hábitos',
-  'goals': 'Objetivos',
+  'goals': 'Metas',
   'reports': 'Informes',
   'settings': 'Configuración',
   
-  // Landing page examples
+  // Landing page
   'heroTitle': 'Construye Excelencia en Ventas con',
   'heroTitleHighlight': 'Micro-Mejoras Diarias',
-  'heroDescription': 'Transforma pequeñas acciones consistentes en resultados extraordinarios. Sistema basado en ciencia del comportamiento para alto rendimiento comercial.',
+  'heroDescription': 'Transforma pequeñas acciones consistentes en resultados extraordinarios.',
   
-  // Add more Spanish translations as needed
-  // For now, fallback to English for missing translations
+  // New hero translations
+  'transformHabitsIntoResults': 'Transforma',
+  'dailyHabits': 'Hábitos Diarios',
+  'intoSalesResults': 'en Resultados de Ventas',
+  'completeSystemDescription': 'Sistema completo de gestión que conecta micro-hábitos con metas de ventas. Rastrea, gamifica y premia a tu equipo automáticamente.',
+  'noComplexSetup': 'Sin configuración compleja',
+  'resultsIn30Days': 'Resultados en 30 días',
+  'integratesWithCRM': 'Se integra con tu CRM',
+  
+  'onePercentBetter': '1% mejor cada día',
+  'systemsOverGoals': 'Enfócate en el sistema, no solo en las metas',
+  'compoundEffect': 'Efecto compuesto',
+  'identityBasedHabits': 'Hábitos basados en identidad',
+  'performanceMultiplier': 'Multiplicador de rendimiento',
+  'startNow': 'Comenzar Ahora',
+  'scheduleDemo': 'Agendar Demo',
+  
+  // Social Proof
+  'provenResults': 'Resultados Comprobados',
+  'dataFromRealTeams': 'Datos de equipos reales usando el sistema',
+  'activeTeams': 'Equipos activos',
+  'avgSalesIncrease': 'Aumento promedio en ventas',
+  'habitCompletionRate': 'Tasa de finalización de hábitos',
+  'avgROI6Months': 'ROI promedio en 6 meses',
+  'testimonial1': 'En 3 meses nuestro equipo aumentó las ventas en 35%. El sistema de hábitos diarios marcó la diferencia en consistencia.',
+  'testimonial1Author': 'Carlos Mendes',
+  'testimonial1Role': 'Gerente de Ventas, Tech Solutions',
+  'testimonial2': 'La integración con nuestro CRM ahorra 5 horas por semana. Y la gamificación aumentó el compromiso del equipo en 80%.',
+  'testimonial2Author': 'Ana Paula Silva',
+  'testimonial2Role': 'Directora Comercial, Growth Corp',
+  
+  // Dashboard Preview
+  'dashboardTitle': 'Dashboard',
+  'liveView': 'Vista en tiempo real',
+  'live': 'En vivo',
+  'monthlyGoal': 'Meta',
+  'habitsToday': 'Hábitos',
+  'progress': 'Progreso',
+  'calls': 'llamadas',
+  'updateCRM': 'Actualizar CRM',
+  'proposals': 'propuestas',
+  'completedStatus': 'Completo',
+  'pending': 'Pendiente',
+  
+  // Hero section
+  'welcomeBack': '¡Bienvenido de vuelta!',
+  'helloUser': 'Hola, {{name}}. Continúa donde lo dejaste.',
+  'goToDashboard': 'Ir al Dashboard',
+  'notYou': '¿No eres tú?',
+  'logout': 'Cerrar sesión',
+  'accessAccount': 'Accede a tu cuenta',
+  'signIn': 'Iniciar sesión',
+  'signInToTrack': 'Inicia sesión para rastrear tus hábitos y metas',
+  'createFreeAccount': 'Crear cuenta gratis',
+  'forgotPassword': '¿Olvidaste tu contraseña?',
+  
+  'whyItWorks': 'Por Qué Funciona',
+  'scientificApproach': 'Nuestro enfoque se basa en décadas de investigación en psicología conductual y neurociencia aplicada al rendimiento comercial.',
+  'identityFirst': 'Identidad Primero',
+  'identityFirstDesc': 'Construye hábitos basados en quién quieres ser, no solo en lo que quieres lograr.',
+  'compoundGrowth': 'Crecimiento Exponencial',
+  'compoundGrowthDesc': 'Pequeñas mejoras diarias se acumulan en resultados extraordinarios con el tiempo.',
+  'environmentDesign': 'Diseño de Entorno',
+  'environmentDesignDesc': 'Creamos un entorno digital que facilita buenos hábitos y elimina barreras al éxito.',
+  
+  'featuresTitle': 'Todo lo que necesitas para sobresalir en ventas',
+  'smartGoalsTitle': 'Metas Inteligentes',
+  'smartGoalsDesc': 'Metas con IA que se adaptan a tu rendimiento',
+  'atomicHabitsTitle': 'Hábitos Atómicos',
+  'atomicHabitsDesc': 'Pequeñas acciones diarias que generan grandes resultados',
+  'autoRewardsTitle': 'Recompensas Automáticas',
+  'autoRewardsDesc': 'Premios transparentes basados en rendimiento real',
 };
