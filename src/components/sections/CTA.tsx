@@ -15,9 +15,14 @@ const CTA = () => {
         <p className="mx-auto mb-10 max-w-2xl text-xl text-muted-foreground">
           {t('ctaDesc')}
         </p>
-        <Button size="lg" onClick={() => navigate("/auth")}>
-          {t('createAccount')}
-        </Button>
+        <div className="flex flex-wrap items-center justify-center gap-4">
+          <Button size="lg" onClick={() => navigate("/auth")}>
+            {t('createAccount')}
+          </Button>
+          <Button size="lg" variant="outline" onClick={() => navigate("/schedule-demo")}>
+            {t('scheduleDemo')}
+          </Button>
+        </div>
       </div>
     </section>
   );

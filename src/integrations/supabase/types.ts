@@ -250,6 +250,54 @@ export type Database = {
           },
         ]
       }
+      demo_appointments: {
+        Row: {
+          company_name: string | null
+          company_size: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status: string | null
+          timezone: string | null
+          updated_at: string
+        }
+        Insert: {
+          company_name?: string | null
+          company_size?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          scheduled_date: string
+          scheduled_time: string
+          status?: string | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          company_name?: string | null
+          company_size?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          scheduled_date?: string
+          scheduled_time?: string
+          status?: string | null
+          timezone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       goals: {
         Row: {
           created_at: string
