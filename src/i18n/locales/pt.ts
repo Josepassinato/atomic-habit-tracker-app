@@ -149,6 +149,21 @@ export const pt = {
   'you': 'Você',
   'rewards': 'Recompensas',
   
+  // Realtime & Notifications
+  'errorLoadingData': 'Erro ao carregar dados',
+  'newGoalCreated': 'Nova meta criada',
+  'goalAchieved': 'Meta alcançada! 🎉',
+  'goalProgress': 'Atualização de progresso da meta',
+  'goalMilestone': 'Marco da meta alcançado',
+  'habitVerified': 'Hábito verificado pelo gerente',
+  'justNow': 'Agora mesmo',
+  'minutesAgo': 'minutos atrás',
+  'hoursAgo': 'horas atrás',
+  'daysAgo': 'dias atrás',
+  'noNotifications': 'Nenhuma notificação ainda',
+  'clearAll': 'Limpar tudo',
+  'offline': 'Offline',
+  
   'pricingTitle': 'Escolha o plano perfeito para sua equipe',
   'startupPlan': 'Iniciante',
   'businessPlan': 'Business',

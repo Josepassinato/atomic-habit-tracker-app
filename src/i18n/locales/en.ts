@@ -261,6 +261,21 @@ export const en = {
   'you': 'You',
   'rewards': 'Rewards',
   
+  // Realtime & Notifications
+  'errorLoadingData': 'Error loading data',
+  'newGoalCreated': 'New goal created',
+  'goalAchieved': 'Goal achieved! 🎉',
+  'goalProgress': 'Goal progress update',
+  'goalMilestone': 'Goal milestone reached',
+  'habitVerified': 'Habit verified by manager',
+  'justNow': 'Just now',
+  'minutesAgo': 'minutes ago',
+  'hoursAgo': 'hours ago',
+  'daysAgo': 'days ago',
+  'noNotifications': 'No notifications yet',
+  'clearAll': 'Clear all',
+  'offline': 'Offline',
+  
   // Footer
   'salesAutomationFuture': 'The future of sales automation and performance',
   'aboutUs': 'About Us',

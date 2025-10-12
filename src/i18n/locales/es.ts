@@ -149,6 +149,21 @@ export const es = {
   'you': 'Tú',
   'rewards': 'Recompensas',
   
+  // Realtime & Notifications
+  'errorLoadingData': 'Error al cargar datos',
+  'newGoalCreated': 'Nueva meta creada',
+  'goalAchieved': '¡Meta alcanzada! 🎉',
+  'goalProgress': 'Actualización de progreso de meta',
+  'goalMilestone': 'Hito de meta alcanzado',
+  'habitVerified': 'Hábito verificado por el gerente',
+  'justNow': 'Justo ahora',
+  'minutesAgo': 'minutos atrás',
+  'hoursAgo': 'horas atrás',
+  'daysAgo': 'días atrás',
+  'noNotifications': 'No hay notificaciones aún',
+  'clearAll': 'Borrar todo',
+  'offline': 'Desconectado',
+  
   'pricingTitle': 'Elige el plan perfecto para tu equipo',
   'startupPlan': 'Inicial',
   'businessPlan': 'Business',
