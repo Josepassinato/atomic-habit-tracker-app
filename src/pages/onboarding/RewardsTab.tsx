@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
@@ -7,7 +7,9 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Trophy, Medal, Gift, Percent } from "lucide-react";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Trophy, Medal, Gift, Percent, Info } from "lucide-react";
 import { Team } from "./types";
 
 interface RewardsTabProps {
@@ -43,6 +45,8 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
   isComissaoAberta,
   setIsComissaoAberta
 }) => {
+  const [showAmazonRewards, setShowAmazonRewards] = useState(false);
+  
   if (!currentTeam) return null;
 
   return (
@@ -55,6 +59,50 @@ const RewardsTab: React.FC<RewardsTabProps> = ({
       <p className="text-sm text-muted-foreground mb-4">
         Set incentives to celebrate goal and habit achievements
       </p>
+      
+      {/* Amazon Rewards Section */}
+      <Card>
+        <CardHeader>
+          <div className="flex items-start justify-between">
+            <div>
+              <CardTitle className="flex items-center gap-2">
+                <Gift className="h-5 w-5" />
+                Recompensas Amazon
+              </CardTitle>
+              <CardDescription>
+                Configure recompensas automáticas da Amazon para conquistas
+              </CardDescription>
+            </div>
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={() => setShowAmazonRewards(!showAmazonRewards)}
+            >
+              {showAmazonRewards ? 'Ocultar' : 'Configurar'}
+            </Button>
+          </div>
+        </CardHeader>
+        {showAmazonRewards && (
+          <CardContent>
+            <Alert className="mb-4">
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                As recompensas Amazon são geradas automaticamente com seus links de afiliado.
+                Configure os prêmios para cada nível de conquista na página de Recompensas.
+              </AlertDescription>
+            </Alert>
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-medium mb-2">Como funciona:</h4>
+              <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+                <li>Vendedores conquistam prêmios ao bater metas</li>
+                <li>Gerentes aprovam as recompensas</li>
+                <li>Link de afiliado Amazon é gerado automaticamente</li>
+                <li>Você ganha comissão em cada compra</li>
+              </ul>
+            </div>
+          </CardContent>
+        )}
+      </Card>
       
       {/* Commissions Section */}
       <Collapsible 

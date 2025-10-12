@@ -35,6 +35,90 @@ export type Database = {
         }
         Relationships: []
       }
+      amazon_affiliate_config: {
+        Row: {
+          affiliate_tag: string
+          created_at: string
+          id: string
+          is_active: boolean | null
+          marketplace_domain: string
+          region: string
+          updated_at: string
+        }
+        Insert: {
+          affiliate_tag: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          marketplace_domain: string
+          region: string
+          updated_at?: string
+        }
+        Update: {
+          affiliate_tag?: string
+          created_at?: string
+          id?: string
+          is_active?: boolean | null
+          marketplace_domain?: string
+          region?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      amazon_rewards: {
+        Row: {
+          achievement_level: string
+          achievement_type: string
+          amazon_asin: string
+          category: string
+          company_id: string
+          created_at: string
+          currency: string
+          estimated_price: number
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          requires_approval: boolean | null
+          reward_description: string | null
+          reward_name: string
+          updated_at: string
+        }
+        Insert: {
+          achievement_level: string
+          achievement_type: string
+          amazon_asin: string
+          category: string
+          company_id: string
+          created_at?: string
+          currency?: string
+          estimated_price: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          requires_approval?: boolean | null
+          reward_description?: string | null
+          reward_name: string
+          updated_at?: string
+        }
+        Update: {
+          achievement_level?: string
+          achievement_type?: string
+          amazon_asin?: string
+          category?: string
+          company_id?: string
+          created_at?: string
+          currency?: string
+          estimated_price?: number
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          requires_approval?: boolean | null
+          reward_description?: string | null
+          reward_name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       audit_trail: {
         Row: {
           action: string
@@ -116,9 +200,12 @@ export type Database = {
           id: string
           instance_url: string | null
           last_sync: string | null
+          oauth_state: string | null
           provider: string
+          refresh_token: string | null
           status: string
           sync_frequency: string | null
+          token_expires_at: string | null
           updated_at: string
         }
         Insert: {
@@ -129,9 +216,12 @@ export type Database = {
           id?: string
           instance_url?: string | null
           last_sync?: string | null
+          oauth_state?: string | null
           provider: string
+          refresh_token?: string | null
           status?: string
           sync_frequency?: string | null
+          token_expires_at?: string | null
           updated_at?: string
         }
         Update: {
@@ -142,9 +232,12 @@ export type Database = {
           id?: string
           instance_url?: string | null
           last_sync?: string | null
+          oauth_state?: string | null
           provider?: string
+          refresh_token?: string | null
           status?: string
           sync_frequency?: string | null
+          token_expires_at?: string | null
           updated_at?: string
         }
         Relationships: [
@@ -269,6 +362,36 @@ export type Database = {
           },
         ]
       }
+      oauth_credentials: {
+        Row: {
+          client_id: string
+          client_secret: string
+          created_at: string
+          id: string
+          provider: string
+          redirect_uri: string
+          updated_at: string
+        }
+        Insert: {
+          client_id: string
+          client_secret: string
+          created_at?: string
+          id?: string
+          provider: string
+          redirect_uri: string
+          updated_at?: string
+        }
+        Update: {
+          client_id?: string
+          client_secret?: string
+          created_at?: string
+          id?: string
+          provider?: string
+          redirect_uri?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       onboarding_templates: {
         Row: {
           created_at: string
@@ -346,6 +469,62 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      reward_achievements: {
+        Row: {
+          achievement_date: string
+          affiliate_link: string | null
+          approved_at: string | null
+          approved_by: string | null
+          company_id: string
+          created_at: string
+          id: string
+          notes: string | null
+          purchase_confirmed: boolean | null
+          purchase_date: string | null
+          reward_id: string
+          status: string
+          user_id: string
+        }
+        Insert: {
+          achievement_date?: string
+          affiliate_link?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          company_id: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          purchase_confirmed?: boolean | null
+          purchase_date?: string | null
+          reward_id: string
+          status?: string
+          user_id: string
+        }
+        Update: {
+          achievement_date?: string
+          affiliate_link?: string | null
+          approved_at?: string | null
+          approved_by?: string | null
+          company_id?: string
+          created_at?: string
+          id?: string
+          notes?: string | null
+          purchase_confirmed?: boolean | null
+          purchase_date?: string | null
+          reward_id?: string
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_achievements_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "amazon_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       roi_analytics: {
         Row: {
