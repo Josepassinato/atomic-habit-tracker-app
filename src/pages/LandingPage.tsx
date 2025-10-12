@@ -1,7 +1,7 @@
 
 import React from "react";
 import { useLocation } from "react-router-dom";
-import Header from "@/components/Header";
+import LandingHeader from "@/components/LandingHeader";
 import Hero from "@/components/sections/Hero";
 import { SocialProof } from "@/components/sections/SocialProof";
 import Features from "@/components/sections/Features";
@@ -19,7 +19,7 @@ const LandingPage = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <Header />
+      <LandingHeader />
       {showBackButton && <PageNavigation showLogout={false} />}
       <Hero />
       <SocialProof />

@@ -3,25 +3,15 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { ArrowRight, Target, TrendingUp, Users, Zap, CheckCircle, BarChart3 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useLanguage } from "@/i18n/index";
+import LandingHeader from "@/components/LandingHeader";
+import Footer from "@/components/sections/Footer";
 
 const EntendaProduto = () => {
   const { t } = useLanguage();
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <header className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-            SalesPro
-          </Link>
-          <Link to="/auth">
-            <Button variant="default">
-              {t('hero.cta')}
-            </Button>
-          </Link>
-        </div>
-      </header>
+      <LandingHeader />
 
       {/* Hero Section */}
       <section className="container mx-auto px-4 py-16 md:py-24">
@@ -261,12 +251,7 @@ const EntendaProduto = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="border-t bg-muted/30 py-8">
-        <div className="container mx-auto px-4 text-center text-muted-foreground">
-          <p>© 2024 SalesPro. Transformando metas em hábitos sustentáveis.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
