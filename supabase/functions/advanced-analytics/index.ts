@@ -1,4 +1,6 @@
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.49.9';
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -22,77 +24,112 @@ serve(async (req) => {
   }
 
   try {
-    const { type, data }: AnalyticsRequest = await req.json();
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY is not configured");
+    // Initialize Supabase client
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Get OpenAI API key from admin_settings
+    const { data: settings, error: settingsError } = await supabase
+      .from('admin_settings')
+      .select('openai_api_key')
+      .eq('id', '00000000-0000-0000-0000-000000000001')
+      .single();
+
+    if (settingsError || !settings?.openai_api_key) {
+      throw new Error('OpenAI API key not configured. Please configure it in the admin settings.');
     }
+
+    const openaiApiKey = settings.openai_api_key;
+    const { type, data }: AnalyticsRequest = await req.json();
 
     let systemPrompt = "";
     let userPrompt = "";
 
     switch (type) {
       case 'prediction':
-        systemPrompt = "You are an expert sales analytics AI. Analyze sales data and provide accurate predictions with confidence intervals.";
-        userPrompt = `Given the following sales data for the past months: ${JSON.stringify(data.sales)}
+        systemPrompt = `Você é um analista de vendas sênior com 15 anos de experiência em previsões precisas.
+Especializado em análise de dados de vendas B2B, você combina estatística avançada com intuição de mercado.
+Considere tendências, sazonalidade, correlação entre hábitos e resultados, e fatores externos.
+Suas previsões devem incluir intervalos de confiança e justificativas claras baseadas nos dados.`;
         
-Current month sales: ${data.current_month}
-Target: ${data.target}
+        userPrompt = `Analise os seguintes dados de vendas para gerar uma previsão detalhada para o próximo mês:
 
-Provide a prediction for:
-1. Next month's expected sales (with 90% confidence interval)
-2. Probability of reaching the target
-3. Key trends identified
-4. Recommended actions
+Vendas dos últimos meses: ${JSON.stringify(data.sales)}
+Vendas do mês atual: ${data.current_month}
+Meta estabelecida: ${data.target}
 
-Format as JSON: { prediction: number, confidence_low: number, confidence_high: number, probability: number, trends: string[], recommendations: string[] }`;
+Forneça uma análise completa incluindo:
+1. Previsão de vendas para o próximo mês (com intervalo de confiança de 90%)
+2. Probabilidade de atingir a meta
+3. Tendências principais identificadas nos dados
+4. Ações recomendadas para maximizar resultados
+
+Retorne no formato JSON: { prediction: number, confidence_low: number, confidence_high: number, probability: number, trends: string[], recommendations: string[] }`;
         break;
 
       case 'insights':
-        systemPrompt = "You are a business intelligence AI specialized in sales performance analysis.";
-        userPrompt = `Analyze this sales and habits data:
+        systemPrompt = `Você é um consultor de performance de vendas especializado em análise de dados comportamentais.
+Com expertise em gamificação e desenvolvimento de hábitos produtivos, você identifica padrões e correlações.
+Forneça insights práticos e acionáveis que podem ser implementados imediatamente pela equipe.
+Seja direto e focado em resultados mensuráveis.`;
         
-Sales over time: ${JSON.stringify(data.sales)}
-Habits completion rates: ${JSON.stringify(data.habits)}
+        userPrompt = `Analise a correlação entre hábitos e performance de vendas:
 
-Provide actionable insights about:
-1. Correlation between habits and sales
-2. Performance patterns
-3. Areas of improvement
-4. Potential risks
+Vendas ao longo do tempo: ${JSON.stringify(data.sales)}
+Taxas de conclusão de hábitos: ${JSON.stringify(data.habits)}
 
-Format as JSON: { roi_score: number, correlations: string[], patterns: string[], improvements: string[], risks: string[] }`;
+Forneça insights acionáveis sobre:
+1. Correlação entre conclusão de hábitos e resultados de vendas
+2. Padrões de performance identificados
+3. Áreas prioritárias para melhoria
+4. Riscos potenciais que devem ser mitigados
+
+Retorne no formato JSON: { roi_score: number, correlations: string[], patterns: string[], improvements: string[], risks: string[] }`;
         break;
 
       case 'roi_analysis':
-        systemPrompt = "You are an ROI calculation expert. Calculate the return on investment of habit-based sales training.";
-        userPrompt = `Calculate ROI based on:
+        systemPrompt = `Você é um especialista em análise de ROI e eficiência operacional com foco em programas de desenvolvimento.
+Sua missão é calcular o retorno sobre investimento em programas de hábitos e treinamento de vendas.
+Analise métricas financeiras e comportamentais para fornecer uma visão clara do impacto do programa.
+Forneça recomendações concretas para otimizar o ROI.`;
         
-Baseline sales (before habits): ${data.sales?.[0] || 0}
-Current sales (with habits): ${data.current_month || 0}
-Habit completion rate: ${(data.habits?.[data.habits.length - 1] || 0) * 100}%
+        userPrompt = `Calcule o ROI do programa de hábitos de vendas baseado nos seguintes dados:
 
-Provide detailed ROI analysis as JSON: { roi_percentage: number, revenue_increase: number, efficiency_gain: number, cost_benefit: string, summary: string }`;
+Vendas baseline (antes dos hábitos): ${data.sales?.[0] || 0}
+Vendas atuais (com programa de hábitos): ${data.current_month || 0}
+Taxa de conclusão de hábitos: ${(data.habits?.[data.habits.length - 1] || 0) * 100}%
+
+Forneça uma análise detalhada de ROI incluindo:
+- Percentual de ROI
+- Aumento absoluto de receita
+- Ganho de eficiência
+- Análise custo-benefício
+- Resumo executivo
+
+Retorne no formato JSON: { roi_percentage: number, revenue_increase: number, efficiency_gain: number, cost_benefit: string, summary: string }`;
         break;
 
       default:
         throw new Error("Invalid analysis type");
     }
 
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    console.log(`Analyzing ${type} with OpenAI GPT-4o-mini`);
+
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
+        "Authorization": `Bearer ${openaiApiKey}`,
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
+        model: "gpt-4o-mini",
         messages: [
           { role: "system", content: systemPrompt },
           { role: "user", content: userPrompt }
         ],
-        temperature: 0.3,
+        temperature: 0.7,
+        max_tokens: 1500,
         response_format: { type: "json_object" }
       }),
     });
