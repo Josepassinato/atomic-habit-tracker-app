@@ -22,6 +22,7 @@ const Premiacoes = React.lazy(() => import("@/pages/Premiacoes"));
 const Relatorios = React.lazy(() => import("@/pages/Relatorios"));
 const Tutorial = React.lazy(() => import("@/pages/Tutorial"));
 const Configuracoes = React.lazy(() => import("@/pages/Configuracoes"));
+const Analytics = React.lazy(() => import("@/pages/Analytics"));
 const Index = React.lazy(() => import("@/pages/Index"));
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
 
@@ -167,6 +168,15 @@ const AppRoutes: React.FC = () => {
             <AppLayout>
               <Configuracoes />
             </AppLayout>
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/analytics" 
+        element={
+          <ProtectedRoute requiredRole="gerente">
+            <Analytics />
           </ProtectedRoute>
         } 
       />

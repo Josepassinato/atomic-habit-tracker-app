@@ -11,3 +11,6 @@ verify_jwt = true
 
 [functions.ai-consultant]
 verify_jwt = true
+
+[functions.advanced-analytics]
+verify_jwt = true
