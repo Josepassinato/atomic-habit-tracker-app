@@ -253,6 +253,14 @@ export const en = {
   'rewardsStepContent': 'Set up rewards and incentives for your team',
   'integrationsStepContent': 'Connect your CRM and other tools (optional)',
   
+  // Gamification
+  'toNextLevel': 'to next level',
+  'totalXP': 'Total XP',
+  'achievements': 'Achievements',
+  'teamLeaderboard': 'Team Leaderboard',
+  'you': 'You',
+  'rewards': 'Rewards',
+  
   // Footer
   'salesAutomationFuture': 'The future of sales automation and performance',
   'aboutUs': 'About Us',

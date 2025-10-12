@@ -140,6 +140,15 @@ export const pt = {
   'goalsStepContent': 'Defina suas metas e objetivos de vendas',
   'rewardsStepContent': 'Configure recompensas e incentivos para sua equipe',
   'integrationsStepContent': 'Conecte seu CRM e outras ferramentas (opcional)',
+  
+  // Gamification
+  'toNextLevel': 'para próximo nível',
+  'totalXP': 'XP Total',
+  'achievements': 'Conquistas',
+  'teamLeaderboard': 'Ranking da Equipe',
+  'you': 'Você',
+  'rewards': 'Recompensas',
+  
   'pricingTitle': 'Escolha o plano perfeito para sua equipe',
   'startupPlan': 'Iniciante',
   'businessPlan': 'Business',
