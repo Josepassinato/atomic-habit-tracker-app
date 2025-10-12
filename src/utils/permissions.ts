@@ -99,19 +99,12 @@ export const getCurrentUserProfile = async (): Promise<UserAuth | null> => {
 /**
  * Obtém o usuário atual (compatibilidade com código legado)
  * @deprecated Use getCurrentUserProfile() ou useAuth() hook instead
+ * SECURITY: Never trust client-side storage for authentication
  */
 export const getCurrentUser = (): UserAuth | null => {
-  // Legacy fallback - try to get from localStorage first
-  try {
-    const storedUser = localStorage.getItem('habitus-user');
-    if (storedUser) {
-      return JSON.parse(storedUser);
-    }
-  } catch (error) {
-    console.error("Error parsing stored user:", error);
-  }
-  
-  console.warn("getCurrentUser() is deprecated. Use getCurrentUserProfile() or useAuth() hook instead.");
+  console.warn("getCurrentUser() is deprecated and insecure. Use getCurrentUserProfile() or useAuth() hook instead.");
+  // REMOVED: localStorage access for security reasons
+  // Roles and authentication must always be verified server-side
   return null;
 };
 

@@ -1,7 +1,7 @@
 project_id = "dasuzjpdzqxrbuxlmemw"
 
 [functions.crm-sync]
-verify_jwt = false
+verify_jwt = true
 
 [functions.habits-verification]
 verify_jwt = true

@@ -14,6 +14,45 @@ interface CRMSyncRequest {
   salesRepsData?: any[];
 }
 
+// SECURITY: Allowlist of trusted CRM domains to prevent SSRF
+const ALLOWED_CRM_DOMAINS = [
+  'api.hubapi.com',
+  'api.pipedrive.com',
+  'pipedrive.com',
+  'salesforce.com',
+  'my.salesforce.com',
+];
+
+function validateCRMUrl(url: string, crmType: string): void {
+  if (crmType === 'hubspot') {
+    // HubSpot uses fixed API domain
+    return;
+  }
+
+  try {
+    const parsedUrl = new URL(url);
+    
+    // Only allow HTTPS
+    if (parsedUrl.protocol !== 'https:') {
+      throw new Error('Only HTTPS URLs are allowed');
+    }
+
+    // Check if domain is in allowlist
+    const isAllowed = ALLOWED_CRM_DOMAINS.some(domain => 
+      parsedUrl.hostname === domain || parsedUrl.hostname.endsWith(`.${domain}`)
+    );
+
+    if (!isAllowed) {
+      throw new Error(`Domain ${parsedUrl.hostname} is not in the allowed CRM domains list`);
+    }
+  } catch (error) {
+    if (error instanceof TypeError) {
+      throw new Error('Invalid URL format');
+    }
+    throw error;
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -24,6 +63,16 @@ serve(async (req) => {
     const body: CRMSyncRequest = await req.json();
     console.log('CRM Sync request:', { action: body.action, crmType: body.crmType, teamId: body.teamId });
 
+    // SECURITY: Validate API URL to prevent SSRF
+    if (body.apiUrl) {
+      validateCRMUrl(body.apiUrl, body.crmType);
+    }
+
+    // SECURITY: Validate API key format (basic check)
+    if (!body.apiKey || body.apiKey.length < 10) {
+      throw new Error('Invalid API key');
+    }
+
     switch (body.action) {
       case 'import':
         return await handleImport(body);
@@ -33,9 +82,17 @@ serve(async (req) => {
         throw new Error('Ação não suportada');
     }
   } catch (error) {
-    console.error('Erro no CRM Sync:', error);
+    console.error('CRM Sync error occurred');
+    
+    // SECURITY: Don't expose internal error details to client
+    const errorMessage = error instanceof Error 
+      ? (error.message.includes('not in the allowed') || error.message.includes('Invalid') 
+          ? error.message 
+          : 'An error occurred while syncing with CRM')
+      : 'An error occurred while syncing with CRM';
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: errorMessage }),
       {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
