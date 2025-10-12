@@ -24,6 +24,7 @@ const Tutorial = React.lazy(() => import("@/pages/Tutorial"));
 const Configuracoes = React.lazy(() => import("@/pages/Configuracoes"));
 const Analytics = React.lazy(() => import("@/pages/Analytics"));
 const ScheduleDemo = React.lazy(() => import("@/pages/ScheduleDemo"));
+const EntendaProduto = React.lazy(() => import("@/pages/EntendaProduto"));
 const Index = React.lazy(() => import("@/pages/Index"));
 const NotFound = React.lazy(() => import("@/pages/NotFound"));
 
@@ -55,6 +56,7 @@ const AppRoutes: React.FC = () => {
       <Route path="/registro" element={<Navigate to="/auth" replace />} />
       <Route path="/recuperar-senha" element={<RecuperarSenha />} />
       <Route path="/schedule-demo" element={<ScheduleDemo />} />
+      <Route path="/entenda-produto" element={<EntendaProduto />} />
       
       {/* Rotas protegidas */}
       <Route 
