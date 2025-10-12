@@ -45,7 +45,7 @@ const ProductHighlight = () => {
                 onClick={() => navigate("/entenda-produto")}
               >
                 <BookOpen className="mr-2 h-5 w-5" />
-                Entenda o Produto
+                Conheça o Habitus
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </div>

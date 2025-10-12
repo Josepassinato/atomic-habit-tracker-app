@@ -82,7 +82,7 @@ const Features = () => {
             className="gap-2"
           >
             <BookOpen className="h-5 w-5" />
-            Entenda como funciona o método
+            Conheça o Habitus
           </Button>
         </div>
         

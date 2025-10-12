@@ -40,7 +40,7 @@ const LandingHeader: React.FC = () => {
             variant="ghost" 
             onClick={() => navigate("/entenda-produto")}
           >
-            Entenda o Produto
+            Conheça o Habitus
           </Button>
         </nav>
         
@@ -95,7 +95,7 @@ const LandingHeader: React.FC = () => {
                   onClick={() => navigate("/entenda-produto")}
                   className="justify-start"
                 >
-                  Entenda o Produto
+                  Conheça o Habitus
                 </Button>
                 {!user && (
                   <>
