@@ -77,9 +77,14 @@ const Hero = () => {
             </div>
             
             <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4">
-              <Button size="lg" className="hover-scale" onClick={() => navigate("/auth")}>
-                {t('startNow')}
-              </Button>
+              <div className="flex flex-col items-center gap-2">
+                <Button size="lg" className="hover-scale" onClick={() => navigate("/auth")}>
+                  {t('startNow')}
+                </Button>
+                <span className="text-sm text-muted-foreground font-medium">
+                  ✨ Teste Grátis 15 Dias
+                </span>
+              </div>
               <Button variant="outline" size="lg" className="hover-scale" onClick={() => navigate("/schedule-demo")}>
                 {t('scheduleDemo')}
               </Button>

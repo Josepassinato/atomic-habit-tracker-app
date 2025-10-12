@@ -38,7 +38,7 @@ const ProductHighlight = () => {
             </p>
             
             {/* CTA Button */}
-            <div className="pt-4">
+            <div className="pt-4 flex flex-col items-center gap-3">
               <Button 
                 size="lg" 
                 className="text-lg px-8 py-6 h-auto shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-200 bg-primary hover:bg-primary/90"
@@ -48,6 +48,9 @@ const ProductHighlight = () => {
                 Conheça o Habitus
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
+              <span className="text-sm font-semibold bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent">
+                ✨ Teste Grátis 15 Dias
+              </span>
             </div>
             
             {/* Small caption */}

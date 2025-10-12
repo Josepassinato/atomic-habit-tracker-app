@@ -115,7 +115,12 @@ const Pricing = () => {
   return (
     <section className="bg-slate-50 py-20">
       <div className="container mx-auto px-4">
-        <h2 className="mb-12 text-center text-3xl font-bold">{t('pricingTitle')}</h2>
+        <div className="text-center mb-12">
+          <h2 className="text-3xl font-bold mb-4">{t('pricingTitle')}</h2>
+          <p className="text-lg text-muted-foreground">
+            ✨ <span className="font-semibold text-primary">Teste Grátis 15 Dias</span> - Sem compromisso, cancele quando quiser
+          </p>
+        </div>
         
         <div className="grid gap-8 md:grid-cols-3">
           <Card>

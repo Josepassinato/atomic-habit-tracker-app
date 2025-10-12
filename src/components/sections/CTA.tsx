@@ -16,9 +16,14 @@ const CTA = () => {
           {t('ctaDesc')}
         </p>
         <div className="flex flex-wrap items-center justify-center gap-4">
-          <Button size="lg" onClick={() => navigate("/auth")}>
-            {t('createAccount')}
-          </Button>
+          <div className="flex flex-col items-center gap-2">
+            <Button size="lg" onClick={() => navigate("/auth")}>
+              {t('createAccount')}
+            </Button>
+            <span className="text-sm text-muted-foreground font-medium">
+              ✨ Teste Grátis 15 Dias
+            </span>
+          </div>
           <Button size="lg" variant="outline" onClick={() => navigate("/schedule-demo")}>
             {t('scheduleDemo')}
           </Button>
