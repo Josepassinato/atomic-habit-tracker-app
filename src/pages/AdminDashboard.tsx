@@ -13,6 +13,7 @@ import AdminUsers from "@/components/admin-dashboard/AdminUsers";
 import AdminPlans from "@/components/admin-dashboard/AdminPlans";
 import AdminSettings from "@/components/admin-dashboard/AdminSettings";
 import AdminAnalytics from "@/components/admin-dashboard/AdminAnalytics";
+import { AmazonAffiliateConfig } from "@/components/admin/AmazonAffiliateConfig";
 import { AdminMetrics, AdminSettings as AdminSettingsType } from "@/types/admin";
 import { getCurrentUser } from "@/utils/permissions";
 import { openAIService } from "@/services/openai-service";
@@ -176,6 +177,7 @@ const AdminDashboard = () => {
             <TabsTrigger value="analytics">Analytics</TabsTrigger>
             <TabsTrigger value="users">Usuários</TabsTrigger>
             <TabsTrigger value="plans">Planos</TabsTrigger>
+            <TabsTrigger value="amazon">Amazon Affiliates</TabsTrigger>
             <TabsTrigger value="settings">Configurações</TabsTrigger>
           </TabsList>
           
@@ -189,6 +191,10 @@ const AdminDashboard = () => {
           
           <TabsContent value="plans" className="space-y-4">
             <AdminPlans />
+          </TabsContent>
+          
+          <TabsContent value="amazon" className="space-y-4">
+            <AmazonAffiliateConfig />
           </TabsContent>
           
           <TabsContent value="settings" className="space-y-4">
