@@ -38,7 +38,7 @@ export const SecurityDashboard: React.FC = () => {
   const fetchSecurityMetrics = async () => {
     try {
       // Fetch security metrics
-      const { data: users } = await supabase.from('user_profiles').select('id, role, created_at');
+      const { data: users } = await supabase.from('user_profiles').select('id, created_at');
       const { data: companies } = await supabase.from('companies').select('id');
 
       const metrics: SecurityMetrics = {

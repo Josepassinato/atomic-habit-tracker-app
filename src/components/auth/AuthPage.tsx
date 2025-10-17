@@ -93,9 +93,20 @@ export const AuthPage: React.FC = () => {
 
         const { error } = await signUp(email, password, {
           name,
-          company_id: companyId,
-          role
+          company_id: companyId
         });
+
+        // Após criar o usuário, adiciona o role na tabela user_roles
+        if (!error) {
+          // O trigger handle_new_user já criou o perfil, agora adicionamos o role
+          const { data: { user: newUser } } = await supabase.auth.getUser();
+          if (newUser) {
+            await supabase.from('user_roles').insert({
+              user_id: newUser.id,
+              role: role as 'admin' | 'gerente' | 'vendedor'
+            });
+          }
+        }
 
         if (error) {
           if (error.message.includes('already registered')) {

@@ -835,7 +835,6 @@ export type Database = {
           email: string | null
           id: string
           name: string | null
-          role: string | null
           team_ids: Json | null
           teams: Json | null
           updated_at: string
@@ -847,7 +846,6 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string | null
-          role?: string | null
           team_ids?: Json | null
           teams?: Json | null
           updated_at?: string
@@ -859,7 +857,6 @@ export type Database = {
           email?: string | null
           id?: string
           name?: string | null
-          role?: string | null
           team_ids?: Json | null
           teams?: Json | null
           updated_at?: string

@@ -39,11 +39,18 @@ export const useAuthProvider = () => {
         .single();
 
       if (profile) {
+        // Busca o role da tabela user_roles (separada por segurança)
+        const { data: roleData } = await supabase
+          .from('user_roles')
+          .select('role')
+          .eq('user_id', userId)
+          .single();
+
         const userAuth: UserAuth = {
           id: profile.user_id,
           email: profile.email,
           nome: profile.name,
-          role: profile.role as UserRole,
+          role: (roleData?.role as UserRole) || 'vendedor',
           empresa_id: profile.company_id,
           equipe_id: profile.team_ids?.[0] || null
         };
