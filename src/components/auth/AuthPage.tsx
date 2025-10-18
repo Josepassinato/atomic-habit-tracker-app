@@ -169,6 +169,22 @@ export const AuthPage: React.FC = () => {
                 <Button type="submit" className="w-full" disabled={loading}>
                   {loading ? 'Signing in...' : 'Sign In'}
                 </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full"
+                  onClick={() => {
+                    setEmail('teste@habitus.com');
+                    setPassword('Teste@123');
+                    setTimeout(() => {
+                      const form = document.querySelector('form');
+                      form?.requestSubmit();
+                    }, 100);
+                  }}
+                  disabled={loading}
+                >
+                  🚀 Login Rápido para Testes
+                </Button>
               </form>
             </TabsContent>
             
