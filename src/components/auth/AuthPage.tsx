@@ -173,13 +173,21 @@ export const AuthPage: React.FC = () => {
                   type="button"
                   variant="outline"
                   className="w-full"
-                  onClick={() => {
-                    setEmail('teste@habitus.com');
-                    setPassword('Teste@123');
-                    setTimeout(() => {
-                      const form = document.querySelector('form');
-                      form?.requestSubmit();
-                    }, 100);
+                  onClick={async () => {
+                    setLoading(true);
+                    try {
+                      const { error } = await signIn('teste@habitus.com', 'Teste@123');
+                      if (error) {
+                        toast.error('Erro no login: ' + error.message);
+                      } else {
+                        toast.success('Login realizado com sucesso!');
+                        navigate('/dashboard');
+                      }
+                    } catch (error) {
+                      toast.error('Erro inesperado');
+                    } finally {
+                      setLoading(false);
+                    }
                   }}
                   disabled={loading}
                 >
