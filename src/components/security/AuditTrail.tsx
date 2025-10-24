@@ -51,43 +51,7 @@ export const AuditTrail: React.FC = () => {
     try {
       // Simulate audit logs since we don't have a real audit table yet
       // In production, this would fetch from an audit_logs table
-      const mockLogs: AuditLog[] = [
-        {
-          id: '1',
-          user_id: 'user1',
-          user_name: 'João Silva',
-          action: 'create',
-          resource_type: 'habit',
-          resource_id: 'habit1',
-          details: { habit_title: 'Prospecção Matinal' },
-          ip_address: '192.168.1.100',
-          created_at: new Date(Date.now() - 1000 * 60 * 30).toISOString()
-        },
-        {
-          id: '2',
-          user_id: 'user2',
-          user_name: 'Maria Santos',
-          action: 'update',
-          resource_type: 'goal',
-          resource_id: 'goal1',
-          details: { old_target: 50000, new_target: 60000 },
-          ip_address: '192.168.1.101',
-          created_at: new Date(Date.now() - 1000 * 60 * 60 * 2).toISOString()
-        },
-        {
-          id: '3',
-          user_id: 'admin1',
-          user_name: 'Admin',
-          action: 'view',
-          resource_type: 'admin_dashboard',
-          resource_id: 'dashboard',
-          details: { section: 'user_management' },
-          ip_address: '192.168.1.102',
-          created_at: new Date(Date.now() - 1000 * 60 * 60 * 4).toISOString()
-        }
-      ];
-
-      setLogs(mockLogs);
+      setLogs([]);
     } catch (error) {
       console.error('Error fetching audit logs:', error);
     } finally {

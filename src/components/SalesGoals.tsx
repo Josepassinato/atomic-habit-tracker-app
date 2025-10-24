@@ -16,29 +16,6 @@ interface Goal {
   percentage: number;
 }
 
-const initialGoals = [
-  {
-    id: 1,
-    name: "Main Goal",
-    target: 120000,
-    current: 102000,
-    percentage: 85,
-  },
-  {
-    id: 2,
-    name: "Prospecting Goal",
-    target: 50,
-    current: 45,
-    percentage: 90,
-  },
-  {
-    id: 3,
-    name: "Conversion Goal",
-    target: 30,
-    current: 18,
-    percentage: 60,
-  },
-];
 
 const SalesGoals = () => {
   const { supabase } = useSupabase();
@@ -78,22 +55,7 @@ const SalesGoals = () => {
           }));
           setGoals(mappedGoals);
         } else {
-          // If no data, initialize with default data (using new column names)
-          const goalsForDB = initialGoals.map(goal => ({
-            ...goal,
-            target_value: goal.target,
-            current_value: goal.current
-          }));
-          
-          const { error: insertError } = await supabase
-            .from('goals')
-            .upsert(goalsForDB);
-          
-          if (insertError) {
-            console.error("Error inserting goals:", insertError);
-          }
-          
-          setGoals(initialGoals);
+          setGoals([]);
         }
         
         // Fetch AI suggestion
@@ -108,24 +70,12 @@ const SalesGoals = () => {
           setAiSuggestion(suggestionData.text);
         }
       } else {
-        // Fallback to local data
-        const savedGoals = localStorage.getItem('goals');
-        if (savedGoals) {
-          setGoals(JSON.parse(savedGoals));
-        } else {
-          setGoals(initialGoals);
-          localStorage.setItem('goals', JSON.stringify(initialGoals));
-        }
-        
-        const savedSuggestion = localStorage.getItem('goal_suggestion');
-        if (savedSuggestion) {
-          setAiSuggestion(savedSuggestion);
-        }
+        setGoals([]);
       }
     } catch (error) {
       console.error("Error loading goals:", error);
       toast.error(t('loadError'));
-      setGoals(initialGoals);
+      setGoals([]);
     } finally {
       setLoading(false);
     }
@@ -149,6 +99,10 @@ const SalesGoals = () => {
         {loading ? (
           <div className="flex justify-center p-4">
             <div className="inline-block h-6 w-6 animate-spin rounded-full border-2 border-solid border-primary border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]" />
+          </div>
+        ) : goals.length === 0 ? (
+          <div className="text-center p-6 text-muted-foreground">
+            {t('noGoalsYet')}
           </div>
         ) : (
           <div className="space-y-6">

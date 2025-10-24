@@ -73,51 +73,7 @@ export const AIInsightsDashboard: React.FC<AIInsightsDashboardProps> = ({
   };
 
   const parseInsightsFromAnalysis = (analysis: any): AIInsight[] => {
-    // Mock insights - in practice, you'd parse the AI analysis response
-    const mockInsights: AIInsight[] = [
-      {
-        id: '1',
-        type: 'performance',
-        title: 'Aumento na taxa de conversão',
-        description: 'A taxa de conversão aumentou 15% nas últimas duas semanas, principalmente devido aos novos scripts de follow-up.',
-        impact: 'alto',
-        confidence: 92,
-        actionable: false,
-        relatedData: { metric: 'conversion_rate', change: '+15%' }
-      },
-      {
-        id: '2',
-        type: 'opportunity',
-        title: 'Potencial de melhoria em prospecção',
-        description: 'Existe uma oportunidade de aumentar 30% o volume de leads qualificados focando em horários específicos.',
-        impact: 'alto',
-        confidence: 87,
-        actionable: true,
-        relatedData: { bestTimes: ['9:00-11:00', '14:00-16:00'] }
-      },
-      {
-        id: '3',
-        type: 'warning',
-        title: 'Queda no engajamento de leads',
-        description: 'O tempo de resposta médio aos leads aumentou para 4 horas, o que pode impactar negativamente as conversões.',
-        impact: 'medio',
-        confidence: 85,
-        actionable: true,
-        relatedData: { averageResponseTime: '4h', recommended: '< 2h' }
-      },
-      {
-        id: '4',
-        type: 'suggestion',
-        title: 'Implementar cadência de nutrição',
-        description: 'Leads que não converteram podem ser reativados com uma sequência automatizada de e-mails.',
-        impact: 'medio',
-        confidence: 78,
-        actionable: true,
-        relatedData: { potentialLeads: 156, estimatedConversion: '12%' }
-      }
-    ];
-
-    return mockInsights;
+    return [];
   };
 
   const getInsightIcon = (type: string) => {

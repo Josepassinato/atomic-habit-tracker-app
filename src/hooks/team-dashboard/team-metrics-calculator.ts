@@ -64,7 +64,7 @@ export class TeamMetricsCalculator {
       const teamConfig = user.teams.find((t: any) => t.id === equipe.id);
       if (teamConfig && teamConfig.metas) {
         metaTotal = Number(teamConfig.metas.mensal) || 100000;
-        metaAtual = Math.floor(Math.random() * metaTotal * 0.8); // Valor aleatório para exemplo
+        metaAtual = 0;
       } else {
         metaTotal = equipe.total_goal || 100000;
         metaAtual = 75000;

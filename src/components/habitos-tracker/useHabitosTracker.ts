@@ -2,14 +2,14 @@
 import { useState, useEffect, useCallback } from "react";
 import { toast } from "sonner";
 import { HabitoEvidenciaType } from "../habitos/HabitoEvidencia";
-import { initialHabits, getAIFeedback, generateSuggestedHabits } from "../habitos/HabitosService";
+import { getAIFeedback, generateSuggestedHabits } from "../habitos/HabitosService";
 import { Habito, ModeloNegocio } from "../habitos/types";
 
 export const useHabitosTracker = () => {
   const [habitos, setHabitos] = useState<Habito[]>(() => {
     // Try to recover from localStorage, otherwise use initial habits
     const salvos = localStorage.getItem("habitos");
-    return salvos ? JSON.parse(salvos) : initialHabits;
+    return salvos ? JSON.parse(salvos) : [];
   });
   
   const [feedback, setFeedback] = useState<string>("");
@@ -66,7 +66,7 @@ export const useHabitosTracker = () => {
   }, [habitos, habitosCumpridos]);
   
   const reiniciarHabitos = useCallback(() => {
-    setHabitos(initialHabits.map(h => ({...h, completed: false, evidence: undefined})));
+    setHabitos([]);
     setFeedback("");
     toast.info("Habits restarted for the next day.", {
       description: "All habits have been unchecked and are ready to be completed again."

@@ -10,9 +10,9 @@ import { useLanguage } from "@/i18n";
 const DashboardSummary = () => {
   const { supabase, isConfigured } = useSupabase();
   const { t } = useLanguage();
-  const [salesGoal, setSalesGoal] = useState<number>(85);
-  const [habitsCompleted, setHabitsCompleted] = useState<number>(72);
-  const [totalBonus, setTotalBonus] = useState<number>(2.5);
+  const [salesGoal, setSalesGoal] = useState<number>(0);
+  const [habitsCompleted, setHabitsCompleted] = useState<number>(0);
+  const [totalBonus, setTotalBonus] = useState<number>(0);
   const [loading, setLoading] = useState<boolean>(false);
 
   useEffect(() => {
@@ -27,7 +27,6 @@ const DashboardSummary = () => {
             : null;
             
           if (!userId) {
-            console.log("User not found, using default data");
             return;
           }
           
@@ -46,7 +45,7 @@ const DashboardSummary = () => {
           if (goalsData) {
             const goal = goalsData.meta_atual || 0;
             const sales = goalsData.vendas_total || 0;
-            const percentage = goal > 0 ? Math.min(Math.round((sales / goal) * 100), 100) : 85;
+            const percentage = goal > 0 ? Math.min(Math.round((sales / goal) * 100), 100) : 0;
             setSalesGoal(percentage);
           }
           

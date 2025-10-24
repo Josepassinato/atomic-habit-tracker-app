@@ -70,34 +70,7 @@ export const SmartGoalSuggestions: React.FC<SmartGoalSuggestionsProps> = ({
 
   const parseGoalSuggestions = (aiResponse: string): GoalSuggestion[] => {
     // Basic parsing - in a real implementation, you'd want more sophisticated parsing
-    const mockSuggestions: GoalSuggestion[] = [
-      {
-        title: 'Aumentar taxa de conversão',
-        description: 'Melhorar a conversão de leads qualificados em vendas',
-        targetValue: 25,
-        type: 'conversao',
-        priority: 'alta',
-        reasoning: 'Baseado na análise dos dados atuais, existe potencial para melhorar a conversão'
-      },
-      {
-        title: 'Prospecção ativa semanal',
-        description: 'Contatar novos prospects por semana',
-        targetValue: 50,
-        type: 'prospeccao',
-        priority: 'media',
-        reasoning: 'Aumentar o pipeline de vendas através de prospecção consistente'
-      },
-      {
-        title: 'Follow-up estruturado',
-        description: 'Realizar follow-ups sistemáticos com leads',
-        targetValue: 100,
-        type: 'relacionamento',
-        priority: 'alta',
-        reasoning: 'Muitas oportunidades são perdidas por falta de follow-up adequado'
-      }
-    ];
-
-    return mockSuggestions;
+    return [];
   };
 
   const getPriorityColor = (priority: string) => {

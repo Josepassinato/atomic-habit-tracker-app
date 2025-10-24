@@ -70,51 +70,7 @@ export const HabitRecommendations: React.FC<HabitRecommendationsProps> = ({
   };
 
   const parseHabitRecommendations = (aiResponse: string): HabitRecommendation[] => {
-    // Mock recommendations - in practice, you'd parse the AI response
-    const mockRecommendations: HabitRecommendation[] = [
-      {
-        title: 'Review diário de pipeline',
-        description: 'Revisar e atualizar o pipeline de vendas todos os dias às 9h',
-        category: 'organizacao',
-        difficulty: 'facil',
-        estimatedImpact: 'alto',
-        timeRequired: '15 minutos',
-        reasoning: 'Manter o pipeline atualizado ajuda a identificar oportunidades e gargalos rapidamente',
-        suggestedSchedule: 'Segunda a sexta, 9:00'
-      },
-      {
-        title: 'Prospecção matinal',
-        description: 'Dedicar 30 minutos todas as manhãs para prospecção ativa',
-        category: 'prospeccao',
-        difficulty: 'medio',
-        estimatedImpact: 'alto',
-        timeRequired: '30 minutos',
-        reasoning: 'Prospecção consistente mantém o pipeline saudável e aumenta as oportunidades',
-        suggestedSchedule: 'Segunda a sexta, 8:30'
-      },
-      {
-        title: 'Follow-up estruturado',
-        description: 'Criar lembretes automáticos para follow-up com leads',
-        category: 'relacionamento',
-        difficulty: 'facil',
-        estimatedImpact: 'medio',
-        timeRequired: '10 minutos',
-        reasoning: 'Follow-ups consistentes aumentam significativamente a taxa de conversão',
-        suggestedSchedule: 'Segunda, quarta e sexta, 16:00'
-      },
-      {
-        title: 'Estudo de objeções',
-        description: 'Estudar e praticar respostas para objeções comuns',
-        category: 'produtividade',
-        difficulty: 'medio',
-        estimatedImpact: 'alto',
-        timeRequired: '20 minutos',
-        reasoning: 'Preparação para objeções melhora a confiança e taxa de fechamento',
-        suggestedSchedule: 'Terça e quinta, 17:30'
-      }
-    ];
-
-    return mockRecommendations;
+    return [];
   };
 
   const getDifficultyColor = (difficulty: string) => {

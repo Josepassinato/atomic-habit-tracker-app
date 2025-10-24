@@ -5,7 +5,7 @@ import { Habito } from "@/components/habitos/types";
 import { HabitoEvidenciaType } from "@/components/habitos/HabitoEvidencia";
 import { toast } from "sonner";
 import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider";
-import { initialHabits } from "@/components/habitos/HabitosService";
+
 import { TrendingUp, Zap, Award } from "lucide-react";
 import { useLanguage } from "@/i18n";
 
@@ -54,7 +54,7 @@ export const useHabitos = () => {
   
   const [habits, setHabits] = useState<Habito[]>(() => {
     const saved = localStorage.getItem("habits");
-    return saved ? JSON.parse(saved) : initialHabits;
+    return saved ? JSON.parse(saved) : [];
   });
   
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
