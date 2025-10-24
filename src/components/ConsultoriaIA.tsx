@@ -137,7 +137,7 @@ const ConsultoriaIA = () => {
       }
     } catch (error) {
       console.error("Error getting assistant response:", error);
-      toast.error("Error getting assistant response.");
+      toast.error(t('connectionError'));
     } finally {
       setCarregando(false);
     }

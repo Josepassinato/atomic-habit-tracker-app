@@ -5,6 +5,7 @@ import { Database, RefreshCw } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
 import { supabaseService } from "@/services/supabase";
+import { useLanguage } from "@/i18n";
 
 interface SupabaseSyncButtonProps {
   size?: "sm" | "default" | "lg" | "icon" | null;
@@ -19,29 +20,30 @@ const SupabaseSyncButton: React.FC<SupabaseSyncButtonProps> = ({
 }) => {
   const [isSyncing, setIsSyncing] = useState(false);
   const { isConfigured } = useSupabase();
+  const { t } = useLanguage();
   
   const handleSync = async () => {
     if (!isConfigured) {
-      toast.error("Supabase não está configurado. Configure antes de sincronizar dados.");
+      toast.error(t('supabaseNotConfigured'));
       return;
     }
     
     try {
       setIsSyncing(true);
-      toast.loading("Sincronizando dados com o Supabase...");
+      toast.loading(t('syncing'));
       
       const success = await supabaseService.syncAllDataToSupabase();
       
       toast.dismiss();
       if (success) {
-        toast.success("Dados sincronizados com sucesso!");
+        toast.success(t('syncSuccess'));
       } else {
-        toast.warning("Alguns dados não foram sincronizados completamente.");
+        toast.warning(t('partialSync'));
       }
     } catch (error) {
       console.error("Erro ao sincronizar com o Supabase:", error);
       toast.dismiss();
-      toast.error("Erro ao sincronizar dados com o Supabase.");
+      toast.error(t('syncError'));
     } finally {
       setIsSyncing(false);
     }
@@ -60,7 +62,7 @@ const SupabaseSyncButton: React.FC<SupabaseSyncButtonProps> = ({
       className={`flex items-center gap-2 ${className}`}
     >
       <RefreshCw className={`h-4 w-4 ${isSyncing ? 'animate-pulse' : ''}`} />
-      {isSyncing ? "Sincronizando..." : "Sincronizar Dados"}
+      {isSyncing ? t('syncing') : t('save')}
     </Button>
   );
 };

@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ExternalLink, Zap, MessageSquare, Phone, BarChart, Shuffle } from "lucide-react";
 import { toast } from "sonner";
 import { useSupabase } from "@/hooks/use-supabase";
+import { useLanguage } from "@/i18n";
 
 interface Integration {
   id: string;
@@ -63,6 +64,7 @@ const IntegracoesCRM = () => {
   const [integrationsList, setIntegrationsList] = useState<Integration[]>(integrations);
   const [loading, setLoading] = useState(false);
   const { supabase } = useSupabase();
+  const { t } = useLanguage();
 
   useEffect(() => {
     loadIntegrations();
@@ -141,14 +143,14 @@ const IntegracoesCRM = () => {
       
       const integration = newIntegrations.find(i => i.id === integrationId);
       toast.success(
-        integration?.connected ? "Integration connected successfully!" : "Integration disconnected",
+        integration?.connected ? t('connectionSuccess') : t('disconnecting'),
         {
-          description: `${integration?.name} is now ${integration?.connected ? 'connected' : 'disconnected'}.`
+          description: `${integration?.name} ${integration?.connected ? t('connected') : t('disconnected')}.`
         }
       );
     } catch (error) {
       console.error("Error connecting integration:", error);
-      toast.error("Error connecting integration");
+      toast.error(t('connectionError'));
     } finally {
       setLoading(false);
     }

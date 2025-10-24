@@ -100,14 +100,14 @@ const DashboardSummary = () => {
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">Sales Goal</CardTitle>
-          <CardDescription>Current month progress</CardDescription>
+          <CardTitle className="text-lg font-medium">{t('salesGoalsSection')}</CardTitle>
+          <CardDescription>{t('monthlyGoal')}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">Loading...</span>
+              <span className="text-sm text-muted-foreground">{t('loading')}</span>
             </div>
           ) : (
             <>
@@ -135,7 +135,7 @@ const DashboardSummary = () => {
           {loading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">Loading...</span>
+              <span className="text-sm text-muted-foreground">{t('loading')}</span>
             </div>
           ) : (
             <>

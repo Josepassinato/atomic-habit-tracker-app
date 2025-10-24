@@ -1,4 +1,7 @@
+import { messages } from './messages';
+
 export const es = {
+  ...messages.es,
   // Navegación
   'dashboard': 'Dashboard',
   'habits': 'Hábitos',
