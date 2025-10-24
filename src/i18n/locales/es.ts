@@ -255,4 +255,27 @@ export const es = {
   'newHabit': 'Nuevo Hábito',
   'addHabits': 'Agregar Hábitos',
   'suggestHabits': 'Sugerir Hábitos',
+  
+  // Dashboard Summary
+  'complete': 'Completo',
+  'onTrack': 'En Camino',
+  'inProgress': 'En Progreso',
+  'excellent': 'Excelente',
+  'good': 'Bueno',
+  'needsImprovement': 'Necesita Mejorar',
+  'currentBonus': 'Bonificación actual',
+  'totalBonus': 'Bonificación Total',
+  'accumulatedReward': 'Recompensa acumulada',
+  'monthlyReward': 'Recompensa Mensual',
+  'salesGoal': 'Meta de Ventas',
+  'habitsCompletion': 'Finalización de Hábitos',
+  'total': 'Total',
+  
+  // Sales Goals Component
+  'aiDefined': 'Definido por IA',
+  'aiSuggestion': 'Sugerencia de IA',
+  'defaultAiSuggestion': 'Concéntrese en la meta de conversión aumentando el número de seguimientos para cada cliente potencial calificado.',
+  'mainGoal': 'Meta Principal',
+  'prospectingGoal': 'Meta de Prospección',
+  'conversionGoal': 'Meta de Conversión',
 };

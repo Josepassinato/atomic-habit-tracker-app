@@ -85,15 +85,15 @@ const DashboardSummary = () => {
   }, [supabase, isConfigured, salesGoal, habitsCompleted]);
 
   const getSalesGoalText = () => {
-    if (salesGoal >= 100) return "Complete";
-    if (salesGoal >= 80) return "On Track";
-    return "In Progress";
+    if (salesGoal >= 100) return t('complete');
+    if (salesGoal >= 80) return t('onTrack');
+    return t('inProgress');
   };
 
   const getHabitsText = () => {
-    if (habitsCompleted >= 90) return "Excellent";
-    if (habitsCompleted >= 70) return "Good";
-    return "Needs Improvement";
+    if (habitsCompleted >= 90) return t('excellent');
+    if (habitsCompleted >= 70) return t('good');
+    return t('needsImprovement');
   };
 
   return (
@@ -119,7 +119,7 @@ const DashboardSummary = () => {
               </div>
               <Progress className="mt-2" value={salesGoal} />
               <p className="mt-2 text-sm text-muted-foreground">
-                Current bonus: {salesGoal >= 100 ? "3%" : salesGoal >= 80 ? "1.5%" : "0%"}
+                {t('currentBonus')}: {salesGoal >= 100 ? "3%" : salesGoal >= 80 ? "1.5%" : "0%"}
               </p>
             </>
           )}
@@ -147,7 +147,7 @@ const DashboardSummary = () => {
               </div>
               <Progress className="mt-2" value={habitsCompleted} />
               <p className="mt-2 text-sm text-muted-foreground">
-                Current bonus: {habitsCompleted >= 90 ? "2%" : habitsCompleted >= 70 ? "1%" : "0%"}
+                {t('currentBonus')}: {habitsCompleted >= 90 ? "2%" : habitsCompleted >= 70 ? "1%" : "0%"}
               </p>
             </>
           )}
@@ -156,32 +156,32 @@ const DashboardSummary = () => {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">Total Bonus</CardTitle>
-          <CardDescription>Accumulated reward</CardDescription>
+          <CardTitle className="text-lg font-medium">{t('totalBonus')}</CardTitle>
+          <CardDescription>{t('accumulatedReward')}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (
             <div className="flex items-center space-x-2">
               <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-              <span className="text-sm text-muted-foreground">Loading...</span>
+              <span className="text-sm text-muted-foreground">{t('loading')}</span>
             </div>
           ) : (
             <>
               <div className="flex items-center justify-between">
                 <div className="text-3xl font-bold">{totalBonus}%</div>
-                <Badge>Monthly Reward</Badge>
+                <Badge>{t('monthlyReward')}</Badge>
               </div>
               <div className="mt-4 space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span>Sales Goal</span>
+                  <span>{t('salesGoal')}</span>
                   <span className="font-medium">{salesGoal >= 100 ? "3.0%" : salesGoal >= 80 ? "1.5%" : "0.0%"}</span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
-                  <span>Habits Completion</span>
+                  <span>{t('habitsCompletion')}</span>
                   <span className="font-medium">{habitsCompleted >= 90 ? "2.0%" : habitsCompleted >= 70 ? "1.0%" : "0.0%"}</span>
                 </div>
                 <div className="flex items-center justify-between border-t pt-2 font-medium">
-                  <span>Total</span>
+                  <span>{t('total')}</span>
                   <span>{totalBonus}%</span>
                 </div>
               </div>

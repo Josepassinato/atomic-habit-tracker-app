@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { toast } from "sonner";
+import { useLanguage } from "@/i18n";
 
 interface Goal {
   id: number;
@@ -41,9 +42,10 @@ const initialGoals = [
 
 const SalesGoals = () => {
   const { supabase } = useSupabase();
+  const { t } = useLanguage();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [aiSuggestion, setAiSuggestion] = useState<string>("Focus on the conversion goal by increasing the number of follow-ups for each qualified lead.");
+  const [aiSuggestion, setAiSuggestion] = useState<string>(t('defaultAiSuggestion'));
   
   useEffect(() => {
     fetchGoals();
@@ -122,7 +124,7 @@ const SalesGoals = () => {
       }
     } catch (error) {
       console.error("Error loading goals:", error);
-      toast.error("Unable to load goals");
+      toast.error(t('loadError'));
       setGoals(initialGoals);
     } finally {
       setLoading(false);
@@ -134,12 +136,12 @@ const SalesGoals = () => {
       <CardHeader>
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle>Sales Goals</CardTitle>
-            <CardDescription>{new Date().toLocaleDateString('en-US', { month: 'long' })}, {new Date().getFullYear()}</CardDescription>
+            <CardTitle>{t('salesGoalsSection')}</CardTitle>
+            <CardDescription>{new Date().toLocaleDateString('pt-BR', { month: 'long' })}, {new Date().getFullYear()}</CardDescription>
           </div>
           <Badge className="flex items-center gap-1" variant="outline">
             <TrendingUp className="h-3 w-3" />
-            AI Defined
+            {t('aiDefined')}
           </Badge>
         </div>
       </CardHeader>
@@ -171,7 +173,7 @@ const SalesGoals = () => {
               </div>
             ))}
             <div className="rounded-md bg-muted p-3 text-sm">
-              <p className="font-medium">AI Suggestion:</p>
+              <p className="font-medium">{t('aiSuggestion')}:</p>
               <p className="mt-1 text-muted-foreground">
                 {aiSuggestion}
               </p>

@@ -350,4 +350,26 @@ export const en = {
   // Habits
   'addHabits': 'Add Habits',
   'suggestHabits': 'Suggest Habits',
+  
+  // Dashboard Summary
+  'complete': 'Complete',
+  'onTrack': 'On Track',
+  'inProgress': 'In Progress',
+  'excellent': 'Excellent',
+  'good': 'Good',
+  'needsImprovement': 'Needs Improvement',
+  'currentBonus': 'Current bonus',
+  'totalBonus': 'Total Bonus',
+  'accumulatedReward': 'Accumulated reward',
+  'monthlyReward': 'Monthly Reward',
+  'salesGoal': 'Sales Goal',
+  'habitsCompletion': 'Habits Completion',
+  
+  // Sales Goals Component
+  'aiDefined': 'AI Defined',
+  'aiSuggestion': 'AI Suggestion',
+  'defaultAiSuggestion': 'Focus on the conversion goal by increasing the number of follow-ups for each qualified lead.',
+  'mainGoal': 'Main Goal',
+  'prospectingGoal': 'Prospecting Goal',
+  'conversionGoal': 'Conversion Goal',
 };
