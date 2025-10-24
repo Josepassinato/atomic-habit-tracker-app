@@ -1,6 +1,6 @@
 
 import React, { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+
 import DashboardSummary from "@/components/DashboardSummary";
 import HabitosTracker from "@/components/HabitosTracker";
 import MetasVendas from "@/components/MetasVendas";
@@ -16,19 +16,17 @@ import { useNotificacoes } from "@/components/notificacoes/NotificacoesProvider"
 import { useRealtimeHabits } from "@/hooks/useRealtimeHabits";
 import { useRealtimeGoals } from "@/hooks/useRealtimeGoals";
 import { useLanguage } from "@/i18n";
-import { getCurrentUser } from "@/utils/permissions";
-import { storageService } from "@/services/storage-service";
+import { useAuth } from "@/components/auth/AuthProvider";
 
 const Dashboard = () => {
-  const navigate = useNavigate();
   const { adicionarNotificacao } = useNotificacoes();
   const { t } = useLanguage();
   const notificationShown = useRef(false);
   
-  // Get user profile for realtime hooks
-  const userProfile = JSON.parse(localStorage.getItem('userProfile') || '{}');
-  const teamId = userProfile?.team_ids?.[0];
-  const userId = userProfile?.user_id;
+  // Auth context
+  const { user, userProfile } = useAuth();
+  const teamId = (userProfile as any)?.team_ids?.[0];
+  const userId = user?.id;
   
   // Enable realtime updates
   const { habits, loading: habitsLoading } = useRealtimeHabits(teamId, userId);
@@ -37,18 +35,6 @@ const Dashboard = () => {
   console.log('Realtime habits:', habits.length, 'goals:', goals.length);
   
   useEffect(() => {
-    // Check if user is authenticated
-    const user = getCurrentUser();
-    
-    if (!user) {
-      // If no user found, redirect to auth
-      navigate("/auth");
-      return;
-    }
-    
-    console.log("Dashboard loaded for user:", user);
-    
-    // Only add welcome notification once per component mount
     if (!notificationShown.current) {
       const timer = setTimeout(() => {
         const welcomeMessage = t('welcomeMessage').replace('{{role}}', 'salesperson') || "Welcome back!";
@@ -65,7 +51,7 @@ const Dashboard = () => {
       
       return () => clearTimeout(timer);
     }
-  }, [navigate, adicionarNotificacao, t]);
+  }, [adicionarNotificacao, t]);
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

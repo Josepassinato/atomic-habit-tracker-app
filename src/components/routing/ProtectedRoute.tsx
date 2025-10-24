@@ -12,8 +12,8 @@ interface ProtectedRouteProps {
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ 
   children, 
-  requiredRole = 'vendedor' 
-}) => {
+  requiredRole
+ }) => {
   const { user, userProfile, loading } = useAuth();
   
   if (loading) {
@@ -28,10 +28,10 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     return <Navigate to="/auth" replace />;
   }
   
-  const hasAccess = hasPermission(userProfile, requiredRole);
+  const hasAccess = requiredRole ? hasPermission(userProfile, requiredRole) : true;
   
   if (!hasAccess) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/" replace />;
   }
   
   return <>{children}</>;
