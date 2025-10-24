@@ -128,8 +128,8 @@ const DashboardSummary = () => {
 
       <Card>
         <CardHeader className="pb-2">
-          <CardTitle className="text-lg font-medium">Atomic Habits</CardTitle>
-          <CardDescription>Daily completion</CardDescription>
+          <CardTitle className="text-lg font-medium">{t('atomicHabitsSection')}</CardTitle>
+          <CardDescription>{t('dailyCompletionCard')}</CardDescription>
         </CardHeader>
         <CardContent>
           {loading ? (

@@ -9,6 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { useLanguage } from '@/i18n';
 
 export const AuthPage: React.FC = () => {
   const [isLogin, setIsLogin] = useState(true);
@@ -22,6 +23,7 @@ export const AuthPage: React.FC = () => {
   
   const { signIn, signUp, user, userProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   // Redirect if already authenticated
   useEffect(() => {
@@ -132,7 +134,7 @@ export const AuthPage: React.FC = () => {
         <CardHeader className="text-center">
           <CardTitle className="text-2xl font-bold">Habitus</CardTitle>
           <CardDescription>
-            Sales management and atomic habits system
+            {t('salesManagementAndAtomicHabits')}
           </CardDescription>
         </CardHeader>
         <CardContent>

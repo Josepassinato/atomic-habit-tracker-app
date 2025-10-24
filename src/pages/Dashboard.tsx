@@ -72,20 +72,20 @@ const Dashboard = () => {
                 <div className="lg:col-span-2">
                   <div className="grid gap-6 md:grid-cols-2">
                     <div>
-                      <h2 className="mb-3 text-xl font-semibold">Sales Goals</h2>
+                      <h2 className="mb-3 text-xl font-semibold">{t('salesGoalsSection')}</h2>
                       <MetasVendas />
                     </div>
                     <div>
-                      <h2 className="mb-3 text-xl font-semibold">Atomic Habits</h2>
+                      <h2 className="mb-3 text-xl font-semibold">{t('atomicHabitsSection')}</h2>
                       <HabitosTracker />
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h2 className="mb-3 text-xl font-semibold">AI Consulting</h2>
+                  <h2 className="mb-3 text-xl font-semibold">{t('aiConsultingSection')}</h2>
                   <ConsultoriaIA />
                   <div className="mt-6">
-                    <h3 className="mb-3 text-lg font-semibold">CRM Integrations</h3>
+                    <h3 className="mb-3 text-lg font-semibold">{t('crmIntegrationsSection')}</h3>
                     <IntegracoesCRM />
                   </div>
                 </div>

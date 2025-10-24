@@ -8,6 +8,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 import { useSupabase } from "@/hooks/use-supabase";
 import { useAuth } from "@/components/auth/AuthProvider";
+import { useLanguage } from "@/i18n";
 
 interface Mensagem {
   role: 'user' | 'assistant';
@@ -17,10 +18,11 @@ interface Mensagem {
 const ConsultoriaIA = () => {
   const { supabase } = useSupabase();
   const { userProfile } = useAuth();
+  const { t } = useLanguage();
   const [mensagens, setMensagens] = useState<Mensagem[]>([
     { 
       role: 'assistant', 
-      content: 'Hello! I am the Habitus AI assistant. How can I help you today? I can assist with goal setting, atomic habits suggestions, or analyzing your current performance.' 
+      content: t('aiAssistantGreeting')
     }
   ]);
   const [inputMensagem, setInputMensagem] = useState("");
@@ -144,9 +146,9 @@ const ConsultoriaIA = () => {
   return (
     <Card>
       <CardHeader className="pb-3">
-        <CardTitle>AI Consulting</CardTitle>
+        <CardTitle>{t('aiConsultingSection')}</CardTitle>
         <CardDescription>
-          Get personalized recommendations for your goals and habits
+          {t('getPersonalizedRecommendations')}
         </CardDescription>
       </CardHeader>
       <CardContent>

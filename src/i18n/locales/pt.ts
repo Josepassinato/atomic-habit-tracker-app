@@ -181,4 +181,15 @@ export const pt = {
   
   // Common
   'signOut': 'Sair',
+  
+  // Dashboard page specific
+  'salesManagementAndAtomicHabits': 'Sistema de gestão de vendas e hábitos atômicos',
+  'dailyAtomicHabitsCard': 'Hábitos Atômicos Diários',
+  'salesGoalsSection': 'Metas de Vendas',
+  'atomicHabitsSection': 'Hábitos Atômicos',
+  'aiConsultingSection': 'Consultoria IA',
+  'crmIntegrationsSection': 'Integrações CRM',
+  'aiAssistantGreeting': 'Olá! Sou o assistente de IA do Habitus. Como posso ajudá-lo hoje? Posso auxiliar com definição de metas, sugestões de hábitos atômicos ou análise do seu desempenho atual.',
+  'getPersonalizedRecommendations': 'Obtenha recomendações personalizadas para suas metas e hábitos',
+  'dailyCompletionCard': 'Conclusão diária',
 };

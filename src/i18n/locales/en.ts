@@ -62,7 +62,7 @@ export const en = {
   // Notifications and warnings
   'notifications': 'Notifications',
   'welcomeMessage': 'Welcome back, {{role}}!',
-  'dailyCompletion': 'You have 3 habits to complete today.',
+  'dailyCompletionMessage': 'You have 3 habits to complete today.',
   'configurationRequired': 'Configuration Required',
   'adminNeedsToConfigureApi': 'The system administrator needs to configure the OpenAI API to enable this functionality.',
   'configureOpenAiApi': 'Configure OpenAI API in Admin Panel',
@@ -282,4 +282,15 @@ export const en = {
   'blog': 'Blog',
   'contact': 'Contact',
   'allRightsReserved': 'All rights reserved',
+  
+  // Dashboard page specific
+  'salesManagementAndAtomicHabits': 'Sales management and atomic habits system',
+  'dailyAtomicHabitsCard': 'Daily Atomic Habits',
+  'salesGoalsSection': 'Sales Goals',
+  'atomicHabitsSection': 'Atomic Habits',
+  'aiConsultingSection': 'AI Consulting',
+  'crmIntegrationsSection': 'CRM Integrations',
+  'aiAssistantGreeting': 'Hello! I am the Habitus AI assistant. How can I help you today? I can assist with goal setting, atomic habits suggestions, or analyzing your current performance.',
+  'getPersonalizedRecommendations': 'Get personalized recommendations for your goals and habits',
+  'dailyCompletionCard': 'Daily completion',
 };
