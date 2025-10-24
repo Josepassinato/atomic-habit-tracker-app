@@ -156,7 +156,7 @@ const RealtimeNotifications: React.FC = () => {
             const Icon = notification.icon || getIcon(notification.type);
             
             return (
-              <div key={notification.id}>
+              <React.Fragment key={notification.id}>
                 <div 
                   className={`p-3 rounded-lg border transition-all cursor-pointer ${
                     notification.read 
@@ -204,7 +204,7 @@ const RealtimeNotifications: React.FC = () => {
                 {index < notifications.length - 1 && (
                   <Separator className="my-2" />
                 )}
-              </div>
+              </React.Fragment>
             );
           })
         )}
