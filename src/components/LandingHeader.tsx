@@ -40,7 +40,7 @@ const LandingHeader: React.FC = () => {
             variant="ghost" 
             onClick={() => navigate("/entenda-produto")}
           >
-            Conheça o Habitus
+            {t('learnAboutHabitus')}
           </Button>
         </nav>
         
@@ -67,7 +67,7 @@ const LandingHeader: React.FC = () => {
                 variant="default" 
                 onClick={() => navigate("/auth")}
               >
-                {t('hero.cta') || 'Começar'}
+                {t('startFree')}
               </Button>
             </div>
           )}
@@ -95,7 +95,7 @@ const LandingHeader: React.FC = () => {
                   onClick={() => navigate("/entenda-produto")}
                   className="justify-start"
                 >
-                  Conheça o Habitus
+                  {t('learnAboutHabitus')}
                 </Button>
                 {!user && (
                   <>
@@ -110,7 +110,7 @@ const LandingHeader: React.FC = () => {
                       variant="default" 
                       onClick={() => navigate("/auth")}
                     >
-                      {t('hero.cta') || 'Começar'}
+                      {t('startFree')}
                     </Button>
                   </>
                 )}

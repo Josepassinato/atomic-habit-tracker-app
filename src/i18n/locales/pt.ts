@@ -195,4 +195,14 @@ export const pt = {
   'aiAssistantGreeting': 'Olá! Sou o assistente de IA do Habitus. Como posso ajudá-lo hoje? Posso auxiliar com definição de metas, sugestões de hábitos atômicos ou análise do seu desempenho atual.',
   'getPersonalizedRecommendations': 'Obtenha recomendações personalizadas para suas metas e hábitos',
   'dailyCompletionCard': 'Conclusão diária',
+  
+  // Landing page navigation
+  'features': 'Recursos',
+  'pricing': 'Preços',
+  'testimonials': 'Depoimentos',
+  'learnAboutHabitus': 'Conheça o Habitus',
+  'startFree': 'Começar Grátis',
+  
+  // Product highlight
+  'basedOnAtomicHabits': 'Baseado nos princípios de Hábitos Atômicos de James Clear',
 };

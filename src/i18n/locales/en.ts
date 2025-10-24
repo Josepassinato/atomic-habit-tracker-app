@@ -296,4 +296,14 @@ export const en = {
   'aiAssistantGreeting': 'Hello! I am the Habitus AI assistant. How can I help you today? I can assist with goal setting, atomic habits suggestions, or analyzing your current performance.',
   'getPersonalizedRecommendations': 'Get personalized recommendations for your goals and habits',
   'dailyCompletionCard': 'Daily completion',
+  
+  // Landing page navigation
+  'features': 'Features',
+  'pricing': 'Pricing',
+  'testimonials': 'Testimonials',
+  'learnAboutHabitus': 'Learn About Habitus',
+  'startFree': 'Start Free',
+  
+  // Product highlight
+  'basedOnAtomicHabits': 'Based on the Atomic Habits principles by James Clear',
 };

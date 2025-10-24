@@ -73,7 +73,7 @@ const Features = () => {
         <div className="text-center mb-12">
           <h2 className="text-3xl font-bold mb-4">{t('featuresTitle')}</h2>
           <p className="text-muted-foreground max-w-2xl mx-auto mb-6">
-            Baseado nos princípios de Hábitos Atômicos de James Clear
+            {t('basedOnAtomicHabits')}
           </p>
           <Button 
             variant="outline" 
@@ -82,7 +82,7 @@ const Features = () => {
             className="gap-2"
           >
             <BookOpen className="h-5 w-5" />
-            Conheça o Habitus
+            {t('learnAboutHabitus')}
           </Button>
         </div>
         

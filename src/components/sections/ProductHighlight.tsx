@@ -3,10 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { BookOpen, ArrowRight, Sparkles, CheckCircle2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useLanguage } from "@/i18n";
 import habitosAtomicosLivro from "@/assets/habitos-atomicos-livro.jpeg";
 
 const ProductHighlight = () => {
   const navigate = useNavigate();
+  const { t } = useLanguage();
 
   return (
     <section className="py-16 bg-gradient-to-br from-primary/10 via-primary/5 to-background relative overflow-hidden">
@@ -93,7 +95,7 @@ const ProductHighlight = () => {
                   onClick={() => navigate("/entenda-produto")}
                 >
                   <BookOpen className="mr-2 h-5 w-5" />
-                  Conheça o Habitus
+                  {t('learnAboutHabitus')}
                   <ArrowRight className="ml-2 h-5 w-5" />
                 </Button>
               </div>
