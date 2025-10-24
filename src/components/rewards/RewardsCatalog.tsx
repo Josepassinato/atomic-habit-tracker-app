@@ -7,6 +7,7 @@ import { useLanguage } from '@/i18n';
 import { amazonAffiliateService, AmazonReward } from '@/services/amazon-affiliate-service';
 import { useAuth } from '../auth/AuthProvider';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface RewardsCatalogProps {
   achievementType: string;
@@ -30,8 +31,18 @@ export const RewardsCatalog: React.FC<RewardsCatalogProps> = ({
   }, [achievementType, achievementLevel]);
 
   const loadRewards = async () => {
-    // Mock company ID for now - in production, get from userProfile
-    const companyId = 'mock-company-id';
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('company_id')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (!profile?.company_id) return;
+    
+    const companyId = profile.company_id;
     
     setLoading(true);
     const data = await amazonAffiliateService.getRewardsByAchievement(

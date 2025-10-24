@@ -23,8 +23,18 @@ export const RewardsApprovalPanel: React.FC = () => {
   }, []);
 
   const loadPendingAchievements = async () => {
-    // Mock company ID for now
-    const companyId = 'mock-company-id';
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
+    const { data: profile } = await supabase
+      .from('user_profiles')
+      .select('company_id')
+      .eq('user_id', user.id)
+      .single();
+    
+    if (!profile?.company_id) return;
+    
+    const companyId = profile.company_id;
     
     setLoading(true);
     const { data, error } = await supabase

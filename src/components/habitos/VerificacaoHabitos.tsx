@@ -26,73 +26,8 @@ interface Vendedor {
   habitos: Habito[];
 }
 
-// Dados fictícios para demonstração
-const vendedoresDemo: Vendedor[] = [
-  {
-    id: "v1",
-    nome: "Ana Silva",
-    habitos: [
-      {
-        id: 1,
-        titulo: "Check-in Matinal",
-        descricao: "Definir metas diárias para vendas",
-        cumprido: true,
-        horario: "08:30",
-        verificacaoNecessaria: true,
-        evidencia: {
-          tipo: "texto",
-          conteudo: "Realizei o check-in às 8:15 e defini meta de 3 demonstrações para hoje",
-          timestamp: new Date(new Date().setHours(8, 15)).toISOString()
-        }
-      },
-      {
-        id: 2,
-        titulo: "Follow-up Sistemático",
-        descricao: "Verificar se contatos foram registrados no CRM",
-        cumprido: true,
-        horario: "12:00",
-        verificacaoNecessaria: true,
-        evidencia: {
-          tipo: "texto",
-          conteudo: "Atualizei 8 registros de clientes no CRM com detalhes das reuniões de ontem",
-          timestamp: new Date(new Date().setHours(12, 5)).toISOString()
-        }
-      }
-    ]
-  },
-  {
-    id: "v2",
-    nome: "Carlos Mendes",
-    habitos: [
-      {
-        id: 1,
-        titulo: "Check-in Matinal",
-        descricao: "Definir metas diárias para vendas",
-        cumprido: true,
-        horario: "08:30",
-        verificacaoNecessaria: true,
-        evidencia: {
-          tipo: "texto",
-          conteudo: "Fiz o planejamento do dia e defini 5 leads para qualificar hoje",
-          timestamp: new Date(new Date().setHours(8, 45)).toISOString()
-        }
-      },
-      {
-        id: 3,
-        titulo: "Treinamento em Micro Doses",
-        descricao: "Ler conteúdo e validar aprendizado",
-        cumprido: true,
-        horario: "15:00",
-        verificacaoNecessaria: true,
-        evidencia: {
-          tipo: "texto",
-          conteudo: "Realizei o treinamento sobre objeções comuns e pratiquei com a equipe",
-          timestamp: new Date(new Date().setHours(15, 20)).toISOString()
-        }
-      }
-    ]
-  }
-];
+// Empty initial data - will be loaded from Supabase
+const vendedoresDemo: Vendedor[] = [];
 
 const VerificacaoHabitos: React.FC = () => {
   const [vendedores, setVendedores] = useState<Vendedor[]>(vendedoresDemo);

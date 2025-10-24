@@ -91,29 +91,7 @@ const RealtimeNotifications: React.FC = () => {
     }
   };
 
-  // Simular algumas notificações iniciais para demonstração
-  useEffect(() => {
-    const demoNotifications = [
-      {
-        type: 'habit_verified' as const,
-        title: 'Hábito Verificado Automaticamente',
-        description: '"Follow-up CRM" foi verificado via IA - evidência válida detectada',
-        priority: 'medium' as const,
-        icon: CheckCircle
-      },
-      {
-        type: 'team_activity' as const,
-        title: 'Meta Atingida',
-        description: 'Equipe Vendas SP atingiu 85% da meta mensal',
-        priority: 'high' as const,
-        icon: Target
-      }
-    ];
-
-    setTimeout(() => {
-      demoNotifications.forEach(notif => addNotification(notif));
-    }, 2000);
-  }, []);
+  // Removed demo notifications - will show real data only
 
   return (
     <Card className="h-full">

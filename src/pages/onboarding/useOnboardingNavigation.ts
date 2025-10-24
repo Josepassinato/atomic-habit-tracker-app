@@ -96,52 +96,6 @@ export const useOnboardingNavigation = () => {
       // Save to localStorage
       localStorage.setItem("user", JSON.stringify(updatedUserData));
       
-      // Save mock members for each team if they don't exist
-      if (!localStorage.getItem("vendedores")) {
-        const mockVendedores = teams.flatMap((team: Team, index: number) => [
-          {
-            id: `v${index}1`,
-            nome: `Salesperson ${index+1}A`,
-            email: `salesperson${index+1}a@example.com`,
-            equipe_id: team.id,
-            vendas_total: Math.floor(Math.random() * 100000) + 50000,
-            meta_atual: 150000,
-            taxa_conversao: (Math.random() * 0.3 + 0.2).toFixed(2),
-            criado_em: new Date().toISOString()
-          },
-          {
-            id: `v${index}2`,
-            nome: `Salesperson ${index+1}B`,
-            email: `salesperson${index+1}b@example.com`,
-            equipe_id: team.id,
-            vendas_total: Math.floor(Math.random() * 100000) + 50000,
-            meta_atual: 150000,
-            taxa_conversao: (Math.random() * 0.3 + 0.2).toFixed(2),
-            criado_em: new Date().toISOString()
-          }
-        ]);
-        
-        localStorage.setItem("vendedores", JSON.stringify(mockVendedores));
-        console.log("Mock salespeople created:", mockVendedores);
-      }
-      
-      // Add mock habits for each team
-      if (!localStorage.getItem("habitos_equipe")) {
-        const mockHabitos = teams.flatMap((team: Team) => 
-          team.habitos.map((habito: string, idx: number) => ({
-            id: `h${team.id}-${idx}`,
-            equipe_id: team.id,
-            descricao: habito,
-            concluido: Math.random() > 0.5,
-            data_criacao: new Date().toISOString(),
-            data_conclusao: Math.random() > 0.5 ? new Date().toISOString() : null
-          }))
-        );
-        
-        localStorage.setItem("habitos_equipe", JSON.stringify(mockHabitos));
-        console.log("Mock habits created:", mockHabitos);
-      }
-      
       toast({
         title: "Configuration completed!",
         description: "Team configurations have been saved successfully.",

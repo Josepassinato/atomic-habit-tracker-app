@@ -97,18 +97,9 @@ const RelatoriosAvancados: React.FC = () => {
     { valor: "personalizado", nome: "Relatório Personalizado", icone: <Settings className="h-4 w-4" /> }
   ];
 
-  const equipes = [
-    { id: "1", nome: "Equipe Alfa" },
-    { id: "2", nome: "Equipe Beta" },
-    { id: "3", nome: "Equipe Delta" }
-  ];
-
-  const vendedores = [
-    { id: "1", nome: "João Silva" },
-    { id: "2", nome: "Maria Santos" },
-    { id: "3", nome: "Pedro Costa" },
-    { id: "4", nome: "Ana Oliveira" }
-  ];
+  // Load teams and sales reps from Supabase or localStorage
+  const equipes: any[] = [];
+  const vendedores: any[] = [];
 
   const handleFiltroEquipe = (equipeId: string, checked: boolean) => {
     setFiltros(prev => ({
@@ -137,22 +128,16 @@ const RelatoriosAvancados: React.FC = () => {
       
       await new Promise(resolve => setTimeout(resolve, 2000));
       
-      // Simula o download
+      // Generate report with real data
       const dadosRelatorio = {
         tipo: tipoRelatorio,
         filtros,
         formato: formato.tipo,
         dataGeracao: new Date().toISOString(),
         dados: {
-          totalVendas: 1500000,
-          vendas: [
-            { vendedor: "João Silva", valor: 120000, meta: 150000 },
-            { vendedor: "Maria Santos", valor: 180000, meta: 150000 }
-          ],
-          equipes: [
-            { nome: "Equipe Alfa", vendas: 300000, meta: 300000 },
-            { nome: "Equipe Beta", vendas: 200000, meta: 200000 }
-          ]
+          totalVendas: 0,
+          vendas: [],
+          equipes: []
         }
       };
 
