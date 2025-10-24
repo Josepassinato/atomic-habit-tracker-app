@@ -205,4 +205,54 @@ export const pt = {
   
   // Product highlight
   'basedOnAtomicHabits': 'Baseado nos princípios de Hábitos Atômicos de James Clear',
+  
+  // Common status and actions (specific to habits/goals)
+  'generating': 'Gerando...',
+  'downloading': 'Baixando...',
+  'notCompleted': 'Não completo',
+  'markAsCompleted': 'Marcar como concluído',
+  'completing': 'Completando...',
+  'awaitingVerification': 'Aguardando verificação do gerente',
+  'verifiedByManager': 'Verificado pelo gerente',
+  
+  // Evidências
+  'addEvidence': 'Adicionar Evidência',
+  'addEvidenceFor': 'Adicionar Evidência para',
+  'describeHabit': 'Descreva como você completou este hábito...',
+  
+  // Integrações
+  'connectCrmTools': 'Conecte seu CRM e ferramentas de comunicação',
+  
+  // Relatórios
+  'generateReport': 'Gerar Relatório',
+  'exportReport': 'Exportar Relatório',
+  'downloadReport': 'Baixar Relatório',
+  'advancedFilters': 'Filtros Avançados',
+  'exportFormat': 'Escolha o formato de exportação do seu relatório',
+  'generatingReport': 'Gerando relatório...',
+  
+  // Configurações
+  'supabaseConfig': 'Configuração do Supabase',
+  'supabaseDescription': 'Configure a conexão com o Supabase para sincronizar seus dados na nuvem',
+  'supabaseUrl': 'URL do Supabase',
+  'supabaseKey': 'Chave API do Supabase',
+  'supabaseKeyDescription': 'Esta deve ser a chave anônima (public) do seu projeto Supabase',
+  'testConnection': 'Testar Conexão',
+  'syncData': 'Sincronizar Dados',
+  'connectedSuccessfully': 'Conectado ao Supabase com sucesso!',
+  'connectionFailed': 'Falha ao conectar com o Supabase. Verifique as credenciais.',
+  'syncingData': 'Sincronizando dados com o Supabase...',
+  'urlAndKeyRequired': 'URL e chave API são obrigatórios',
+  'configureBeforeSync': 'Configure o Supabase antes de sincronizar dados',
+  
+  // API Config
+  'apiConfigured': 'A API da OpenAI está configurada e operacional. Todas as funcionalidades de IA estão disponíveis.',
+  'apiNotConfigured': 'A API da OpenAI precisa ser configurada pelo administrador do sistema para habilitar as funcionalidades de IA.',
+  'forAdministrators': 'Para Administradores',
+  'configureApiKey': 'Configure a chave da API da OpenAI no painel administrativo para habilitar todas as funcionalidades de IA para todos os usuários do sistema.',
+  
+  // Hábitos
+  'newHabit': 'Novo Hábito',
+  'addHabits': 'Adicionar Hábitos',
+  'suggestHabits': 'Sugerir Hábitos',
 };

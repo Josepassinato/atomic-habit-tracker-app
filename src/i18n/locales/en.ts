@@ -306,4 +306,48 @@ export const en = {
   
   // Product highlight
   'basedOnAtomicHabits': 'Based on the Atomic Habits principles by James Clear',
+  
+  // Common status and actions (specific to habits/goals)
+  'generating': 'Generating...',
+  'downloading': 'Downloading...',
+  'notCompleted': 'Not completed',
+  
+  // Evidence
+  'addEvidenceFor': 'Add Evidence for',
+  'describeHabit': 'Describe how you completed this habit...',
+  
+  // Integrations
+  'connectCrmTools': 'Connect your CRM and communication tools',
+  
+  // Reports
+  'generateReport': 'Generate Report',
+  'exportReport': 'Export Report',
+  'downloadReport': 'Download Report',
+  'advancedFilters': 'Advanced Filters',
+  'exportFormat': 'Choose your report export format',
+  'generatingReport': 'Generating report...',
+  
+  // Settings
+  'supabaseConfig': 'Supabase Configuration',
+  'supabaseDescription': 'Configure Supabase connection to sync your data in the cloud',
+  'supabaseUrl': 'Supabase URL',
+  'supabaseKey': 'Supabase API Key',
+  'supabaseKeyDescription': 'This should be the anonymous (public) key of your Supabase project',
+  'testConnection': 'Test Connection',
+  'syncData': 'Sync Data',
+  'connectedSuccessfully': 'Successfully connected to Supabase!',
+  'connectionFailed': 'Failed to connect to Supabase. Check your credentials.',
+  'syncingData': 'Syncing data with Supabase...',
+  'urlAndKeyRequired': 'URL and API key are required',
+  'configureBeforeSync': 'Configure Supabase before syncing data',
+  
+  // API Config
+  'apiConfigured': 'The OpenAI API is configured and operational. All AI features are available.',
+  'apiNotConfigured': 'The OpenAI API needs to be configured by the system administrator to enable AI features.',
+  'forAdministrators': 'For Administrators',
+  'configureApiKey': 'Configure the OpenAI API key in the admin panel to enable all AI features for all system users.',
+  
+  // Habits
+  'addHabits': 'Add Habits',
+  'suggestHabits': 'Suggest Habits',
 };
