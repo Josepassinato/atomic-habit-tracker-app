@@ -24,14 +24,26 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     );
   }
   
-  if (!user || !userProfile) {
+  if (!user) {
     return <Navigate to="/auth" replace />;
   }
   
-  const hasAccess = requiredRole ? hasPermission(userProfile, requiredRole) : true;
+  // Se não tem perfil ainda mas tem usuário, aguarda o perfil carregar
+  if (!userProfile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
+  }
   
-  if (!hasAccess) {
-    return <Navigate to="/" replace />;
+  // Verifica permissão apenas se um papel específico for requerido
+  if (requiredRole) {
+    const hasAccess = hasPermission(userProfile, requiredRole);
+    
+    if (!hasAccess) {
+      return <Navigate to="/dashboard" replace />;
+    }
   }
   
   return <>{children}</>;
