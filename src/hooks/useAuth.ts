@@ -108,13 +108,18 @@ export const useAuthProvider = () => {
   const cleanupAuthState = () => {
     // Remove all auth-related keys
     Object.keys(localStorage).forEach((key) => {
-      if (key.startsWith('supabase.auth.') || key.includes('sb-')) {
+      if (
+        key.startsWith('supabase.auth.') || 
+        key.includes('sb-') ||
+        key === 'habitus-user' ||
+        key === 'user'
+      ) {
         localStorage.removeItem(key);
       }
     });
     
-    // Legacy cleanup
-    localStorage.removeItem('habitus-user');
+    // Clear session storage
+    sessionStorage.clear();
   };
 
   const signIn = async (email: string, password: string) => {
