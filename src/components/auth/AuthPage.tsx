@@ -20,7 +20,7 @@ export const AuthPage: React.FC = () => {
   const [companies, setCompanies] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   
-  const { signIn, signUp, user, userProfile } = useAuth();
+  const { signIn, signUp, user, userProfile, refreshProfile } = useAuth();
   const navigate = useNavigate();
 
   // Redirect if already authenticated
@@ -176,16 +176,58 @@ export const AuthPage: React.FC = () => {
                   onClick={async () => {
                     setLoading(true);
                     try {
-                      const { error } = await signIn('teste@habitus.com', 'Teste@123');
+                      const TEST_EMAIL = 'teste@habitus.com';
+                      const TEST_PASSWORD = 'Teste@123';
+                      let { error } = await signIn(TEST_EMAIL, TEST_PASSWORD);
+
                       if (error) {
-                        console.error('Login error:', error);
-                        toast.error('Usuário de teste não encontrado. Por favor, crie uma conta ou use suas credenciais.');
-                      } else {
-                        toast.success('Login realizado com sucesso!');
-                        setTimeout(() => {
-                          navigate('/dashboard');
-                        }, 500);
+                        // Tenta criar automaticamente o usuário de teste
+                        const signUpRes = await signUp(TEST_EMAIL, TEST_PASSWORD, { name: 'Test User' });
+                        if (signUpRes.error) {
+                          console.error('Quick signup error:', signUpRes.error);
+                          const msg = String(signUpRes.error.message || '').toLowerCase();
+                          if (msg.includes('confirm')) {
+                            toast.error('Confirmação de e-mail exigida. Desative "Confirm email" no Supabase para usar o login rápido.');
+                          } else if (msg.includes('already') || msg.includes('registered')) {
+                            toast.error('Credenciais inválidas. Ajuste a senha do usuário de teste no Supabase ou use suas credenciais.');
+                          } else {
+                            toast.error('Não foi possível criar usuário de teste: ' + signUpRes.error.message);
+                          }
+                          return;
+                        }
+                        // Se criou, tenta logar (funciona quando confirmação de e-mail está desativada)
+                        ({ error } = await signIn(TEST_EMAIL, TEST_PASSWORD));
+                        if (error) {
+                          toast.error('Conta criada, mas é preciso confirmar o e-mail. Verifique sua caixa de entrada ou desative "Confirm email" no Supabase.');
+                          return;
+                        }
                       }
+
+                      // Garante que exista um perfil para o ProtectedRoute não bloquear
+                      const { data: { user: currentUser } } = await supabase.auth.getUser();
+                      if (currentUser) {
+                        const { data: existing } = await supabase
+                          .from('user_profiles')
+                          .select('user_id')
+                          .eq('user_id', currentUser.id)
+                          .limit(1);
+
+                        if (!existing || existing.length === 0) {
+                          await supabase.from('user_profiles').insert({
+                            user_id: currentUser.id,
+                            name: 'Test User',
+                            email: currentUser.email
+                          });
+                        }
+
+                        // Atualiza o contexto com o profile antes de navegar
+                        await refreshProfile?.();
+                      }
+
+                      toast.success('Login realizado com sucesso!');
+                      setTimeout(() => {
+                        navigate('/dashboard');
+                      }, 600);
                     } catch (error: any) {
                       console.error('Unexpected error:', error);
                       toast.error('Erro inesperado: ' + (error?.message || 'Tente novamente'));
