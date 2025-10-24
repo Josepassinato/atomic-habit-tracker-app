@@ -178,13 +178,17 @@ export const AuthPage: React.FC = () => {
                     try {
                       const { error } = await signIn('teste@habitus.com', 'Teste@123');
                       if (error) {
-                        toast.error('Erro no login: ' + error.message);
+                        console.error('Login error:', error);
+                        toast.error('Usuário de teste não encontrado. Por favor, crie uma conta ou use suas credenciais.');
                       } else {
                         toast.success('Login realizado com sucesso!');
-                        navigate('/dashboard');
+                        setTimeout(() => {
+                          navigate('/dashboard');
+                        }, 500);
                       }
-                    } catch (error) {
-                      toast.error('Erro inesperado');
+                    } catch (error: any) {
+                      console.error('Unexpected error:', error);
+                      toast.error('Erro inesperado: ' + (error?.message || 'Tente novamente'));
                     } finally {
                       setLoading(false);
                     }
