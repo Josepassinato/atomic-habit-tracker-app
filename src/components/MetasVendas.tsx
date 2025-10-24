@@ -44,8 +44,8 @@ const MetasVendas = () => {
   const { supabase } = useSupabase();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [loading, setLoading] = useState(true);
-  const [aiSuggestion, setAiSuggestion] = useState<string>("Focus on the conversion goal by increasing the number of follow-ups for each qualified lead.");
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [aiSuggestion, setAiSuggestion] = useState<string>(t('defaultAiSuggestion') || "");
   
   useEffect(() => {
     fetchGoals();
@@ -108,11 +108,11 @@ const MetasVendas = () => {
           setAiSuggestion(savedSuggestion);
         }
       }
-    } catch (error) {
-      console.error("Error loading goals:", error);
-      toast.error("Unable to load goals");
-      setGoals(initialGoals);
-    } finally {
+      } catch (error) {
+        console.error("Error loading goals:", error);
+        toast.error(t('loadError'));
+        setGoals(initialGoals);
+      } finally {
       setLoading(false);
     }
   };
